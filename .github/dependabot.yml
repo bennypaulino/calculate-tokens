@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      day: monday
+      time: "06:00"
+      timezone: UTC
+    commit-message:
+      prefix: "ci"
+      include: scope
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

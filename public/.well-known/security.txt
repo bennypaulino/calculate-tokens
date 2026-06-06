@@ -1,0 +1,5 @@
+Contact: mailto:security@calculatetokens.com
+Expires: 2027-06-06T00:00:00Z
+Preferred-Languages: en
+Canonical: https://calculatetokens.com/.well-known/security.txt
+Policy: https://calculatetokens.com/privacy#security

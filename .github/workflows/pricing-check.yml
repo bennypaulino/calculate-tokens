@@ -1,0 +1,122 @@
+name: Daily Pricing Check
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      price_changes: ${{ steps.detection.outputs.price_changes }}
+      detected_sha: ${{ steps.detection.outputs.detected_sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-node@1d0ff469b99b2b8b67c9669571f74f8a1c71caaf  # v4.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+      - name: Validate prices.json schema
+        run: |
+          node -e "
+            const Ajv = require('ajv');
+            const addFormats = require('ajv-formats');
+            const schema = require('./public/api/v1/prices.schema.json');
+            const data = require('./public/api/v1/prices.json');
+            const ajv = new Ajv({ strict: false });
+            addFormats(ajv);
+            const validate = ajv.compile(schema);
+            if (!validate(data)) { console.error(validate.errors); process.exit(1); }
+            console.log('Valid');
+          "
+      - name: Check for stale pricing data
+        run: node scripts/check-staleness.js
+      - name: Detect provider pricing page changes
+        id: detection
+        run: |
+          node scripts/check-page-changes.js
+          echo "detected_sha=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+      - name: Check audit exemption expiry
+        run: node scripts/check-exemption-expiry.js
+      - name: Validate security.txt expiry
+        run: node scripts/check-security-txt.js
+
+  update-timestamps:
+    runs-on: ubuntu-latest
+    needs: [validate]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-node@1d0ff469b99b2b8b67c9669571f74f8a1c71caaf  # v4.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Update last_checked timestamps
+        run: node scripts/update-checked.js
+      - name: Update pricing-snapshots hashes
+        run: node scripts/check-page-changes.js --update-only
+      - name: Compute prices.json hash
+        run: node scripts/compute-prices-hash.js
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (
+            git add public/api/v1/prices.json public/_headers scripts/pricing-snapshots/ &&
+            git commit -m "chore: update pricing last_checked timestamps and page snapshots [skip ci]" &&
+            git push
+          )
+
+  notify-price-changes:
+    runs-on: ubuntu-latest
+    needs: [validate]
+    if: ${{ needs.validate.result == 'success' && needs.validate.outputs.price_changes != '' }}
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          ref: ${{ needs.validate.outputs.detected_sha }}
+      - uses: actions/setup-node@1d0ff469b99b2b8b67c9669571f74f8a1c71caaf  # v4.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Check for existing open verification issue
+        id: dedup_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OPEN=$(gh issue list --label "pricing-verification-pending" --state open --json number --jq length)
+          echo "open_count=${OPEN}" >> $GITHUB_OUTPUT
+      - name: Generate issue body
+        id: gen_body
+        if: steps.dedup_check.outputs.open_count == '0'
+        env:
+          PRICE_CHANGES: ${{ needs.validate.outputs.price_changes }}
+        run: node scripts/generate-issue-body.js > /tmp/issue_body.md
+      - name: Open pricing verification issue
+        if: steps.dedup_check.outputs.open_count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PRICE_CHANGES: ${{ needs.validate.outputs.price_changes }}
+        run: |
+          gh issue create \
+            --title "Pricing verification needed: ${PRICE_CHANGES}" \
+            --label "pricing-verification-pending" \
+            --body-file /tmp/issue_body.md

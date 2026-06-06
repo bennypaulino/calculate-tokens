@@ -1,0 +1,54 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      NEXT_PUBLIC_CSP_MODE: analytics
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-node@1d0ff469b99b2b8b67c9669571f74f8a1c71caaf  # v4.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Validate prices.json schema
+        run: |
+          node -e "
+            const Ajv = require('ajv');
+            const addFormats = require('ajv-formats');
+            const schema = require('./public/api/v1/prices.schema.json');
+            const data = require('./public/api/v1/prices.json');
+            const ajv = new Ajv({ strict: false });
+            addFormats(ajv);
+            const validate = ajv.compile(schema);
+            if (!validate(data)) {
+              console.error('Schema validation failed:', JSON.stringify(validate.errors, null, 2));
+              process.exit(1);
+            }
+            console.log('prices.json schema validation passed');
+          "
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+      - name: Check audit exemption expiry
+        run: node scripts/check-exemption-expiry.js
+      - name: Validate security.txt
+        run: node scripts/check-security-txt.js
+      - name: Validate CSP configuration
+        run: node scripts/validate-csp.js
+      - name: Build
+        run: npm run build
+      - name: Compute prices hash
+        run: node scripts/compute-prices-hash.js
+      - name: Verify build integrity
+        run: node scripts/verify-build-integrity.js

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Allow: /api/v1/prices.json
+Sitemap: https://calculatetokens.com/sitemap.xml
