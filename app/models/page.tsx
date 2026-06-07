@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     siteName: "Calculate Tokens",
     images: [
       {
-        url: "/og-image.png",
+        url: "/ai-token-cost-calculator.jpg",
         width: 1200,
         height: 630,
         alt: "AI Model Pricing — Calculate Tokens",
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AI Model Pricing — All Models | Calculate Tokens",
     description: `Compare token pricing for all ${activeModels.length} supported AI models.`,
-    images: ["/og-image.png"],
+    images: ["/ai-token-cost-calculator.jpg"],
   },
 };
 

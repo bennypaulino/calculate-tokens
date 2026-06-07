@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "Calculate Tokens",
     images: [
       {
-        url: "/og-image.png",
+        url: "/ai-token-cost-calculator.jpg",
         width: 1200,
         height: 630,
         alt: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
     description:
       "Calculate exact token counts and costs across GPT-4o, Claude, Gemini, Llama and more. Browser-native — your text never leaves your device.",
-    images: ["/og-image.png"],
+    images: ["/ai-token-cost-calculator.jpg"],
   },
 };
 
