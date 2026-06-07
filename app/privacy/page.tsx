@@ -13,6 +13,14 @@ export const metadata: Metadata = {
       "Privacy policy for calculatetokens.com: what data is collected, what is not, third-party services, data residency, user rights, and how to contact us.",
     url: "https://calculatetokens.com/privacy",
     siteName: "Calculate Tokens",
+    images: [
+      {
+        url: "/ai-token-cost-calculator.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
+      },
+    ],
     locale: "en_US",
     type: "website",
   },

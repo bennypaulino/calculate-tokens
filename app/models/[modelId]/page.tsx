@@ -123,7 +123,7 @@ export async function generateMetadata({
       siteName: "Calculate Tokens",
       images: [
         {
-          url: "/og-image.png",
+          url: "/ai-token-cost-calculator.jpg",
           width: 1200,
           height: 630,
           alt: title,
@@ -136,7 +136,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["/og-image.png"],
+      images: ["/ai-token-cost-calculator.jpg"],
     },
   };
 }

@@ -125,11 +125,20 @@ export async function generateMetadata({
       description,
       url: `https://calculatetokens.com/compare/${slug}`,
       siteName: "Calculate Tokens",
+      images: [
+        {
+          url: "/ai-token-cost-calculator.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
+      images: ["/ai-token-cost-calculator.jpg"],
     },
     alternates: {
       canonical: `https://calculatetokens.com/compare/${slug}`,
