@@ -44,7 +44,6 @@ export async function getTokenStringsForHighlight(
 
     const tokenStrings: string[] = [];
     for (const id of tokenIds) {
-      // decode a single token ID to its string representation
       tokenStrings.push(enc.decode([id]));
     }
 
