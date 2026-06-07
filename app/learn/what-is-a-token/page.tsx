@@ -15,8 +15,23 @@ export const metadata: Metadata = {
       "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
     url: "https://calculatetokens.com/learn/what-is-a-token",
     siteName: "Calculate Tokens",
+    images: [
+      {
+        url: "/ai-token-cost-calculator.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
+      },
+    ],
     locale: "en_US",
     type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "What is a Token in AI? A Complete Guide",
+    description:
+      "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
+    images: ["/ai-token-cost-calculator.jpg"],
   },
 };
 

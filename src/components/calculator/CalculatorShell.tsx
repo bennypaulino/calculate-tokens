@@ -88,24 +88,25 @@ export default function CalculatorShell() {
 
   // Register Service Worker
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js', { updateViaCache: 'none', scope: '/' })
-        .catch(() => {});
+    if (!('serviceWorker' in navigator)) return;
 
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data?.type === 'PRICES_STALE') {
-          setOfflineBanner(true);
-        }
-        if (event.data?.type === 'PRICES_UPDATED') {
-          setOfflineBanner(false);
-        }
-        if (event.data?.type === 'PRICES_REFRESH_AVAILABLE') {
-          const ta = document.querySelector('[aria-label="Enter your AI prompt or text"]');
-          if (!(ta instanceof HTMLTextAreaElement) || ta.value === '') window.location.reload();
-        }
-      });
-    }
+    navigator.serviceWorker
+      .register('/sw.js', { updateViaCache: 'none', scope: '/' })
+      .catch(() => {});
+
+    const handleSwMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'PRICES_STALE') {
+        setOfflineBanner(true);
+      } else if (event.data?.type === 'PRICES_UPDATED') {
+        setOfflineBanner(false);
+      } else if (event.data?.type === 'PRICES_REFRESH_AVAILABLE') {
+        const ta = document.querySelector('[aria-label="Enter your AI prompt or text"]');
+        if (!(ta instanceof HTMLTextAreaElement) || ta.value === '') window.location.reload();
+      }
+    };
+
+    navigator.serviceWorker.addEventListener('message', handleSwMessage);
+    return () => navigator.serviceWorker.removeEventListener('message', handleSwMessage);
   }, []);
 
   // Sync URL state when relevant values change

@@ -85,7 +85,10 @@ async function staleWhileRevalidate(request) {
       });
       await cache.put(request, toCache);
 
-      const isNew = newGenAt && (!oldGenAt || newGenAt > oldGenAt);
+      // Only notify refresh when there IS a prior cached version AND the new one is strictly newer.
+      // Omitting the oldGenAt guard would fire PRICES_REFRESH_AVAILABLE on first install,
+      // causing an immediate reload even though the user is already seeing fresh data.
+      const isNew = oldGenAt && newGenAt && newGenAt > oldGenAt;
       notifyClients({ type: isNew ? 'PRICES_REFRESH_AVAILABLE' : 'PRICES_UPDATED' });
     })
     .catch(() => {});
