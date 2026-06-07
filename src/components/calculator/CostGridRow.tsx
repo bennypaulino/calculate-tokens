@@ -5,16 +5,18 @@ import ContextWindowCell from './ContextWindowCell';
 interface Props {
   row: CostRow;
   isCheapest: boolean;
+  stalenessLevel: 'fresh' | 'amber' | 'red';
+  lastVerified: string;
 }
 
 const statusSymbol = {
   pending: { symbol: '·', title: 'Pending', className: 'text-gray-300' },
   heuristic: { symbol: '~', title: 'Approximate (÷4 heuristic)', className: 'text-gray-400' },
   wasm: { symbol: '', title: 'Exact (model tokenizer)', className: 'text-green-600' },
-  error: { symbol: '?', title: 'Tokenizer error', className: 'text-red-400' },
+  error: { symbol: '?', title: 'Exact tokenization unavailable for this model', className: 'text-red-400' },
 };
 
-export default function CostGridRow({ row, isCheapest }: Props) {
+export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerified }: Props) {
   const inputStatus = statusSymbol[row.inputStatus];
   const totalStatus = statusSymbol[row.inputStatus];
 
@@ -24,7 +26,21 @@ export default function CostGridRow({ row, isCheapest }: Props) {
     >
       <td className="py-3 pl-4 pr-2">
         <div className="flex flex-col">
-          <span className="text-sm font-medium text-gray-900 leading-tight">{row.modelName}</span>
+          <span className="text-sm font-medium text-gray-900 leading-tight">
+            {stalenessLevel === 'amber' && (
+              <span
+                className="text-amber-500 mr-1"
+                aria-label={"Pricing last verified " + lastVerified + " — may have changed"}
+              >●</span>
+            )}
+            {stalenessLevel === 'red' && (
+              <span
+                className="text-red-500 mr-1"
+                aria-label="Pricing unverified for 30+ days — confirm at provider"
+              >⚠</span>
+            )}
+            {row.modelName}
+          </span>
           <span className="text-xs text-gray-400">{row.provider}</span>
         </div>
       </td>

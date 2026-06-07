@@ -38,6 +38,9 @@ yarn-error.log*
 PRD.md
 specs/
 
+# tool-generated session artifacts
+.playwright-mcp/
+
 # vercel
 .vercel
 

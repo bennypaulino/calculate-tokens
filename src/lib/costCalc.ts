@@ -17,10 +17,9 @@ export function computeEffectiveOutputTokens(
 export function computeCostRow(
   model: ModelEntry,
   inputTokens: number,
-  outputMultiplier: number,
+  outputTokens: number,
   thinkingEnabled: boolean
 ) {
-  const outputTokens = Math.round(inputTokens * outputMultiplier);
   const effectiveOutput = computeEffectiveOutputTokens(outputTokens, model, thinkingEnabled);
 
   const inputCost = (inputTokens / 1_000_000) * model.input_cost_per_1m;
@@ -39,5 +38,6 @@ export function computeCostRow(
     contextWindow: model.context_window,
     isThinkingModel: model.thinking_model,
     thinkingBilledSeparately: model.thinking_billed_separately,
+    last_human_verified: model.last_human_verified,
   };
 }

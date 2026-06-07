@@ -4,3 +4,13 @@
   --background: #ffffff;
   --foreground: #0a0a0a;
 }
+
+.token-highlight-a {
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 2px;
+}
+
+.token-highlight-b {
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: 2px;
+}

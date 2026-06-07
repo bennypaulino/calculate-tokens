@@ -5,6 +5,7 @@ import { useCalculatorStore } from '../../store/calculatorStore';
 import type { ModelEntry } from '../../types/prices';
 import type { CostRow } from '../../types/calculator';
 import { computeCostRow } from '../../lib/costCalc';
+import { getStalenessLevel } from '../../lib/prices';
 import CostGridRow from './CostGridRow';
 import CostRatioCallout from './CostRatioCallout';
 
@@ -26,7 +27,7 @@ const HEADERS: { key: SortCol; label: string; align: string }[] = [
 
 export default function CostGrid({ models }: Props) {
   const modelTokenStates = useCalculatorStore((s) => s.modelTokenStates);
-  const outputMultiplier = useCalculatorStore((s) => s.outputMultiplier);
+  const outputTokens = useCalculatorStore((s) => s.outputTokens);
   const thinkingEnabled = useCalculatorStore((s) => s.thinkingEnabled);
   const sortColumn = useCalculatorStore((s) => s.sortColumn);
   const sortDirection = useCalculatorStore((s) => s.sortDirection);
@@ -38,7 +39,7 @@ export default function CostGrid({ models }: Props) {
       const inputTokens = state?.tokenCount ?? 0;
       const inputStatus = state?.status ?? 'pending';
 
-      const computed = computeCostRow(model, inputTokens, outputMultiplier, thinkingEnabled);
+      const computed = computeCostRow(model, inputTokens, outputTokens, thinkingEnabled);
 
       return {
         ...computed,
@@ -46,7 +47,7 @@ export default function CostGrid({ models }: Props) {
         outputStatus: inputStatus,
       };
     });
-  }, [models, modelTokenStates, outputMultiplier, thinkingEnabled]);
+  }, [models, modelTokenStates, outputTokens, thinkingEnabled]);
 
   const sortedRows = useMemo(() => {
     return [...rows].sort((a, b) => {
@@ -133,6 +134,8 @@ export default function CostGrid({ models }: Props) {
                 key={row.modelId}
                 row={row}
                 isCheapest={row.modelId === cheapestId}
+                stalenessLevel={getStalenessLevel(row.last_human_verified)}
+                lastVerified={row.last_human_verified}
               />
             ))}
           </tbody>

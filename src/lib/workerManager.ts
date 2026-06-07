@@ -58,6 +58,30 @@ function createHeuristicWorker(): Worker {
   return new Worker(new URL('../workers/heuristic.worker.ts', import.meta.url), { type: 'module' });
 }
 
+function createClaudeWorker(): Worker {
+  const origin = process.env.NEXT_PUBLIC_WORKERS_ORIGIN;
+  if (origin) {
+    return new Worker(`${origin}/claude.worker.js`, { type: 'module' });
+  }
+  return new Worker(new URL('../workers/claude.worker.ts', import.meta.url), { type: 'module' });
+}
+
+function createGeminiWorker(): Worker {
+  const origin = process.env.NEXT_PUBLIC_WORKERS_ORIGIN;
+  if (origin) {
+    return new Worker(`${origin}/gemini.worker.js`, { type: 'module' });
+  }
+  return new Worker(new URL('../workers/gemini.worker.ts', import.meta.url), { type: 'module' });
+}
+
+function createLlamaWorker(): Worker {
+  const origin = process.env.NEXT_PUBLIC_WORKERS_ORIGIN;
+  if (origin) {
+    return new Worker(`${origin}/llama.worker.js`, { type: 'module' });
+  }
+  return new Worker(new URL('../workers/llama.worker.ts', import.meta.url), { type: 'module' });
+}
+
 export class WorkerManager {
   private workers = new Map<string, ManagedWorker>();
   private latestRequestIds = new Map<string, string>();
@@ -65,16 +89,28 @@ export class WorkerManager {
   private getOrCreateWorker(tokenizer: TokenizerType): ManagedWorker | null {
     if (tokenizer === 'heuristic') return null;
 
-    const key = tokenizer === 'o200k_base' || tokenizer === 'cl100k_base'
-      ? `tiktoken-${tokenizer}`
-      : 'heuristic-worker';
+    let key: string;
+    let factory: () => Worker;
+
+    if (tokenizer === 'o200k_base' || tokenizer === 'cl100k_base') {
+      key = `tiktoken-${tokenizer}`;
+      factory = createTiktokenWorker;
+    } else if (tokenizer === 'claude') {
+      key = 'claude-worker';
+      factory = createClaudeWorker;
+    } else if (tokenizer === 'gemini') {
+      key = 'gemini-worker';
+      factory = createGeminiWorker;
+    } else if (tokenizer === 'llama') {
+      key = 'llama-worker';
+      factory = createLlamaWorker;
+    } else {
+      key = 'heuristic-worker';
+      factory = createHeuristicWorker;
+    }
 
     if (!this.workers.has(key)) {
-      const raw =
-        tokenizer === 'o200k_base' || tokenizer === 'cl100k_base'
-          ? createTiktokenWorker()
-          : createHeuristicWorker();
-      this.workers.set(key, new ManagedWorker(raw));
+      this.workers.set(key, new ManagedWorker(factory()));
     }
     return this.workers.get(key)!;
   }

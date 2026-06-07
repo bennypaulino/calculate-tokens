@@ -14,13 +14,13 @@ export default function CostRatioCallout({ rows }: Props) {
   const priciest = sorted[sorted.length - 1];
   const ratio = priciest.totalCost / cheapest.totalCost;
 
-  if (ratio < 2) return null;
+  if (ratio < 10) return null;
 
   return (
-    <p className="text-xs text-gray-500 text-center">
-      <span className="font-medium text-gray-700">{priciest.modelName}</span> is{' '}
-      <span className="font-medium text-gray-900">{ratio.toFixed(1)}×</span> more expensive than{' '}
-      <span className="font-medium text-gray-700">{cheapest.modelName}</span> for this prompt
+    <p role="status" aria-live="polite" className="text-xs text-gray-500 text-center">
+      <span className="font-medium text-gray-700">{cheapest.modelName}</span> is{' '}
+      <span className="font-medium text-gray-900">{Math.round(ratio)}x</span> cheaper than{' '}
+      <span className="font-medium text-gray-700">{priciest.modelName}</span> for this prompt
       {' '}({formatCost(cheapest.totalCost)} vs {formatCost(priciest.totalCost)}).
     </p>
   );

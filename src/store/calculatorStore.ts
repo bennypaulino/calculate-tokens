@@ -6,11 +6,15 @@ import { heuristicCount } from '../lib/tokenCount';
 export const useCalculatorStore = create<CalculatorStoreState>()(
   subscribeWithSelector((set, get) => ({
     text: '',
-    outputMultiplier: 1,
+    outputTokens: 500,
     thinkingEnabled: false,
     modelTokenStates: {},
     sortColumn: 'total',
     sortDirection: 'desc',
+    selectedModelIds: null,
+    volumeRequests: 10000,
+    cachingEnabled: false,
+    batchEnabled: false,
 
     setText: (text: string) => {
       const charCount = text.length;
@@ -27,8 +31,8 @@ export const useCalculatorStore = create<CalculatorStoreState>()(
       set({ text, modelTokenStates: newStates });
     },
 
-    setOutputMultiplier: (multiplier: number) => {
-      set({ outputMultiplier: multiplier });
+    setOutputTokens: (tokens: number) => {
+      set({ outputTokens: tokens });
     },
 
     setThinkingEnabled: (enabled: boolean) => {
@@ -64,6 +68,22 @@ export const useCalculatorStore = create<CalculatorStoreState>()(
         sortDirection:
           prev.sortColumn === column && prev.sortDirection === 'desc' ? 'asc' : 'desc',
       }));
+    },
+
+    setSelectedModelIds: (ids: string[] | null) => {
+      set({ selectedModelIds: ids });
+    },
+
+    setVolumeRequests: (vol: number) => {
+      set({ volumeRequests: vol });
+    },
+
+    setCachingEnabled: (enabled: boolean) => {
+      set({ cachingEnabled: enabled });
+    },
+
+    setBatchEnabled: (enabled: boolean) => {
+      set({ batchEnabled: enabled });
     },
   }))
 );

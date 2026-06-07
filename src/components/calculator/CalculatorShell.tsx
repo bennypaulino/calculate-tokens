@@ -11,8 +11,12 @@ import OutputSlider from './OutputSlider';
 import CostGrid from './CostGrid';
 import StalenessIndicator from './StalenessIndicator';
 import OfflineBanner from './OfflineBanner';
-import PresetsPlaceholder from './PresetsPlaceholder';
+import PresetBar from './PresetBar';
+import ModelFilter from './ModelFilter';
 import AdSlotPlaceholder from './AdSlotPlaceholder';
+import AdSlotSidebar from './AdSlotSidebar';
+import ShareButton from './ShareButton';
+import ScalingSimulator from './ScalingSimulator';
 
 // Module-level singleton — survives React re-renders
 const workerManagerSingleton = new WorkerManager();
@@ -21,17 +25,30 @@ export default function CalculatorShell() {
   const [pricesData, setPricesData] = useState<PricesData | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [offlineBanner, setOfflineBanner] = useState(false);
+  const [activePresetId, setActivePresetId] = useState<string | null>(null);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const setText = useCalculatorStore((s) => s.setText);
   const text = useCalculatorStore((s) => s.text);
-  const outputMultiplier = useCalculatorStore((s) => s.outputMultiplier);
+  const outputTokens = useCalculatorStore((s) => s.outputTokens);
   const thinkingEnabled = useCalculatorStore((s) => s.thinkingEnabled);
-  const setOutputMultiplier = useCalculatorStore((s) => s.setOutputMultiplier);
+  const setOutputTokens = useCalculatorStore((s) => s.setOutputTokens);
   const setThinkingEnabled = useCalculatorStore((s) => s.setThinkingEnabled);
   const initializeModelStates = useCalculatorStore((s) => s.initializeModelStates);
   const setModelTokenState = useCalculatorStore((s) => s.setModelTokenState);
+  const selectedModelIds = useCalculatorStore((s) => s.selectedModelIds);
+  const setSelectedModelIds = useCalculatorStore((s) => s.setSelectedModelIds);
+  const modelTokenStates = useCalculatorStore((s) => s.modelTokenStates);
+  const volumeRequests = useCalculatorStore((s) => s.volumeRequests);
+  const cachingEnabled = useCalculatorStore((s) => s.cachingEnabled);
+  const batchEnabled = useCalculatorStore((s) => s.batchEnabled);
+  const setVolumeRequests = useCalculatorStore((s) => s.setVolumeRequests);
+  const setCachingEnabled = useCalculatorStore((s) => s.setCachingEnabled);
+  const setBatchEnabled = useCalculatorStore((s) => s.setBatchEnabled);
 
   const activeModelsRef = useRef<ModelEntry[]>([]);
+  const hasTrackedFilterRef = useRef<boolean>(false);
 
   // Load prices and initialize
   useEffect(() => {
@@ -42,9 +59,26 @@ export default function CalculatorShell() {
         activeModelsRef.current = active;
 
         // Decode URL state
+        // AC-2.4.6: URLSearchParams never assigns to arbitrary object props, so prototype
+        // pollution params (e.g. __proto__, constructor) are silently discarded.
         const urlState = decodeUrlState(window.location.search);
-        if (urlState.out !== undefined) setOutputMultiplier(urlState.out);
+        if (urlState.out !== undefined) setOutputTokens(urlState.out);
         if (urlState.think !== undefined) setThinkingEnabled(urlState.think);
+        if (urlState.vol !== undefined) setVolumeRequests(urlState.vol);
+        if (urlState.cache !== undefined) setCachingEnabled(urlState.cache);
+        if (urlState.batch !== undefined) setBatchEnabled(urlState.batch);
+
+        // Apply URL models param: validate IDs against known active models
+        if (urlState.models && urlState.models.length > 0) {
+          const activeIds = new Set(active.map((m) => m.id));
+          const validIds = urlState.models.filter((id) => activeIds.has(id));
+          if (validIds.length >= 2) {
+            // Only set filter if it doesn't include all models
+            if (validIds.length < active.length) {
+              setSelectedModelIds(validIds);
+            }
+          }
+        }
 
         const charCount = useCalculatorStore.getState().text.length;
         initializeModelStates(active.map((m) => m.id), charCount);
@@ -66,6 +100,10 @@ export default function CalculatorShell() {
         if (event.data?.type === 'PRICES_UPDATED') {
           setOfflineBanner(false);
         }
+        if (event.data?.type === 'PRICES_REFRESH_AVAILABLE') {
+          const ta = document.querySelector('[aria-label="Enter your AI prompt or text"]');
+          if (!(ta instanceof HTMLTextAreaElement) || ta.value === '') window.location.reload();
+        }
       });
     }
   }, []);
@@ -73,10 +111,17 @@ export default function CalculatorShell() {
   // Sync URL state when relevant values change
   useEffect(() => {
     if (!pricesData) return;
-    const encoded = encodeUrlState({ out: outputMultiplier, think: thinkingEnabled });
+    const encoded = encodeUrlState({
+      out: outputTokens,
+      think: thinkingEnabled,
+      models: selectedModelIds ?? undefined,
+      vol: volumeRequests,
+      cache: cachingEnabled,
+      batch: batchEnabled,
+    });
     const newUrl = `${window.location.pathname}${encoded}`;
     window.history.replaceState(null, '', newUrl);
-  }, [outputMultiplier, thinkingEnabled, pricesData]);
+  }, [outputTokens, thinkingEnabled, selectedModelIds, volumeRequests, cachingEnabled, batchEnabled, pricesData]);
 
   // Tokenize text when it changes
   const tokenizeAll = useCallback(
@@ -113,7 +158,11 @@ export default function CalculatorShell() {
   useEffect(() => {
     const unsub = useCalculatorStore.subscribe(
       (state) => state.text,
-      (text) => tokenizeAll(text)
+      (text) => {
+        tokenizeAll(text);
+        // Clear active preset when user edits text directly
+        setActivePresetId(null);
+      }
     );
     return unsub;
   }, [tokenizeAll]);
@@ -127,8 +176,55 @@ export default function CalculatorShell() {
     }
   }, [pricesData, thinkingEnabled, setThinkingEnabled]);
 
+  // Load preset text into textarea using native DOM insertText so browser undo works (AC-2.3.2)
+  const handlePresetSelect = useCallback((presetId: string, text: string) => {
+    const el = textareaRef.current;
+    if (el) {
+      el.focus();
+      el.select();
+      // setRangeText + input event preserves the native undo stack
+      el.setRangeText(text, 0, el.value.length, 'end');
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+      // Fallback if ref isn't attached yet
+      setText(text);
+      tokenizeAll(text);
+    }
+    setActivePresetId(presetId);
+  }, [setText, tokenizeAll]);
+
   const activeModels = pricesData?.models.filter((m) => m.active) ?? [];
-  const hasThinkingModels = activeModels.some((m) => m.thinking_model);
+
+  // Derive filtered models for the grid
+  const filteredModels = selectedModelIds
+    ? activeModels.filter((m) => selectedModelIds.includes(m.id))
+    : activeModels;
+
+  // Toggle a single model in/out of the selection
+  const handleModelToggle = useCallback((id: string) => {
+    const current = selectedModelIds ?? activeModels.map((m) => m.id);
+    const next = current.includes(id)
+      ? current.filter((mid) => mid !== id)
+      : [...current, id];
+    // Enforce minimum 2 — guard should already be in UI but be safe
+    if (next.length < 2) return;
+    // If all selected, treat as "all" (null)
+    if (next.length === activeModels.length) {
+      setSelectedModelIds(null);
+    } else {
+      setSelectedModelIds(next);
+      // Track first-time filter event
+      if (!hasTrackedFilterRef.current) {
+        hasTrackedFilterRef.current = true;
+        window.umami?.track('compare_tab_switched', { tab: 'filtered' });
+      }
+    }
+  }, [selectedModelIds, activeModels, setSelectedModelIds]);
+
+  const handleSelectAllModels = useCallback(() => {
+    setSelectedModelIds(null);
+    window.umami?.track('compare_tab_switched', { tab: 'all' });
+  }, [setSelectedModelIds]);
 
   // Staleness: use worst staleness across all active models
   const stalenessLevel = pricesData
@@ -166,29 +262,106 @@ export default function CalculatorShell() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <OfflineBanner show={offlineBanner} />
+    <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)_minmax(0,1.2fr)] lg:gap-6">
+      {/* Left sidebar — desktop only, contains PresetBar and ModelFilter */}
+      <aside className="hidden lg:flex lg:flex-col lg:gap-4">
+        <PresetBar
+          activePresetId={activePresetId}
+          onSelect={(text, id) => handlePresetSelect(id, text)}
+          className="flex flex-col gap-2"
+        />
+        {activeModels.length > 0 && (
+          <ModelFilter
+            models={activeModels}
+            selectedIds={selectedModelIds}
+            onToggle={handleModelToggle}
+            onSelectAll={handleSelectAllModels}
+          />
+        )}
+      </aside>
 
-      {/* Presets row */}
-      <PresetsPlaceholder />
+      {/* Center column */}
+      <main className="flex flex-col gap-6 min-w-0">
+        <OfflineBanner show={offlineBanner} />
 
-      {/* Textarea */}
-      <PromptTextarea onTextChange={tokenizeAll} />
-
-      {/* Controls row */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <OutputSlider hasThinkingModels={hasThinkingModels} />
-
-        <div className="flex items-end justify-end sm:justify-start">
-          <StalenessIndicator level={stalenessLevel} lastVerified={oldestVerified} />
+        {/* PresetBar — mobile only, horizontal mode — with ShareButton right-aligned */}
+        <div className="lg:hidden">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <PresetBar
+              activePresetId={activePresetId}
+              onSelect={(text, id) => handlePresetSelect(id, text)}
+              className="flex flex-row flex-wrap gap-2"
+            />
+            <ShareButton />
+          </div>
         </div>
-      </div>
 
-      {/* Cost grid */}
-      <CostGrid models={activeModels} />
+        {/* ShareButton — desktop, right-aligned above textarea */}
+        <div className="hidden lg:flex lg:justify-end">
+          <ShareButton />
+        </div>
 
-      {/* Ad slot */}
-      <AdSlotPlaceholder />
+        {/* Textarea */}
+        <PromptTextarea
+          ref={textareaRef}
+          onTextChange={tokenizeAll}
+          highlightEncoding={
+            (() => {
+              const firstModel = filteredModels[0] ?? activeModels[0];
+              if (!firstModel) return null;
+              return firstModel.tokenizer === 'o200k_base' || firstModel.tokenizer === 'cl100k_base'
+                ? firstModel.tokenizer
+                : null;
+            })()
+          }
+          tokenizerType={(filteredModels[0] ?? activeModels[0])?.tokenizer}
+        />
+
+        {/* Controls row */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <OutputSlider activeModels={activeModels} />
+
+          <div className="flex items-end justify-end sm:justify-start">
+            <StalenessIndicator level={stalenessLevel} lastVerified={oldestVerified} />
+          </div>
+        </div>
+
+        {/* Compare All button — shown above grid when any model is deselected */}
+        {selectedModelIds !== null && (
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSelectAllModels}
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2 transition-colors"
+            >
+              Compare All ({activeModels.length} models)
+            </button>
+            <span className="text-xs text-gray-400">
+              Showing {filteredModels.length} of {activeModels.length}
+            </span>
+          </div>
+        )}
+
+        {/* Cost grid */}
+        <CostGrid models={filteredModels} />
+
+        {/* Scaling simulator */}
+        <ScalingSimulator
+          models={filteredModels}
+          tokenStates={modelTokenStates}
+          outputTokens={outputTokens}
+        />
+
+        {/* Inline ad slot */}
+        <AdSlotPlaceholder type="inline" />
+      </main>
+
+      {/* Right sidebar — desktop only, sticky ad */}
+      <aside className="hidden lg:block">
+        <div className="sticky top-4">
+          <AdSlotSidebar />
+        </div>
+      </aside>
     </div>
   );
 }

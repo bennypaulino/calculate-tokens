@@ -67,6 +67,14 @@ async function staleWhileRevalidate(request) {
         }
       }
 
+      // Read old generated_at from cached body (if cached exists)
+      let oldGenAt = null;
+      if (cached) { try { oldGenAt = JSON.parse(await cached.clone().text()).generated_at; } catch {} }
+
+      // Read new generated_at from bodyText
+      let newGenAt = null;
+      try { newGenAt = JSON.parse(bodyText).generated_at; } catch {}
+
       // Store with timestamp header
       const headers = new Headers(response.headers);
       headers.set('X-SW-Cached-At', String(Date.now()));
@@ -76,7 +84,9 @@ async function staleWhileRevalidate(request) {
         headers,
       });
       await cache.put(request, toCache);
-      notifyClients({ type: 'PRICES_UPDATED' });
+
+      const isNew = newGenAt && (!oldGenAt || newGenAt > oldGenAt);
+      notifyClients({ type: isNew ? 'PRICES_REFRESH_AVAILABLE' : 'PRICES_UPDATED' });
     })
     .catch(() => {});
 
