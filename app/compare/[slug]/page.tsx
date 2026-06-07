@@ -575,8 +575,7 @@ export default async function ComparisonPage({
             <strong className="font-medium text-gray-700">
               Data provenance:
             </strong>{" "}
-            Prices sourced directly from provider pricing pages and
-            human-verified.
+            Prices sourced directly from provider pricing pages.
           </p>
           <p>
             {modelA.display_name} prices last verified{" "}
