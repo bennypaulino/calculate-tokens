@@ -48,6 +48,12 @@ jobs:
         run: node scripts/check-security-txt.js
       - name: Validate CSP configuration
         run: node scripts/validate-csp.js
+      - name: Validate CSP configuration (adsense mode)
+        run: |
+          NEXT_PUBLIC_CSP_MODE=adsense node scripts/generate-headers.js
+          NEXT_PUBLIC_CSP_MODE=adsense node scripts/validate-csp.js
+        env:
+          NEXT_PUBLIC_WORKERS_ORIGIN: https://workers.calculatetokens.com
       - name: Build
         run: npm run build
       - name: Compute prices hash
