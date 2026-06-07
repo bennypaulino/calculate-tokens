@@ -20,6 +20,8 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Unit tests
+        run: npm test
       - name: Type check
         run: npx tsc --noEmit
       - name: Validate prices.json schema

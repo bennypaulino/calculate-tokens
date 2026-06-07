@@ -75,3 +75,63 @@ test('textarea and slider are reachable via keyboard Tab navigation', async ({ p
   }
   expect(sliderFocused).toBe(true)
 })
+
+// AC-3.4.5 — ArrowRight on the output slider increments aria-valuenow
+test('output slider increments aria-valuenow on ArrowRight key press', async ({ page }) => {
+  await page.goto('/')
+
+  const slider = page.getByRole('slider')
+  await expect(slider).toBeVisible()
+
+  const before = parseInt((await slider.getAttribute('aria-valuenow')) ?? '0', 10)
+
+  await slider.focus()
+  await slider.press('ArrowRight')
+
+  const after = parseInt((await slider.getAttribute('aria-valuenow')) ?? '0', 10)
+  expect(after).toBeGreaterThan(before)
+})
+
+// AC-3.4.4 — share button is reachable via Tab within 30 presses
+test('share button is reachable via keyboard Tab within 30 presses', async ({ page }) => {
+  await page.goto('/')
+
+  let shareButtonFocused = false
+  for (let i = 0; i < 30; i++) {
+    await page.keyboard.press('Tab')
+    const focused = page.locator(':focus')
+    const testId = await focused.getAttribute('data-testid').catch(() => null)
+    if (testId === 'share-button') {
+      shareButtonFocused = true
+      break
+    }
+  }
+  expect(shareButtonFocused).toBe(true)
+})
+
+// AC-3.4.7 — focus order: textarea appears before slider in Tab sequence
+test('focus order: textarea appears before slider in Tab sequence', async ({ page }) => {
+  await page.goto('/')
+
+  // Record Tab sequence positions for textarea and slider
+  let textareaTabIndex = -1
+  let sliderTabIndex = -1
+
+  for (let i = 0; i < 40; i++) {
+    await page.keyboard.press('Tab')
+    const focused = page.locator(':focus')
+    const tagName: string = await focused.evaluate((el: Element) => el.tagName.toLowerCase()).catch(() => '')
+    const role = await focused.getAttribute('role').catch(() => null)
+
+    if ((tagName === 'textarea' || role === 'textbox') && textareaTabIndex === -1) {
+      textareaTabIndex = i
+    }
+    if (role === 'slider' && sliderTabIndex === -1) {
+      sliderTabIndex = i
+    }
+    if (textareaTabIndex !== -1 && sliderTabIndex !== -1) break
+  }
+
+  expect(textareaTabIndex).toBeGreaterThanOrEqual(0)
+  expect(sliderTabIndex).toBeGreaterThan(textareaTabIndex)
+})
