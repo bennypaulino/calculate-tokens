@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/generate-headers.js",
-    "build": "next build",
+    "build": "next build && node scripts/compute-csp-hashes.js",
     "start": "next start",
     "check:bundle": "node scripts/check-bundle-size.js",
     "test": "vitest run",
