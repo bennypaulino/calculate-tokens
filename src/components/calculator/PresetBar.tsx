@@ -13,15 +13,10 @@ interface Preset {
 interface Props {
   onSelect: (text: string, id: string) => void;
   activePresetId: string | null;
+  className?: string;
 }
 
-declare global {
-  interface Window {
-    umami?: { track: (event: string, data?: Record<string, unknown>) => void };
-  }
-}
-
-export default function PresetBar({ onSelect, activePresetId }: Props) {
+export default function PresetBar({ onSelect, activePresetId, className }: Props) {
   const [tooltip, setTooltip] = useState<string | null>(null);
 
   const handleSelect = (preset: Preset) => {
@@ -30,7 +25,7 @@ export default function PresetBar({ onSelect, activePresetId }: Props) {
   };
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className={className ?? 'flex items-center gap-2 flex-wrap'}>
       <span className="text-xs text-gray-500 font-medium shrink-0">Presets:</span>
       {(presets as Preset[]).map((preset) => {
         const isActive = preset.id === activePresetId;

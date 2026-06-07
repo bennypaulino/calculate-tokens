@@ -102,6 +102,7 @@ type TokenizeError = {
 - AC-1.2.3: A worker initialization failure for one model does not affect tokenization for other models.
 - AC-1.2.4: The UI thread is not blocked during Wasm worker initialization (LCP is not delayed by worker startup, verified via Lighthouse).
 - AC-1.2.5: Workers are garbage-collected by the browser when the page is destroyed — no explicit termination is required. If explicit cleanup is implemented for memory profiling purposes, use the `pagehide` event (not `beforeunload`, which fires on navigation and prematurely kills workers when the user clicks a link and uses Back).
+- AC-1.2.6: `WorkerManager` factory functions branch on `NEXT_PUBLIC_WORKERS_ORIGIN`. When the variable is empty or unset, workers are loaded via bundled relative `new URL('../workers/foo.worker.ts', import.meta.url)` paths (dev and analytics-mode builds). When set to a valid `https://` origin, workers are loaded via absolute URL (`new Worker(\`${origin}/tiktoken.worker.js\`, { type: 'module' })`). This is the Phase 1 prerequisite for the cross-origin adsense build validated in Phase 3 AC-3.7.x.
 
 ### Failure behavior
 - Wasm module fails to load: UI shows heuristic count permanently for that model; `title` tooltip states "Exact tokenization unavailable"

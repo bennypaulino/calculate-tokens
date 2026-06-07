@@ -42,6 +42,10 @@ This checklist is a binary pass/fail gate. Every item must pass before any launc
 - [ ] **(Automated)** Playwright `seo.spec.ts` OG metadata tests pass — confirms `og:title`, `og:description` (≤160 chars), and `og:image` resolution across key pages. One-time human visual check of rendered appearance is recommended but not a blocking gate.
 - [ ] **(Automated)** `scripts/validate-structured-data.js` build-time JSON-LD validation passes — confirms all `<script type="application/ld+json">` blocks are valid JSON with correct Schema.org `@type` fields and required properties. Google Rich Results Test is a supplementary check for rich result eligibility (Google's proprietary determination, not automatable).
 
+### Cross-origin workers
+- [ ] **(Automated)** `node scripts/validate-worker-origin.js` exits 0 — confirms `workers.calculatetokens.com` is live, returns HTTP 200, and has correct `Access-Control-Allow-Origin` and `Cross-Origin-Resource-Policy` headers
+- [ ] If AdSense build is active (`NEXT_PUBLIC_CSP_MODE=adsense`): Playwright adsense-build test (AC-3.7.4) passes — GPT-4o and Claude Sonnet show exact (non-heuristic `~`-prefixed) token counts across all five browser projects
+
 ### Security
 - [ ] `/.well-known/security.txt` is live and returns HTTP 200 with valid RFC 9116 content
 - [ ] `security.txt` specifies a security contact email and an expiry date no more than 12 months from launch date
@@ -181,6 +185,7 @@ Tokenizers run via WebAssembly. Open source.
 
 `.github/workflows/monitoring.yml` runs daily at 09:00 UTC after launch. It checks:
 - Site availability (`curl -f https://calculatetokens.com` — HTTP 200)
+- Worker subdomain availability (`node scripts/validate-worker-origin.js` — confirms CORS headers on `workers.calculatetokens.com`)
 - No JavaScript console errors in production (Playwright smoke test via `tests/e2e/smoke.spec.ts`)
 - `prices.json` staleness (existing `check-staleness.js`)
 - `security.txt` expiry (existing `check-security-txt.js`)

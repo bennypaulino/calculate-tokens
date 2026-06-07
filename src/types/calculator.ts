@@ -21,25 +21,37 @@ export interface CostRow {
   outputStatus: TokenizerStatus;
   isThinkingModel: boolean;
   thinkingBilledSeparately: boolean;
+  last_human_verified: string;
 }
 
 export interface UrlParams {
   out: number;
   think: boolean;
   models: string[];
+  vol?: number;
+  cache?: boolean;
+  batch?: boolean;
 }
 
 export interface CalculatorStoreState {
   text: string;
-  outputMultiplier: number;
+  outputTokens: number;
   thinkingEnabled: boolean;
   modelTokenStates: Record<string, ModelTokenState>;
   sortColumn: SortColumn;
   sortDirection: SortDirection;
+  selectedModelIds: string[] | null;
+  volumeRequests: number;
+  cachingEnabled: boolean;
+  batchEnabled: boolean;
   setText: (text: string) => void;
-  setOutputMultiplier: (multiplier: number) => void;
+  setOutputTokens: (tokens: number) => void;
   setThinkingEnabled: (enabled: boolean) => void;
   setModelTokenState: (modelId: string, state: Partial<ModelTokenState>) => void;
   initializeModelStates: (modelIds: string[], charCount: number) => void;
   setSortColumn: (column: SortColumn) => void;
+  setSelectedModelIds: (ids: string[] | null) => void;
+  setVolumeRequests: (vol: number) => void;
+  setCachingEnabled: (enabled: boolean) => void;
+  setBatchEnabled: (enabled: boolean) => void;
 }

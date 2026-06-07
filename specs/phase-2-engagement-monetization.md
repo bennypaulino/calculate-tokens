@@ -321,23 +321,6 @@ No ad unit may be within 150px of any interactive control (textarea, slider, tog
 ### Carbon Ads contingency
 If AdSense is not approved, the same 4 slot positions are populated with Carbon Ads units. Carbon Ads requires a single script tag; the same container CSS applies.
 
-### CSP impact when AdSense is enabled
-When `NEXT_PUBLIC_CSP_MODE=adsense` (Configuration B), `wasm-unsafe-eval` is absent from the CSP. **Wasm tokenization is disabled for all models.** The fallback behavior differs by model family:
-
-| Model family | AdSense-mode fallback | Accuracy |
-|-------------|----------------------|----------|
-| OpenAI (GPT-4o, GPT-4.1, o4-mini) | `js-tiktoken` pure-JS mode (no Wasm required) | Maintained — tiktoken has a full JS implementation |
-| Claude, Gemini, Llama | Heuristic permanently (4 chars/token) | Degraded — no pure-JS alternative exists for these tokenizers |
-
-Consequences:
-- The `~` prefix on token counts is permanent for Claude, Gemini, and Llama in AdSense mode; the "exact" indicator never appears for these models
-- OpenAI models retain accurate counts via pure-JS tiktoken; the "exact" indicator appears for those models
-- The token highlighter is disabled (shows "Exact tokenization unavailable") for Claude, Gemini, and Llama in AdSense mode
-- This degradation for non-OpenAI models MUST be disclosed: add a note to the `/privacy` page under "AdSense mode limitations" and add a `title` tooltip on the affected model rows: "Token counts for this model are estimated in the current configuration"
-- AC-1.2.1 and AC-1.2.2 (Wasm accuracy) are inapplicable in AdSense mode for Claude/Gemini/Llama
-
-This is an intentional architectural tradeoff: CSP security > tokenizer accuracy. The heuristic serves the Sam and Marcus personas adequately; Elena persona loses precision for non-OpenAI models in AdSense mode.
-
 ### Acceptance Criteria
 - AC-2.5.1: Lighthouse CLS score remains < 0.1 with AdSense scripts loaded (ad containers have explicit `min-height`).
 - AC-2.5.2: No ad unit appears within 150px of the textarea, slider, or any toggle (measured in DevTools).
