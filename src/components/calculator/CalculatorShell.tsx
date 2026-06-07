@@ -11,7 +11,7 @@ import OutputSlider from './OutputSlider';
 import CostGrid from './CostGrid';
 import StalenessIndicator from './StalenessIndicator';
 import OfflineBanner from './OfflineBanner';
-import PresetsPlaceholder from './PresetsPlaceholder';
+import PresetBar from './PresetBar';
 import AdSlotPlaceholder from './AdSlotPlaceholder';
 
 // Module-level singleton — survives React re-renders
@@ -21,6 +21,9 @@ export default function CalculatorShell() {
   const [pricesData, setPricesData] = useState<PricesData | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [offlineBanner, setOfflineBanner] = useState(false);
+  const [activePresetId, setActivePresetId] = useState<string | null>(null);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const setText = useCalculatorStore((s) => s.setText);
   const text = useCalculatorStore((s) => s.text);
@@ -113,7 +116,11 @@ export default function CalculatorShell() {
   useEffect(() => {
     const unsub = useCalculatorStore.subscribe(
       (state) => state.text,
-      (text) => tokenizeAll(text)
+      (text) => {
+        tokenizeAll(text);
+        // Clear active preset when user edits text directly
+        setActivePresetId(null);
+      }
     );
     return unsub;
   }, [tokenizeAll]);
@@ -126,6 +133,23 @@ export default function CalculatorShell() {
       setThinkingEnabled(false);
     }
   }, [pricesData, thinkingEnabled, setThinkingEnabled]);
+
+  // Load preset text into textarea using native DOM insertText so browser undo works (AC-2.3.2)
+  const handlePresetSelect = useCallback((presetId: string, text: string) => {
+    const el = textareaRef.current;
+    if (el) {
+      el.focus();
+      el.select();
+      // setRangeText + input event preserves the native undo stack
+      el.setRangeText(text, 0, el.value.length, 'end');
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+      // Fallback if ref isn't attached yet
+      setText(text);
+      tokenizeAll(text);
+    }
+    setActivePresetId(presetId);
+  }, [setText, tokenizeAll]);
 
   const activeModels = pricesData?.models.filter((m) => m.active) ?? [];
   const hasThinkingModels = activeModels.some((m) => m.thinking_model);
@@ -170,10 +194,13 @@ export default function CalculatorShell() {
       <OfflineBanner show={offlineBanner} />
 
       {/* Presets row */}
-      <PresetsPlaceholder />
+      <PresetBar
+        activePresetId={activePresetId}
+        onSelect={(text, id) => handlePresetSelect(id, text)}
+      />
 
       {/* Textarea */}
-      <PromptTextarea onTextChange={tokenizeAll} />
+      <PromptTextarea ref={textareaRef} onTextChange={tokenizeAll} />
 
       {/* Controls row */}
       <div className="grid sm:grid-cols-2 gap-4">
