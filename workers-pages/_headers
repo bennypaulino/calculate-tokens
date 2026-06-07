@@ -1,0 +1,5 @@
+/*
+  Access-Control-Allow-Origin: https://calculatetokens.com
+  Cross-Origin-Resource-Policy: cross-origin
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'
+

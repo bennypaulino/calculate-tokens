@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CalculatorShell from "../src/components/calculator/CalculatorShell";
 
 const comparisonLinks = [
   { a: "GPT-4o", b: "Claude Sonnet 4.6", href: "/compare/claude-sonnet-4-6-vs-gpt-4o" },
@@ -38,13 +39,13 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         {/* Hero */}
-        <section className="text-center max-w-2xl mx-auto mb-16">
+        <section className="text-center max-w-2xl mx-auto mb-10">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-4 leading-tight">
             Calculate exact token costs across every major AI model
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 mb-8">
+          <p className="text-lg sm:text-xl text-gray-600 mb-4">
             Accurate per-model tokenization. Your text stays in your browser.
           </p>
           <Link
@@ -56,23 +57,8 @@ export default function Home() {
           </Link>
         </section>
 
-        {/* Calculator coming soon */}
-        <section className="border border-gray-200 rounded-xl p-8 sm:p-12 text-center mb-16 bg-gray-50">
-          <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full mb-4">
-            Coming soon
-          </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Interactive calculator
-          </h2>
-          <p className="text-gray-600 text-sm max-w-md mx-auto">
-            Paste any prompt and instantly see token counts and USD costs for
-            GPT-4o, Claude, Gemini, Llama and more — all computed locally in
-            your browser using each model&apos;s actual tokenizer.
-          </p>
-        </section>
-
         {/* Privacy callout */}
-        <section className="flex items-start gap-4 border border-green-200 bg-green-50 rounded-xl px-6 py-5 mb-16">
+        <section className="flex items-start gap-4 border border-green-200 bg-green-50 rounded-xl px-6 py-4 mb-8">
           <span className="text-green-600 text-xl mt-0.5" aria-hidden="true">
             &#128274;
           </span>
@@ -88,6 +74,11 @@ export default function Home() {
               </Link>
             </p>
           </div>
+        </section>
+
+        {/* Calculator */}
+        <section className="mb-12">
+          <CalculatorShell />
         </section>
 
         {/* Comparison links */}

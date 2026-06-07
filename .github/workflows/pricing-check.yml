@@ -48,6 +48,9 @@ jobs:
         run: node scripts/check-exemption-expiry.js
       - name: Validate security.txt expiry
         run: node scripts/check-security-txt.js
+      - name: Validate worker subdomain headers (non-blocking)
+        run: node scripts/validate-worker-origin.js
+        continue-on-error: true
 
   update-timestamps:
     runs-on: ubuntu-latest

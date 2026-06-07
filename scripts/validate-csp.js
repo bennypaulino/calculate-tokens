@@ -34,6 +34,14 @@ if (!cspMatch) {
 
 const csp = cspMatch[1].trim();
 
+// Returns the values of a named CSP directive, or an empty string if absent.
+// Matches both "; directive-name values" and "directive-name values" at the start.
+function getDirectiveValues(cspString, directive) {
+  const pattern = new RegExp(`(?:^|;)\\s*${directive}\\s+([^;]+)`, 'i');
+  const match = cspString.match(pattern);
+  return match ? match[1].trim() : '';
+}
+
 if (mode === 'analytics') {
   const hasWasmUnsafeEval = csp.includes('wasm-unsafe-eval');
   const hasAdSense = csp.includes('googlesyndication.com');
@@ -53,13 +61,21 @@ if (mode === 'analytics') {
 
 if (mode === 'adsense') {
   const hasWasmUnsafeEval = csp.includes('wasm-unsafe-eval');
+  const workerSrc = getDirectiveValues(csp, 'worker-src');
+  const workerSrcHasSubdomain = workerSrc.includes('https://workers.calculatetokens.com');
 
   if (hasWasmUnsafeEval) {
     console.error('[FAIL] adsense mode must NOT contain "wasm-unsafe-eval" in Content-Security-Policy.');
     process.exit(1);
   }
 
-  console.log('[OK] CSP mode=adsense: "wasm-unsafe-eval" absent.');
+  if (!workerSrcHasSubdomain) {
+    console.error('[FAIL] adsense mode requires "https://workers.calculatetokens.com" specifically in the worker-src directive.');
+    console.error(`  Found worker-src: ${workerSrc || '(missing)'}`);
+    process.exit(1);
+  }
+
+  console.log('[OK] CSP mode=adsense: "wasm-unsafe-eval" absent, "https://workers.calculatetokens.com" in worker-src.');
 }
 
 process.exit(0);

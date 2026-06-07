@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/generate-headers.js",
     "build": "next build",
     "start": "next start"
   },
@@ -11,6 +12,7 @@
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "date-fns": "^4.4.0",
+    "js-tiktoken": "^1.0.21",
     "next": "16.2.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",

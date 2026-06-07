@@ -1,0 +1,12 @@
+{
+  "name": "calculatetokens-workers",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Compiled Wasm tokenizer workers for workers.calculatetokens.com (second Cloudflare Pages project)",
+  "scripts": {
+    "build:workers": "node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

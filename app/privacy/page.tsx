@@ -214,9 +214,9 @@ export default function PrivacyPage() {
           <a href="#opt-out" className="text-indigo-600 hover:underline">
             Opt-out section
           </a>{" "}
-          below. AdSense integration is subject to a Content Security Policy
-          mode switch that disables WebAssembly tokenisers — this degradation
-          is disclosed per-model in the calculator UI.
+          below. Tokenization accuracy is unaffected by AdSense — all
+          tokenizers continue to run via WebAssembly regardless of ad
+          configuration.
         </p>
       </Section>
 

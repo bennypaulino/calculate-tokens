@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+// Generates public/_headers with the correct Content-Security-Policy for the
+// current NEXT_PUBLIC_CSP_MODE. Run as a prebuild step before `next build`.
+//
+// analytics mode: includes wasm-unsafe-eval; excludes AdSense domains.
+// adsense mode:   excludes wasm-unsafe-eval; includes AdSense domains and
+//                 worker-src https://workers.calculatetokens.com.
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+
+const mode = process.env.NEXT_PUBLIC_CSP_MODE;
+
+if (!mode || (mode !== 'analytics' && mode !== 'adsense')) {
+  console.error('[generate-headers] FAIL: NEXT_PUBLIC_CSP_MODE must be "analytics" or "adsense".');
+  process.exit(1);
+}
+
+const HEADERS_PATH = path.resolve(__dirname, '../public/_headers');
+
+const SHARED_HEADERS = [
+  'X-Frame-Options: DENY',
+  'X-Content-Type-Options: nosniff',
+  'Referrer-Policy: strict-origin-when-cross-origin',
+  'Permissions-Policy: camera=(), microphone=(), geolocation=()',
+].map(h => `  ${h}`).join('\n');
+
+const ANALYTICS_CSP =
+  "default-src 'self'; " +
+  "script-src 'self' 'wasm-unsafe-eval'; " +
+  "worker-src 'self'; " +
+  "connect-src 'self'; " +
+  "style-src 'self' 'unsafe-inline'; " +
+  "img-src 'self' data:; " +
+  "font-src 'self' https://fonts.gstatic.com; " +
+  "frame-ancestors 'none'";
+
+const ADSENSE_CSP =
+  "default-src 'self'; " +
+  "script-src 'self' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; " +
+  "worker-src 'self' https://workers.calculatetokens.com; " +
+  "connect-src 'self'; " +
+  "style-src 'self' 'unsafe-inline'; " +
+  "img-src 'self' data: https:; " +
+  "font-src 'self' https://fonts.gstatic.com; " +
+  "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; " +
+  "frame-ancestors 'none'";
+
+const csp = mode === 'analytics' ? ANALYTICS_CSP : ADSENSE_CSP;
+
+// Read existing _headers to preserve the /api/v1/prices.json section (set by compute-prices-hash.js).
+let pricesSection =
+  '/api/v1/prices.json\n' +
+  '  X-Content-Hash: placeholder\n' +
+  '  Access-Control-Allow-Origin: *\n' +
+  '  Content-Type: application/json; charset=utf-8\n' +
+  '  Cache-Control: public, max-age=86400, stale-while-revalidate=86400';
+
+if (fs.existsSync(HEADERS_PATH)) {
+  const existing = fs.readFileSync(HEADERS_PATH, 'utf8');
+  const match = existing.match(/^\/api\/v1\/prices\.json\n(?:[ \t]+[^\n]+\n?)*/m);
+  if (match) pricesSection = match[0].trimEnd();
+}
+
+const content =
+  `/*\n${SHARED_HEADERS}\n  Content-Security-Policy: ${csp}\n\n${pricesSection}\n`;
+
+fs.writeFileSync(HEADERS_PATH, content, 'utf8');
+console.log(`[generate-headers] Wrote public/_headers (mode=${mode})`);

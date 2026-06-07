@@ -54,9 +54,9 @@ These constraints appear throughout the specs and must never be violated:
 **1. Prompt text never leaves the browser — ever.**
 No URL parameter, no analytics event, no server call ever encodes or transmits textarea content. The share URL encodes only configuration (slider value, model selection, toggle states). `?t=` or any text-encoding URL parameter is explicitly prohibited. This is simultaneously a privacy guarantee and an XSS mitigation.
 
-**2. Dual CSP mode — mutually exclusive.**
-`NEXT_PUBLIC_CSP_MODE=analytics`: enables `wasm-unsafe-eval` (Wasm tokenizers work) but excludes AdSense.
-`NEXT_PUBLIC_CSP_MODE=adsense`: enables AdSense but removes `wasm-unsafe-eval` (Wasm disabled for all models). In adsense mode, OpenAI models fall back to pure-JS tiktoken (accurate); Claude/Gemini/Llama fall back to heuristic permanently (no pure-JS alternative exists). `scripts/validate-csp.js` enforces this in CI — build fails if the mode is unset or if both directives appear simultaneously.
+**2. Dual CSP mode — deployment configuration, not a product tradeoff.**
+`NEXT_PUBLIC_CSP_MODE=analytics`: `wasm-unsafe-eval` in the main site CSP; workers bundled and served from the same origin. AdSense excluded.
+`NEXT_PUBLIC_CSP_MODE=adsense`: `wasm-unsafe-eval` absent from the main site CSP (satisfies AdSense). Workers are served from `workers.calculatetokens.com` (a separate Cloudflare Pages project) whose own CSP carries `wasm-unsafe-eval`. Tokenization accuracy is **identical in both modes** — the subdomain handles Wasm, the main page handles AdSense, and they communicate via `postMessage`. `scripts/validate-csp.js` enforces this in CI: fails if mode is unset, if `wasm-unsafe-eval` appears on the main domain in adsense mode, or if `worker-src https://workers.calculatetokens.com` is missing in adsense mode. `NEXT_PUBLIC_WORKERS_ORIGIN` controls which worker URL strategy is used: empty = bundled relative workers (dev / analytics mode); `https://workers.calculatetokens.com` = cross-origin workers (adsense production build).
 
 **3. Wasm tokenizers run in dedicated Web Workers — never the main thread.**
 Workers are lazy-loaded on first textarea input. Until a worker resolves, the heuristic (`Math.ceil(charCount / 4)`) is shown with a `~` prefix. When Wasm resolves, the count updates silently — no flash, no layout shift.
@@ -98,7 +98,7 @@ Service Worker integrity: `scripts/compute-prices-hash.js` runs post-build and w
 | `llama` | sentencepiece Wasm |
 | `heuristic` | `Math.ceil(chars / 4)` — no worker spawned |
 
-In `adsense` CSP mode, `claude`, `gemini`, and `llama` tokenizers are permanently heuristic. The `~` prefix and "exact" indicator never appear for those models. This degradation must be disclosed per-row via `title` tooltip and on the `/privacy` page.
+In `adsense` CSP mode, all tokenizers continue to work at full accuracy because workers are served from `workers.calculatetokens.com` with its own permissive CSP. The `~` prefix disappears and the "exact" indicator appears for all model families once their workers resolve — same behaviour as analytics mode.
 
 ---
 
@@ -110,7 +110,7 @@ In `adsense` CSP mode, `claude`, `gemini`, and `llama` tokenizers are permanentl
 
 **Phase 2** (Weeks 7–8): Token highlighter (XSS-safe DOM construction required), scaling simulator with CSV export (`sanitizeCsvCell` in `src/lib/csv.ts`), preset library (`src/data/presets.json` committed before Phase 2 begins), shareable URL (configuration-only invariant), AdSense integration, all 8 Umami events wired.
 
-**Phase 3** (Weeks 9–10): AdSense + Carbon Ads applications submitted simultaneously. GSC verification, Core Web Vitals gate, accessibility audit, cross-browser Playwright suite (5 browser projects: chromium, firefox, webkit, mobile-chrome, mobile-safari).
+**Phase 3** (Weeks 9–10): AdSense + Carbon Ads applications submitted simultaneously. GSC verification, Core Web Vitals gate, accessibility audit, cross-browser Playwright suite (5 browser projects: chromium, firefox, webkit, mobile-chrome, mobile-safari). Cross-origin worker deployment (`workers.calculatetokens.com`) live and verified (AC-3.7.x).
 
 **Phase 4** (Week 10–11): Launch gate checklist, HN post, Product Hunt, post-launch monitoring workflow.
 
