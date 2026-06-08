@@ -96,6 +96,12 @@ export default function RootLayout({
             strategy="afterInteractive"
           />
         )}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2070140496775055"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
