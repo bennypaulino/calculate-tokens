@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Warns when a locale value is identical to the English value — possible untranslated content.
-// Skips intentionally-English terms: presets.*, model names, provider names, technical glossary.
+// Skips: SKIP_PREFIXES (key prefix), ALWAYS_ENGLISH (value-based), EXEMPT_KEYS (per-key approval).
 'use strict'
 const fs = require('fs')
 const path = require('path')
@@ -30,7 +30,7 @@ const EXEMPT_KEYS = new Set([
   // Technical ML/API terms — universally used in English across all locales
   'compare.tokenizer',       // "Tokenizer"
   'models.attrTokenizer',    // "Tokenizer" (model detail attribute)
-  'models.featureBatch',     // "Batch" — same concept as spec technical glossary 'batch'
+  'models.featureBatch',     // "Batch" — capitalized form of 'batch' in ALWAYS_ENGLISH; exempt here to match
   'models.featureCaching',   // "Caching" — infrastructure term
   // Pricing column headers — mixed technical notation kept in English for brevity
   'models.colInput',         // "Input / 1M"
