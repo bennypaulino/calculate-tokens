@@ -260,7 +260,7 @@ export default function ScalingSimulator({
                 >
                   <td className="py-2 pr-4 text-gray-800">
                     <span className="font-medium">{row.modelName}</span>
-                    <span className="text-gray-400 ml-1">({row.provider})</span>
+                    <span className="text-gray-500 ml-1">({row.provider})</span>
                     {row.cachingApplied && (
                       <span className="ml-1 text-green-600" title="Caching applied">
                         cache
@@ -277,7 +277,7 @@ export default function ScalingSimulator({
                   </td>
                   <td className="py-2 text-right font-mono">
                     {isCheapest ? (
-                      <span className="text-green-600 font-medium">cheapest</span>
+                      <span className="text-green-700 font-medium">cheapest</span>
                     ) : (
                       <span className="text-gray-500">
                         +{formatCost(delta)}/mo
@@ -291,7 +291,7 @@ export default function ScalingSimulator({
         </table>
       </div>
 
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-gray-500">
         Estimates based on current token counts and pricing. Caching and batch
         discounts vary by provider.
       </p>

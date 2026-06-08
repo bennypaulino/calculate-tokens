@@ -48,13 +48,13 @@ test('textarea and slider are reachable via keyboard Tab navigation', async ({ p
   // Start from the top of the page
   await page.keyboard.press('Tab')
 
-  // Keep tabbing until we hit the textarea (up to 20 presses)
+  // Keep tabbing until we hit the textarea (up to 35 presses).
+  // Desktop layout: 3 header links + 5 presets + 9 model checkboxes + share button = ~18 stops.
   let textareaFocused = false
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 35; i++) {
     const focused = page.locator(':focus')
-    const role = await focused.getAttribute('role')
     const tagName: string = await focused.evaluate((el: Element) => el.tagName.toLowerCase())
-    if (tagName === 'textarea' || role === 'textbox') {
+    if (tagName === 'textarea') {
       textareaFocused = true
       break
     }
@@ -62,13 +62,17 @@ test('textarea and slider are reachable via keyboard Tab navigation', async ({ p
   }
   expect(textareaFocused).toBe(true)
 
-  // Keep tabbing until we hit the slider
+  // Keep tabbing until we hit the slider.
+  // <input type="range"> has an implicit ARIA role of "slider" but no DOM role attribute,
+  // so we detect it by tagName + type instead of getAttribute('role').
   let sliderFocused = false
   for (let i = 0; i < 20; i++) {
     await page.keyboard.press('Tab')
     const focused = page.locator(':focus')
-    const role = await focused.getAttribute('role')
-    if (role === 'slider') {
+    const isRangeInput: boolean = await focused.evaluate(
+      (el: Element) => el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'range'
+    )
+    if (isRangeInput) {
       sliderFocused = true
       break
     }
@@ -121,13 +125,16 @@ test('focus order: textarea appears before slider in Tab sequence', async ({ pag
     await page.keyboard.press('Tab')
     const focused = page.locator(':focus')
     const tagName: string = await focused.evaluate((el: Element) => el.tagName.toLowerCase()).catch(() => '')
-    const role = await focused.getAttribute('role').catch(() => null)
 
-    if ((tagName === 'textarea' || role === 'textbox') && textareaTabIndex === -1) {
+    if (tagName === 'textarea' && textareaTabIndex === -1) {
       textareaTabIndex = i
     }
-    if (role === 'slider' && sliderTabIndex === -1) {
-      sliderTabIndex = i
+    // <input type="range"> has an implicit ARIA role of "slider" — detect by tagName+type
+    if (sliderTabIndex === -1) {
+      const isRangeInput: boolean = await focused.evaluate(
+        (el: Element) => el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'range'
+      ).catch(() => false)
+      if (isRangeInput) sliderTabIndex = i
     }
     if (textareaTabIndex !== -1 && sliderTabIndex !== -1) break
   }

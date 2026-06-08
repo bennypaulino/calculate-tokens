@@ -1,11 +1,30 @@
 import { test, expect, type Page, type Route, type Request } from '@playwright/test'
 
 /**
- * Helper: intercepts POST requests to Umami's /api/send endpoint and
- * returns a handle that accumulates all payloads received during the test.
+ * Helper: injects a mock window.umami before page load so that analytics
+ * calls work even when NEXT_PUBLIC_UMAMI_WEBSITE_ID is not set in the build.
+ * The mock forwards all track() calls to /api/send in the same format as
+ * the real Umami script, which we then intercept with page.route().
  */
 async function captureUmamiEvents(page: Page) {
   const events: Array<{ type: string; data: Record<string, unknown> }> = []
+
+  // Inject mock before page load — must be called before page.goto()
+  await page.addInitScript(() => {
+    // @ts-ignore
+    window.umami = {
+      track: (eventName: string, eventData?: Record<string, unknown>) => {
+        fetch('/api/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'event',
+            payload: { name: eventName, data: eventData ?? {} },
+          }),
+        }).catch(() => {})
+      },
+    }
+  })
 
   await page.route('**/api/send', async (route: Route, request: Request) => {
     const body = request.postDataJSON() as {
@@ -34,7 +53,8 @@ const INPUT_347 =
   'Two driven jocks help fax my big quiz. ' +
   'Five quacking zephyrs jolt my wax bed. ' +
   'The five boxing wizards jump quickly. ' +
-  'Jackdaws love my big sphinx of quartz!!'
+  'Jackdaws love my big sphinx of quartz!! ' +
+  'Quick brown fox! Lazy hound.'
 
 // Sanity check — exactly 347 chars
 if (INPUT_347.length !== 347) {
@@ -65,7 +85,8 @@ test('preset_selected event fires with preset_name when a preset is clicked', as
   const events = await captureUmamiEvents(page)
   await page.goto('/')
 
-  const preset = page.getByTestId('preset-customer-support-turn')
+  // PresetBar renders in both mobile and desktop slots — filter to the visible one
+  const preset = page.locator('[data-testid="preset-customer-support-turn"]:visible')
   await preset.click()
 
   // Event should fire synchronously or near-synchronously
@@ -77,14 +98,18 @@ test('preset_selected event fires with preset_name when a preset is clicked', as
 })
 
 // AC-2.6.x — share_url_copied event fires when share button is clicked
-test('share_url_copied event fires on clicking the share button', async ({ page }) => {
+test('share_url_copied event fires on clicking the share button', async ({ page, browserName }) => {
   const events = await captureUmamiEvents(page)
   await page.goto('/')
 
-  // Grant clipboard-write permission so the copy succeeds
-  await page.context().grantPermissions(['clipboard-write'])
+  // Firefox doesn't support clipboard-write permission grant via Playwright;
+  // skip the explicit grant and let the browser handle it
+  if (browserName !== 'firefox') {
+    await page.context().grantPermissions(['clipboard-write'])
+  }
 
-  const shareButton = page.getByTestId('share-button')
+  // Two share buttons in DOM (mobile + desktop slots); filter to the visible one
+  const shareButton = page.locator('[data-testid="share-button"]:visible')
   await shareButton.click()
 
   await page.waitForTimeout(500)
@@ -139,7 +164,10 @@ test('Umami script abort does not throw JS errors', async ({ page }) => {
 })
 
 // AC-2.4.3 — share URL must NOT contain textarea text content
-test('Share URL does not contain textarea text content', async ({ page }) => {
+test('Share URL does not contain textarea text content', async ({ page, browserName }) => {
+  // Firefox doesn't support clipboard-read/write permission grants via Playwright
+  test.skip(browserName === 'firefox', 'Firefox does not support clipboard permission grants in Playwright')
+
   await page.goto('/')
   await page.context().grantPermissions(['clipboard-write', 'clipboard-read'])
 
@@ -147,7 +175,8 @@ test('Share URL does not contain textarea text content', async ({ page }) => {
   const sampleText = 'Super secret prompt text that must not leak into the URL'
   await textarea.fill(sampleText)
 
-  const shareButton = page.getByTestId('share-button')
+  // Two share buttons in DOM (mobile + desktop slots); filter to the visible one
+  const shareButton = page.locator('[data-testid="share-button"]:visible')
   await shareButton.click()
 
   // Read what was written to the clipboard

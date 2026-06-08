@@ -85,7 +85,7 @@ export default function CostGrid({ models }: Props) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-x-auto rounded-xl border border-gray-200">
+      <div className="overflow-x-auto rounded-xl border border-gray-200" tabIndex={0} role="region" aria-label="Model pricing comparison">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">

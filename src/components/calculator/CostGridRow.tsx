@@ -11,7 +11,7 @@ interface Props {
 
 const statusSymbol = {
   pending: { symbol: '·', title: 'Pending', className: 'text-gray-300' },
-  heuristic: { symbol: '~', title: 'Approximate (÷4 heuristic)', className: 'text-gray-400' },
+  heuristic: { symbol: '~', title: 'Approximate (÷4 heuristic)', className: 'text-gray-500' },
   wasm: { symbol: '', title: 'Exact (model tokenizer)', className: 'text-green-600' },
   error: { symbol: '?', title: 'Exact tokenization unavailable for this model', className: 'text-red-400' },
 };
@@ -41,7 +41,7 @@ export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerif
             )}
             {row.modelName}
           </span>
-          <span className="text-xs text-gray-400">{row.provider}</span>
+          <span className="text-xs text-gray-500">{row.provider}</span>
         </div>
       </td>
 
@@ -81,12 +81,12 @@ export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerif
             title={totalStatus.title}
           >
             {row.inputStatus === 'heuristic' && (
-              <span className="text-xs font-normal mr-0.5 text-gray-400">~</span>
+              <span className="text-xs font-normal mr-0.5 text-gray-500">~</span>
             )}
             {formatCost(row.totalCost)}
           </span>
           {isCheapest && (
-            <span className="text-xs text-green-600 font-medium leading-none">cheapest</span>
+            <span className="text-xs text-green-700 font-medium leading-none">cheapest</span>
           )}
         </div>
       </td>
