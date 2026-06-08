@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
+import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig } from "@/lib/i18n";
 
 interface Model {
   id: string;
@@ -9,14 +10,21 @@ interface Model {
   active?: boolean;
 }
 
-export const metadata: Metadata = {
-  title: "LLM Model Comparisons — Pricing & Token Cost — Calculate Tokens",
-  description:
-    "Side-by-side pricing and token cost comparisons for GPT-4o, Claude, Gemini, Llama, DeepSeek and more. See exact API costs and tokenizer details.",
-  alternates: {
-    canonical: "https://calculatetokens.com/compare",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const activeModels = pricesData.models.filter((m: Model) => m.active !== false);
+  const pairs = buildPairs(activeModels);
+  return {
+    title: t("compare.indexHeading") + " — Calculate Tokens",
+    description: t("compare.indexSubheading", { count: String(activeModels.length), pairs: String(pairs.length) }),
+    openGraph: {
+      locale: getLocaleConfig().ogLocale,
+    },
+    alternates: {
+      canonical: `${getBaseUrl()}/compare`,
+      languages: getHreflangAlternates("/compare"),
+    },
+  };
+}
 
 function getActiveModels(): Model[] {
   return pricesData.models.filter((m: Model) => m.active !== false);
@@ -75,16 +83,15 @@ export default function ComparePage() {
           className="text-sm text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-1"
         >
           <span aria-hidden="true">&larr;</span>
-          Calculator
+          {t("compare.breadcrumb")}
         </Link>
       </nav>
 
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-3">
-        LLM Model Comparisons
+        {t("compare.indexHeading")}
       </h1>
       <p className="text-gray-600 mb-10 text-base">
-        Side-by-side pricing, context window, and tokenizer comparisons across{" "}
-        {activeModels.length} models. {pairs.length} unique comparisons.
+        {t("compare.indexSubheading", { count: String(activeModels.length), pairs: String(pairs.length) })}
       </p>
 
       <div className="space-y-10">
@@ -94,7 +101,7 @@ export default function ComparePage() {
               id={`group-${provider}`}
               className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3"
             >
-              {provider} comparisons
+              {t("compare.providerGroup", { provider })}
             </h2>
             <ul className="grid sm:grid-cols-2 gap-2">
               {grouped[provider].map((pair) => (
@@ -105,7 +112,7 @@ export default function ComparePage() {
                   >
                     <span>
                       <span className="font-medium">{pair.nameA}</span>
-                      <span className="text-gray-400 mx-2">vs</span>
+                      <span className="text-gray-400 mx-2">{t("home.vs")}</span>
                       <span className="font-medium">{pair.nameB}</span>
                     </span>
                     <span className="text-gray-400 ml-2 shrink-0" aria-hidden="true">
@@ -122,13 +129,13 @@ export default function ComparePage() {
       {/* CTA */}
       <div className="mt-12 border border-gray-200 rounded-xl p-6 text-center bg-gray-50">
         <p className="text-sm text-gray-600 mb-3">
-          Want to calculate costs for your specific prompt?
+          {t("compare.openCalculatorCta")}
         </p>
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 bg-gray-900 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
         >
-          Open calculator
+          {t("compare.openCalculator")}
           <span aria-hidden="true">&rarr;</span>
         </Link>
       </div>

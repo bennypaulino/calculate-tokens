@@ -17,6 +17,7 @@ import AdSlotPlaceholder from './AdSlotPlaceholder';
 import AdSlotSidebar from './AdSlotSidebar';
 import ShareButton from './ShareButton';
 import ScalingSimulator from './ScalingSimulator';
+import { t } from '../../lib/i18n';
 
 // Module-level singleton — survives React re-renders
 const workerManagerSingleton = new WorkerManager();
@@ -100,7 +101,7 @@ export default function CalculatorShell() {
       } else if (event.data?.type === 'PRICES_UPDATED') {
         setOfflineBanner(false);
       } else if (event.data?.type === 'PRICES_REFRESH_AVAILABLE') {
-        const ta = document.querySelector('[aria-label="Enter your AI prompt or text"]');
+        const ta = document.querySelector('[data-testid="prompt-textarea"]');
         if (!(ta instanceof HTMLTextAreaElement) || ta.value === '') window.location.reload();
       }
     };
@@ -217,14 +218,14 @@ export default function CalculatorShell() {
       // Track first-time filter event
       if (!hasTrackedFilterRef.current) {
         hasTrackedFilterRef.current = true;
-        window.umami?.track('compare_tab_switched', { tab: 'filtered' });
+        window.umami?.track('compare_tab_switched', { tab: 'filtered', locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
       }
     }
   }, [selectedModelIds, activeModels, setSelectedModelIds]);
 
   const handleSelectAllModels = useCallback(() => {
     setSelectedModelIds(null);
-    window.umami?.track('compare_tab_switched', { tab: 'all' });
+    window.umami?.track('compare_tab_switched', { tab: 'all', locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
   }, [setSelectedModelIds]);
 
   // Staleness: use worst staleness across all active models
@@ -247,8 +248,8 @@ export default function CalculatorShell() {
   if (loadError) {
     return (
       <div className="border border-red-200 bg-red-50 rounded-xl p-8 text-center">
-        <p className="text-red-700 text-sm font-medium">Failed to load pricing data.</p>
-        <p className="text-red-500 text-xs mt-1">Please refresh the page to try again.</p>
+        <p className="text-red-700 text-sm font-medium">{t('calculator.loadError')}</p>
+        <p className="text-red-500 text-xs mt-1">{t('calculator.loadErrorRetry')}</p>
       </div>
     );
   }
@@ -257,7 +258,7 @@ export default function CalculatorShell() {
     return (
       <div className="border border-gray-200 rounded-xl p-8 text-center">
         <div className="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-500 text-sm mt-2">Loading pricing data…</p>
+        <p className="text-gray-500 text-sm mt-2">{t('calculator.loadingPricing')}</p>
       </div>
     );
   }
@@ -335,10 +336,10 @@ export default function CalculatorShell() {
               onClick={handleSelectAllModels}
               className="text-sm text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2 transition-colors"
             >
-              Compare All ({activeModels.length} models)
+              {t('calculator.compareAll', { count: activeModels.length })}
             </button>
             <span className="text-xs text-gray-500">
-              Showing {filteredModels.length} of {activeModels.length}
+              {t('calculator.showing', { filtered: filteredModels.length, total: activeModels.length })}
             </span>
           </div>
         )}

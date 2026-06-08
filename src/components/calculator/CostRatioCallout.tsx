@@ -1,5 +1,6 @@
 import type { CostRow } from '../../types/calculator';
 import { formatCost } from '../../lib/tokenCount';
+import { t } from '../../lib/i18n';
 
 interface Props {
   rows: CostRow[];
@@ -18,10 +19,13 @@ export default function CostRatioCallout({ rows }: Props) {
 
   return (
     <p role="status" aria-live="polite" className="text-xs text-gray-500 text-center">
-      <span className="font-medium text-gray-700">{cheapest.modelName}</span> is{' '}
-      <span className="font-medium text-gray-900">{Math.round(ratio)}x</span> cheaper than{' '}
-      <span className="font-medium text-gray-700">{priciest.modelName}</span> for this prompt
-      {' '}({formatCost(cheapest.totalCost)} vs {formatCost(priciest.totalCost)}).
+      {t('grid.cheaperCallout', {
+        cheapest: cheapest.modelName,
+        ratio: String(Math.round(ratio)),
+        priciest: priciest.modelName,
+        cheapCost: formatCost(cheapest.totalCost),
+        priciestCost: formatCost(priciest.totalCost),
+      })}
     </p>
   );
 }

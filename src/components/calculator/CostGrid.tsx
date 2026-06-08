@@ -8,6 +8,7 @@ import { computeCostRow } from '../../lib/costCalc';
 import { getStalenessLevel } from '../../lib/prices';
 import CostGridRow from './CostGridRow';
 import CostRatioCallout from './CostRatioCallout';
+import { t } from '../../lib/i18n';
 
 interface Props {
   models: ModelEntry[];
@@ -85,7 +86,7 @@ export default function CostGrid({ models }: Props) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-x-auto rounded-xl border border-gray-200" tabIndex={0} role="region" aria-label="Model pricing comparison">
+      <div className="overflow-x-auto rounded-xl border border-gray-200" tabIndex={0} role="region" aria-label={t('grid.ariaLabel')}>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
@@ -94,37 +95,37 @@ export default function CostGrid({ models }: Props) {
                 className="py-2.5 pl-4 pr-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
                 onClick={() => setSortColumn('name')}
               >
-                Model <SortIcon col="name" />
+                {t('grid.colModel')} <SortIcon col="name" />
               </th>
               <th scope="col" className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Input tokens
+                {t('grid.colInputTokens')}
               </th>
               <th scope="col" className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Output tokens
+                {t('grid.colOutputTokens')}
               </th>
               <th
                 scope="col"
                 className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
                 onClick={() => setSortColumn('input')}
               >
-                Input cost <SortIcon col="input" />
+                {t('grid.colInputCost')} <SortIcon col="input" />
               </th>
               <th
                 scope="col"
                 className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
                 onClick={() => setSortColumn('output')}
               >
-                Output cost <SortIcon col="output" />
+                {t('grid.colOutputCost')} <SortIcon col="output" />
               </th>
               <th
                 scope="col"
                 className="py-2.5 pl-2 pr-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
                 onClick={() => setSortColumn('total')}
               >
-                Total cost <SortIcon col="total" />
+                {t('grid.colTotalCost')} <SortIcon col="total" />
               </th>
               <th scope="col" className="py-2.5 pl-2 pr-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Context
+                {t('grid.colContext')}
               </th>
             </tr>
           </thead>

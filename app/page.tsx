@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import CalculatorShell from "../src/components/calculator/CalculatorShell";
+import { t, getBaseUrl, getHreflangAlternates } from "../src/lib/i18n";
 
 const comparisonLinks = [
   { a: "GPT-4o", b: "Claude Sonnet 4.6", href: "/compare/claude-sonnet-4-6-vs-gpt-4o" },
@@ -9,29 +11,37 @@ const comparisonLinks = [
   { a: "DeepSeek R1", b: "o4-mini", href: "/compare/deepseek-r1-vs-o4-mini" },
 ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "Calculate Tokens",
-  url: "https://calculatetokens.com",
-  applicationCategory: "UtilitiesApplication",
-  operatingSystem: "Web",
-  description:
-    "Browser-native LLM token calculator. Paste a prompt and instantly see accurate token counts and USD costs across all major models — no text ever leaves your browser.",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-  featureList: [
-    "Per-model tokenization accuracy using WebAssembly tokenizers",
-    "Cost estimates for GPT-4o, Claude, Gemini, Llama and more",
-    "Browser-native — prompt text never transmitted to any server",
-    "Side-by-side model comparison",
-  ],
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    alternates: {
+      canonical: getBaseUrl(),
+      languages: getHreflangAlternates("/"),
+    },
+  };
+}
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: t("meta.siteName"),
+    url: getBaseUrl(),
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Web",
+    description: t("meta.siteDescription"),
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    featureList: [
+      "Per-model tokenization accuracy using WebAssembly tokenizers",
+      "Cost estimates for GPT-4o, Claude, Gemini, Llama and more",
+      "Browser-native — prompt text never transmitted to any server",
+      "Side-by-side model comparison",
+    ],
+  };
+
   return (
     <>
       <script
@@ -43,16 +53,16 @@ export default function Home() {
         {/* Hero */}
         <section className="text-center max-w-2xl mx-auto mb-10">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-4 leading-tight">
-            Calculate exact token costs across every major AI model
+            {t("home.heroHeading")}
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 mb-4">
-            Accurate per-model tokenization. Your text stays in your browser.
+            {t("home.heroSubheading")}
           </p>
           <Link
             href="/learn/what-is-a-token"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
           >
-            Learn what a token is
+            {t("home.learnTokenLink")}
             <span aria-hidden="true">&rarr;</span>
           </Link>
         </section>
@@ -64,13 +74,12 @@ export default function Home() {
           </span>
           <div>
             <p className="font-semibold text-green-900 text-sm">
-              Your text never leaves your browser
+              {t("home.privacyCalloutTitle")}
             </p>
             <p className="text-green-800 text-sm mt-0.5">
-              Tokenization runs entirely on your device via WebAssembly. No
-              prompt text is sent to any server, logged, or stored.{" "}
+              {t("home.privacyCalloutBody")}{" "}
               <Link href="/privacy" className="underline hover:no-underline">
-                Privacy policy
+                {t("home.privacyPolicy")}
               </Link>
             </p>
           </div>
@@ -84,7 +93,7 @@ export default function Home() {
         {/* Comparison links */}
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Model comparisons
+            {t("home.modelComparisons")}
           </h2>
           <ul className="grid sm:grid-cols-2 gap-3">
             {comparisonLinks.map((link) => (
@@ -95,7 +104,7 @@ export default function Home() {
                 >
                   <span>
                     <span className="font-medium">{link.a}</span>
-                    <span className="text-gray-500 mx-2">vs</span>
+                    <span className="text-gray-500 mx-2">{t("home.vs")}</span>
                     <span className="font-medium">{link.b}</span>
                   </span>
                   <span className="text-gray-400" aria-hidden="true">

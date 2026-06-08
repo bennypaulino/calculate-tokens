@@ -1,6 +1,7 @@
 import type { CostRow } from '../../types/calculator';
 import { formatCost } from '../../lib/tokenCount';
 import ContextWindowCell from './ContextWindowCell';
+import { t } from '../../lib/i18n';
 
 interface Props {
   row: CostRow;
@@ -10,10 +11,10 @@ interface Props {
 }
 
 const statusSymbol = {
-  pending: { symbol: '·', title: 'Pending', className: 'text-gray-300' },
-  heuristic: { symbol: '~', title: 'Approximate (÷4 heuristic)', className: 'text-gray-500' },
-  wasm: { symbol: '', title: 'Exact (model tokenizer)', className: 'text-green-600' },
-  error: { symbol: '?', title: 'Exact tokenization unavailable for this model', className: 'text-red-400' },
+  pending: { symbol: '·', title: t('grid.statusPending'), className: 'text-gray-300' },
+  heuristic: { symbol: '~', title: t('grid.statusApprox'), className: 'text-gray-500' },
+  wasm: { symbol: '', title: t('grid.statusExact'), className: 'text-green-600' },
+  error: { symbol: '?', title: t('grid.statusUnavailable'), className: 'text-red-400' },
 };
 
 export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerified }: Props) {
@@ -30,13 +31,13 @@ export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerif
             {stalenessLevel === 'amber' && (
               <span
                 className="text-amber-500 mr-1"
-                aria-label={"Pricing last verified " + lastVerified + " — may have changed"}
+                aria-label={t('grid.stalenessWarningAria', { date: lastVerified })}
               >●</span>
             )}
             {stalenessLevel === 'red' && (
               <span
                 className="text-red-500 mr-1"
-                aria-label="Pricing unverified for 30+ days — confirm at provider"
+                aria-label={t('grid.stalenessOutdatedAria')}
               >⚠</span>
             )}
             {row.modelName}
@@ -86,7 +87,7 @@ export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerif
             {formatCost(row.totalCost)}
           </span>
           {isCheapest && (
-            <span className="text-xs text-green-700 font-medium leading-none">cheapest</span>
+            <span className="text-xs text-green-700 font-medium leading-none">{t('simulator.cheapestBadge')}</span>
           )}
         </div>
       </td>

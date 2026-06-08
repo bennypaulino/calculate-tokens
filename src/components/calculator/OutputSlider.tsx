@@ -2,6 +2,7 @@
 
 import { useCalculatorStore } from '../../store/calculatorStore';
 import type { ModelEntry } from '../../types/prices';
+import { t } from '../../lib/i18n';
 
 interface Props {
   activeModels: ModelEntry[];
@@ -27,14 +28,14 @@ export default function OutputSlider({ activeModels }: Props) {
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     setOutputTokens(value);
-    window.umami?.track('output_slider_adjusted', { value });
+    window.umami?.track('output_slider_adjusted', { value, locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
   };
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <label htmlFor="output-slider" className="text-sm font-medium text-gray-700">
-          Output tokens
+          {t('output.label')}
         </label>
         <span className="text-sm text-gray-500 tabular-nums">
           {outputTokens.toLocaleString()} tokens
@@ -50,7 +51,7 @@ export default function OutputSlider({ activeModels }: Props) {
         value={outputTokens}
         onChange={handleSliderChange}
         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-        aria-label="Output token estimate"
+        aria-label={t('output.sliderAriaLabel')}
         aria-valuemin={0}
         aria-valuemax={8000}
         aria-valuenow={outputTokens}
@@ -75,13 +76,14 @@ export default function OutputSlider({ activeModels }: Props) {
                     activeModels.find((m) => m.thinking_model)?.id ?? '';
                   window.umami?.track('thinking_toggle_enabled', {
                     model: firstThinkingModelId,
+                    locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en',
                   });
                 }
               }}
               className="w-4 h-4 rounded accent-blue-600"
             />
             <span className="text-sm text-gray-700">
-              Include thinking tokens
+              {t('output.includeThinking')}
             </span>
           </label>
 
@@ -91,7 +93,7 @@ export default function OutputSlider({ activeModels }: Props) {
               if (m.thinking_billed_separately && m.thinking_multiplier !== null) {
                 return (
                   <p key={m.id} className="text-xs text-gray-500 ml-6">
-                    {m.display_name}: +&nbsp;~{Math.round(outputTokens * m.thinking_multiplier).toLocaleString()} thinking tokens estimated
+                    {m.display_name}: {t('output.thinkingEstimate', { n: Math.round(outputTokens * m.thinking_multiplier).toLocaleString() })}
                   </p>
                 );
               }
@@ -100,9 +102,8 @@ export default function OutputSlider({ activeModels }: Props) {
                   <p
                     key={m.id}
                     className="text-xs text-gray-500 ml-6"
-                    title="DeepSeek R1 includes thinking in its output token pricing — no additional cost is applied"
                   >
-                    {m.display_name}: thinking included in output pricing
+                    {m.display_name}: {t('output.thinking')}
                   </p>
                 );
               }

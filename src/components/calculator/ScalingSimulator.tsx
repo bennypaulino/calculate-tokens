@@ -6,6 +6,7 @@ import { formatCost } from '../../lib/tokenCount';
 import { rowsToCsv } from '../../lib/csv';
 import type { ModelEntry } from '../../types/prices';
 import type { ModelTokenState } from '../../types/calculator';
+import { t } from '../../lib/i18n';
 
 interface ScalingSimulatorProps {
   models: ModelEntry[];
@@ -99,7 +100,7 @@ export default function ScalingSimulator({
       if (isNaN(parsed)) return;
       const clamped = Math.max(1, Math.min(100_000_000, parsed));
       setVolumeRequests(clamped);
-      window.umami?.track('scaling_simulator_used');
+      window.umami?.track('scaling_simulator_used', { locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
     },
     [setVolumeRequests]
   );
@@ -107,7 +108,7 @@ export default function ScalingSimulator({
   const handlePresetClick = useCallback(
     (value: number) => {
       setVolumeRequests(value);
-      window.umami?.track('scaling_simulator_used');
+      window.umami?.track('scaling_simulator_used', { locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
     },
     [setVolumeRequests]
   );
@@ -158,14 +159,14 @@ export default function ScalingSimulator({
           id="scaling-simulator-heading"
           className="text-sm font-semibold text-gray-800"
         >
-          Scaling / Bulk Simulator
+          {t('simulator.heading')}
         </h2>
         <button
           type="button"
           onClick={handleExportCsv}
           className="text-xs text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2 transition-colors"
         >
-          Export CSV
+          {t('simulator.exportCsv')}
         </button>
       </div>
 
@@ -177,7 +178,7 @@ export default function ScalingSimulator({
             htmlFor="volume-requests"
             className="text-xs font-medium text-gray-600"
           >
-            Monthly requests
+            {t('simulator.monthlyRequests')}
           </label>
           <div className="flex items-center gap-2 flex-wrap">
             <input
@@ -218,7 +219,7 @@ export default function ScalingSimulator({
                 onChange={(e) => setCachingEnabled(e.target.checked)}
                 className="w-4 h-4 accent-blue-600"
               />
-              <span className="text-xs text-gray-700">Context caching</span>
+              <span className="text-xs text-gray-700">{t('simulator.cachingLabel')}</span>
             </label>
           )}
           <label className="flex items-center gap-2 cursor-pointer">
@@ -228,7 +229,7 @@ export default function ScalingSimulator({
               onChange={(e) => setBatchEnabled(e.target.checked)}
               className="w-4 h-4 accent-blue-600"
             />
-            <span className="text-xs text-gray-700">Batch API</span>
+            <span className="text-xs text-gray-700">{t('simulator.batchLabel')}</span>
           </label>
         </div>
       </div>
@@ -239,13 +240,13 @@ export default function ScalingSimulator({
           <thead>
             <tr className="border-b border-gray-200">
               <th className="text-left py-2 pr-4 font-medium text-gray-500">
-                Model
+                {t('grid.colModel')}
               </th>
               <th className="text-right py-2 pr-4 font-medium text-gray-500">
-                Monthly cost
+                {t('simulator.colMonthlyCost')}
               </th>
               <th className="text-right py-2 font-medium text-gray-500">
-                vs cheapest
+                {t('simulator.colVsCheapest')}
               </th>
             </tr>
           </thead>
@@ -277,7 +278,7 @@ export default function ScalingSimulator({
                   </td>
                   <td className="py-2 text-right font-mono">
                     {isCheapest ? (
-                      <span className="text-green-700 font-medium">cheapest</span>
+                      <span className="text-green-700 font-medium">{t('simulator.cheapestBadge')}</span>
                     ) : (
                       <span className="text-gray-500">
                         +{formatCost(delta)}/mo
@@ -292,8 +293,7 @@ export default function ScalingSimulator({
       </div>
 
       <p className="text-xs text-gray-500">
-        Estimates based on current token counts and pricing. Caching and batch
-        discounts vary by provider.
+        {t('simulator.disclaimer')}
       </p>
     </section>
   );
