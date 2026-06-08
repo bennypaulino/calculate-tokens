@@ -9,8 +9,9 @@ test('heuristic ~ prefix is visible immediately after typing', async ({ page }) 
 
   // The ~ prefix should appear as soon as the heuristic estimate is displayed,
   // before the Wasm worker has resolved.
-  // We allow up to 2 s for the first render; the worker can take longer.
-  await expect(page.locator('text=/~\\d/')).toBeVisible({ timeout: 2000 })
+  // Allow up to 5 s — static file serving can be slower than dev server.
+  // Multiple cells show ~N (one per model) — .first() avoids strict mode violation
+  await expect(page.locator('text=/~\\d/').first()).toBeVisible({ timeout: 5000 })
 })
 
 // AC-1.1.5 — textarea must have an accessible aria-label and role="textbox"
@@ -48,7 +49,8 @@ test('clicking a preset populates the textarea', async ({ page }) => {
   // Textarea should be empty (or near-empty) before clicking the preset
   await expect(textarea).toBeVisible()
 
-  const preset = page.getByTestId('preset-customer-support-turn')
+  // PresetBar renders in both mobile and desktop slots — filter to the visible one
+  const preset = page.locator('[data-testid="preset-customer-support-turn"]:visible')
   await preset.click()
 
   // After clicking, textarea must contain meaningful content

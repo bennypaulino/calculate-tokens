@@ -174,7 +174,7 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
         </p>
 
         <div className="flex items-center justify-between mt-1.5 px-1">
-          <div className="flex items-center gap-3 text-xs text-gray-400">
+          <div className="flex items-center gap-3 text-xs text-gray-500">
             <span>{charCount.toLocaleString()} chars · {wordCount.toLocaleString()} words{tokenDisplay ? <> · {tokenDisplay}</> : null}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
             {text && (
               <button
                 onClick={() => { setText(''); onTextChange?.(''); }}
-                className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-xs text-gray-500 hover:text-gray-600 transition-colors"
                 aria-label="Clear text"
               >
                 Clear

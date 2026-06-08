@@ -56,7 +56,7 @@ export default function OutputSlider({ activeModels }: Props) {
         aria-valuenow={outputTokens}
       />
 
-      <div className="flex justify-between text-xs text-gray-400 -mt-1 select-none" aria-hidden>
+      <div className="flex justify-between text-xs text-gray-500 -mt-1 select-none" aria-hidden>
         {TICKS.map((tick) => (
           <span key={tick.value}>{tick.label}</span>
         ))}

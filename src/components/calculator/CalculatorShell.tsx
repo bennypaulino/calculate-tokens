@@ -337,7 +337,7 @@ export default function CalculatorShell() {
             >
               Compare All ({activeModels.length} models)
             </button>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-500">
               Showing {filteredModels.length} of {activeModels.length}
             </span>
           </div>

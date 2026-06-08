@@ -95,7 +95,7 @@ export default function Home() {
                 >
                   <span>
                     <span className="font-medium">{link.a}</span>
-                    <span className="text-gray-400 mx-2">vs</span>
+                    <span className="text-gray-500 mx-2">vs</span>
                     <span className="font-medium">{link.b}</span>
                   </span>
                   <span className="text-gray-400" aria-hidden="true">

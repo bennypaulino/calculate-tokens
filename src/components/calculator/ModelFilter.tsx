@@ -54,7 +54,7 @@ export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll
       {/* Provider groups */}
       {Array.from(groups.entries()).map(([provider, providerModels]) => (
         <div key={provider} className="flex flex-col gap-1">
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide leading-none mb-1">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide leading-none mb-1">
             {provider}
           </p>
           {providerModels.map((model) => {
