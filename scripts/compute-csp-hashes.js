@@ -3,6 +3,12 @@
 // SHA-256 hashes, and patches them into the Content-Security-Policy in both
 // public/_headers and out/_headers. Also adds static.cloudflareinsights.com
 // for Cloudflare Web Analytics.
+//
+// Run on every deployment — not just once. The hashes change with each build
+// because Next.js embeds build-time data in inline scripts. Each Cloudflare
+// Pages project must run `npm run build` (which calls this script) with its
+// own NEXT_PUBLIC_CSP_MODE set ("analytics" or "adsense") so the committed
+// public/_headers always reflects the most recent deployment's hashes.
 'use strict';
 
 const fs = require('fs');
