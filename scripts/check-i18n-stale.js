@@ -12,8 +12,18 @@ const en = JSON.parse(fs.readFileSync(path.join(LOCALES_DIR, 'en.json'), 'utf-8'
 const SKIP_PREFIXES = ['presets.']
 // Values that are never translated regardless of key
 const ALWAYS_ENGLISH = new Set([
-  'token', 'context window', 'API', 'WebAssembly', 'batch',
+  'token', 'API', 'WebAssembly', 'batch',
   'Calculate Tokens', 'MIT License',
+  // NOTE: 'context window' intentionally omitted — this term IS translated in all locales.
+  // Research (2026-06): Anthropic, Google Gemini, OpenAI, IBM all translate it:
+  //   DE: "Kontextfenster", ES: "ventana de contexto",
+  //   FR: "fenêtre de contexte", PT-BR: "janela de contexto", JA: "コンテキストウィンドウ"
+])
+// Keys explicitly approved to be identical to English — interpolation-only or technical filenames.
+// Add here (with comment) rather than suppressing whole prefixes.
+const EXEMPT_KEYS = new Set([
+  'compare.contextTokens',   // "{{count}} tokens" — interpolation only, no translatable text
+  'models.pricingSource',    // "prices.json" — technical filename, not user-facing text
 ])
 
 function flattenPairs(obj, prefix = '') {
@@ -38,6 +48,7 @@ for (const locale of locales) {
 
   for (const { key, value: enValue } of enPairs) {
     if (SKIP_PREFIXES.some(p => key.startsWith(p))) continue
+    if (EXEMPT_KEYS.has(key)) continue
     if (ALWAYS_ENGLISH.has(enValue)) continue
     if (enValue.length < 4) continue // skip short tokens, symbols, punctuation
 
