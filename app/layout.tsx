@@ -11,6 +11,9 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://calculatetokens.com"),
+  other: {
+    "google-adsense-account": "ca-pub-2070140496775055",
+  },
   title: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
   description:
     "Calculate exact token counts and costs across GPT-4o, Claude, Gemini, Llama and more. Browser-native — your text never leaves your device.",
