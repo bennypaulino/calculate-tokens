@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
+import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig } from "@/lib/i18n";
 
 interface Model {
   id: string;
@@ -56,35 +57,40 @@ for (const provider of extraProviders) {
   });
 }
 
-export const metadata: Metadata = {
-  title: "AI Model Pricing — All Models | Calculate Tokens",
-  description: `Compare token pricing for all ${activeModels.length} supported AI models: GPT-4o, Claude, Gemini, DeepSeek, Llama and more. Input costs, output costs, context windows.`,
-  alternates: {
-    canonical: "https://calculatetokens.com/models",
-  },
-  openGraph: {
-    title: "AI Model Pricing — All Models | Calculate Tokens",
-    description: `Compare token pricing for all ${activeModels.length} supported AI models. Browser-native token calculator — your text never leaves your device.`,
-    url: "https://calculatetokens.com/models",
-    siteName: "Calculate Tokens",
-    images: [
-      {
-        url: "/ai-token-cost-calculator.jpg",
-        width: 1200,
-        height: 630,
-        alt: "AI Model Pricing — Calculate Tokens",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI Model Pricing — All Models | Calculate Tokens",
-    description: `Compare token pricing for all ${activeModels.length} supported AI models.`,
-    images: ["/ai-token-cost-calculator.jpg"],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const title = t("models.indexMetaTitle", { count: String(activeModels.length) });
+  const description = t("models.indexMetaDesc", { count: String(activeModels.length) });
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${getBaseUrl()}/models`,
+      languages: getHreflangAlternates("/models"),
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${getBaseUrl()}/models`,
+      siteName: t("meta.siteName"),
+      images: [
+        {
+          url: "/ai-token-cost-calculator.jpg",
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: getLocaleConfig().ogLocale,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/ai-token-cost-calculator.jpg"],
+    },
+  };
+}
 
 export default function ModelsPage() {
   return (
@@ -94,23 +100,21 @@ export default function ModelsPage() {
         <ol className="flex items-center gap-1.5">
           <li>
             <Link href="/" className="hover:text-gray-900 transition-colors">
-              Home
+              {t("models.breadcrumbHome")}
             </Link>
           </li>
           <li aria-hidden="true">/</li>
           <li className="text-gray-900 font-medium" aria-current="page">
-            Models
+            {t("models.breadcrumbModels")}
           </li>
         </ol>
       </nav>
 
       <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-3">
-        AI Model Pricing
+        {t("models.indexHeading")}
       </h1>
       <p className="text-gray-600 mb-10 max-w-2xl">
-        Token costs, context windows, and feature support for all{" "}
-        {activeModels.length} models. Click a model for full pricing details and
-        cost examples.
+        {t("models.indexSubheading", { count: String(activeModels.length) })}
       </p>
 
       {/* Per-provider sections */}
@@ -129,19 +133,19 @@ export default function ModelsPage() {
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
                     <th className="text-left px-4 py-3 font-semibold text-gray-700">
-                      Model
+                      {t("models.colModel")}
                     </th>
                     <th className="text-right px-4 py-3 font-semibold text-gray-700">
-                      Input / 1M
+                      {t("models.colInput")}
                     </th>
                     <th className="text-right px-4 py-3 font-semibold text-gray-700">
-                      Output / 1M
+                      {t("models.colOutput")}
                     </th>
                     <th className="text-right px-4 py-3 font-semibold text-gray-700">
-                      Context
+                      {t("models.colContext")}
                     </th>
                     <th className="text-left px-4 py-3 font-semibold text-gray-700">
-                      Features
+                      {t("models.colFeatures")}
                     </th>
                     <th className="px-4 py-3"></th>
                   </tr>
@@ -173,17 +177,17 @@ export default function ModelsPage() {
                         <div className="flex flex-wrap gap-1">
                           {model.supports_context_caching && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Caching
+                              {t("models.featureCaching")}
                             </span>
                           )}
                           {model.supports_batch_api && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              Batch
+                              {t("models.featureBatch")}
                             </span>
                           )}
                           {model.thinking_model && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              Thinking
+                              {t("models.featureThinking")}
                             </span>
                           )}
                         </div>
@@ -192,9 +196,9 @@ export default function ModelsPage() {
                         <Link
                           href={`/models/${model.id}`}
                           className="text-xs text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap"
-                          aria-label={`View ${model.display_name} pricing details`}
+                          aria-label={t("models.detailsAriaLabel", { model: model.display_name })}
                         >
-                          Details &rarr;
+                          {t("models.detailsLink")}
                         </Link>
                       </td>
                     </tr>
@@ -209,13 +213,13 @@ export default function ModelsPage() {
       {/* CTA */}
       <div className="mt-12 pt-8 border-t border-gray-100">
         <p className="text-sm text-gray-600 mb-4">
-          Want to calculate exact costs for your specific workload?
+          {t("models.openCalculatorCta")}
         </p>
         <Link
           href="/"
           className="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-semibold px-5 py-3 rounded-lg hover:bg-gray-700 transition-colors"
         >
-          Open the token calculator
+          {t("models.openCalculatorButton")}
           <span aria-hidden="true">&rarr;</span>
         </Link>
       </div>

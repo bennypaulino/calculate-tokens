@@ -12,7 +12,7 @@ describe('AC-3.4.1 — jest-axe: zero critical/serious WCAG violations', () => {
         <label for="prompt">Prompt</label>
         <textarea
           id="prompt"
-          aria-label="Enter your AI prompt or text"
+          aria-label="Prompt textarea"
           role="textbox"
         ></textarea>
       </body></html>
@@ -77,7 +77,7 @@ describe('AC-3.4.1 — jest-axe: zero critical/serious WCAG violations', () => {
       <html><body>
         <main>
           <label for="ta">Prompt</label>
-          <textarea id="ta" aria-label="Enter your AI prompt or text" role="textbox"></textarea>
+          <textarea id="ta" aria-label="Prompt textarea" role="textbox"></textarea>
           <label for="sl">Output tokens</label>
           <input
             id="sl"

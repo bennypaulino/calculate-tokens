@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
+import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, locale } from "@/lib/i18n";
 
 interface Model {
   id: string;
@@ -27,14 +28,16 @@ function getActiveModels(): Model[] {
   );
 }
 
+const dateLocale = locale === 'en' ? 'en-US' : locale;
+
 function formatContextWindow(tokens: number): string {
   if (tokens >= 1_000_000) {
-    return `${(tokens / 1_000_000).toLocaleString("en-US", { maximumFractionDigits: 1 })}M`;
+    return `${(tokens / 1_000_000).toLocaleString(dateLocale, { maximumFractionDigits: 1 })}M`;
   }
   if (tokens >= 1_000) {
-    return `${(tokens / 1_000).toLocaleString("en-US", { maximumFractionDigits: 0 })}K`;
+    return `${(tokens / 1_000).toLocaleString(dateLocale, { maximumFractionDigits: 0 })}K`;
   }
-  return tokens.toLocaleString("en-US");
+  return tokens.toLocaleString(dateLocale);
 }
 
 function formatTokenizer(tokenizer: string): string {
@@ -57,7 +60,7 @@ function formatCost(cost: number): string {
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
+  return new Date(iso).toLocaleDateString(dateLocale, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -114,8 +117,13 @@ export async function generateMetadata({
   }
 
   const { modelA, modelB } = pair;
-  const title = `${modelA.display_name} vs ${modelB.display_name} — Pricing & Token Cost Comparison`;
-  const description = `Compare ${modelA.display_name} and ${modelB.display_name} token pricing side by side. Input costs $${modelA.input_cost_per_1m}/1M vs $${modelB.input_cost_per_1m}/1M. Calculate exact API costs for your workload.`;
+  const title = t("compare.pageTitle", { modelA: modelA.display_name, modelB: modelB.display_name });
+  const description = t("compare.pageDescription", {
+    modelA: modelA.display_name,
+    modelB: modelB.display_name,
+    inputA: String(modelA.input_cost_per_1m),
+    inputB: String(modelB.input_cost_per_1m),
+  });
 
   return {
     title,
@@ -123,16 +131,17 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `https://calculatetokens.com/compare/${slug}`,
-      siteName: "Calculate Tokens",
+      url: `${getBaseUrl()}/compare/${slug}`,
+      siteName: t("meta.siteName"),
       images: [
         {
           url: "/ai-token-cost-calculator.jpg",
           width: 1200,
           height: 630,
-          alt: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
+          alt: t("meta.siteTitle"),
         },
       ],
+      locale: getLocaleConfig().ogLocale,
     },
     twitter: {
       card: "summary_large_image",
@@ -141,7 +150,8 @@ export async function generateMetadata({
       images: ["/ai-token-cost-calculator.jpg"],
     },
     alternates: {
-      canonical: `https://calculatetokens.com/compare/${slug}`,
+      canonical: `${getBaseUrl()}/compare/${slug}`,
+      languages: getHreflangAlternates(`/compare/${slug}`),
     },
   };
 }
@@ -158,13 +168,13 @@ export default async function ComparisonPage({
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          Comparison not found
+          {t("compare.notFound")}
         </h1>
         <p className="text-gray-600 mb-6">
-          The models in this URL were not found in our database.
+          {t("compare.notFoundBody")}
         </p>
         <Link href="/compare" className="text-blue-600 hover:text-blue-700">
-          View all comparisons
+          {t("compare.viewAllComparisons")}
         </Link>
       </div>
     );
@@ -203,26 +213,49 @@ export default async function ComparisonPage({
     mainEntity: [
       {
         "@type": "Question",
-        name: `Is ${modelA.display_name} cheaper than ${modelB.display_name}?`,
+        name: t("compare.faqCheaperQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
         acceptedAnswer: {
           "@type": "Answer",
           text:
             costA < costB
-              ? `Yes. ${modelA.display_name} is cheaper for typical workloads. At $${modelA.input_cost_per_1m}/1M input tokens and $${modelA.output_cost_per_1m}/1M output tokens, it costs $${costA.toFixed(4)} for 1,000 requests with 500 input and 200 output tokens each — versus $${costB.toFixed(4)} for ${modelB.display_name}.`
-              : `No. ${modelB.display_name} is cheaper for typical workloads. At $${modelB.input_cost_per_1m}/1M input tokens and $${modelB.output_cost_per_1m}/1M output tokens, it costs $${costB.toFixed(4)} for 1,000 requests with 500 input and 200 output tokens each — versus $${costA.toFixed(4)} for ${modelA.display_name}.`,
+              ? t("compare.faqCheaperAYes", {
+                  modelA: modelA.display_name,
+                  modelB: modelB.display_name,
+                  inputA: formatCost(modelA.input_cost_per_1m),
+                  outputA: formatCost(modelA.output_cost_per_1m),
+                  costA: `$${costA.toFixed(4)}`,
+                  costB: `$${costB.toFixed(4)}`,
+                  pct: savings,
+                })
+              : costB < costA
+              ? t("compare.faqCheaperANo", {
+                  modelA: modelA.display_name,
+                  modelB: modelB.display_name,
+                  inputB: formatCost(modelB.input_cost_per_1m),
+                  outputB: formatCost(modelB.output_cost_per_1m),
+                  costA: `$${costA.toFixed(4)}`,
+                  costB: `$${costB.toFixed(4)}`,
+                  pct: savings,
+                })
+              : t("compare.faqCheaperAEqual", { cost: `$${costA.toFixed(4)}` }),
         },
       },
       {
         "@type": "Question",
-        name: `What is the context window size of ${modelA.display_name} vs ${modelB.display_name}?`,
+        name: t("compare.faqContextQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
         acceptedAnswer: {
           "@type": "Answer",
-          text: `${modelA.display_name} has a ${formatContextWindow(modelA.context_window)} token context window. ${modelB.display_name} has a ${formatContextWindow(modelB.context_window)} token context window.`,
+          text: t("compare.faqContextA", {
+            modelA: modelA.display_name,
+            modelB: modelB.display_name,
+            windowA: formatContextWindow(modelA.context_window),
+            windowB: formatContextWindow(modelB.context_window),
+          }),
         },
       },
       {
         "@type": "Question",
-        name: `Do ${modelA.display_name} or ${modelB.display_name} support context caching?`,
+        name: t("compare.faqCachingQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
         acceptedAnswer: {
           "@type": "Answer",
           text: `${modelA.supports_context_caching ? `${modelA.display_name} supports context caching${modelA.context_caching_discount !== null ? ` with a ${(modelA.context_caching_discount * 100).toFixed(0)}% discount on cached tokens` : ""}.` : `${modelA.display_name} does not support context caching.`} ${modelB.supports_context_caching ? `${modelB.display_name} supports context caching${modelB.context_caching_discount !== null ? ` with a ${(modelB.context_caching_discount * 100).toFixed(0)}% discount on cached tokens` : ""}.` : `${modelB.display_name} does not support context caching.`}`,
@@ -246,19 +279,21 @@ export default async function ComparisonPage({
             className="text-sm text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-1"
           >
             <span aria-hidden="true">&larr;</span>
-            All comparisons
+            {t("compare.allComparisons")}
           </Link>
         </nav>
 
         {/* H1 */}
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
-          {modelA.display_name} vs {modelB.display_name} — Pricing &amp; Token
-          Cost Comparison
+          {modelA.display_name} vs {modelB.display_name} — {t("compare.sideBySidePricing")}
         </h1>
         <p className="text-gray-600 mb-10 text-base">
-          Side-by-side API pricing and tokenizer details for{" "}
-          {modelA.display_name} ({modelA.provider}) and {modelB.display_name} (
-          {modelB.provider}).
+          {t("compare.pageSubheading", {
+            modelA: modelA.display_name,
+            modelB: modelB.display_name,
+            providerA: modelA.provider,
+            providerB: modelB.provider,
+          })}
         </p>
 
         {/* Pricing table */}
@@ -267,7 +302,7 @@ export default async function ComparisonPage({
             id="pricing-table-heading"
             className="text-lg font-semibold text-gray-900 mb-4"
           >
-            Side-by-side pricing
+            {t("compare.sideBySidePricing")}
           </h2>
           <div className="overflow-x-auto rounded-xl border border-gray-200">
             <table className="w-full text-sm">
@@ -277,7 +312,7 @@ export default async function ComparisonPage({
                     scope="col"
                     className="text-left px-4 py-3 font-medium text-gray-700 w-40"
                   >
-                    Feature
+                    {t("compare.featureCol")}
                   </th>
                   <th
                     scope="col"
@@ -299,7 +334,7 @@ export default async function ComparisonPage({
                     scope="row"
                     className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
                   >
-                    Provider
+                    {t("compare.provider")}
                   </th>
                   <td className="px-4 py-3 text-gray-900">{modelA.provider}</td>
                   <td className="px-4 py-3 text-gray-900">{modelB.provider}</td>
@@ -309,7 +344,7 @@ export default async function ComparisonPage({
                     scope="row"
                     className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
                   >
-                    Input (per 1M tokens)
+                    {t("compare.inputPer1M")}
                   </th>
                   <td
                     className="px-4 py-3 text-gray-900 font-mono"
@@ -333,7 +368,7 @@ export default async function ComparisonPage({
                     scope="row"
                     className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
                   >
-                    Output (per 1M tokens)
+                    {t("compare.outputPer1M")}
                   </th>
                   <td className="px-4 py-3 text-gray-900 font-mono">
                     {formatCost(modelA.output_cost_per_1m)}
@@ -347,21 +382,21 @@ export default async function ComparisonPage({
                     scope="row"
                     className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
                   >
-                    Context caching
+                    {t("compare.contextCaching")}
                   </th>
                   <td className="px-4 py-3 text-gray-900">
                     {modelA.supports_context_caching
                       ? modelA.context_caching_discount !== null
-                        ? `Yes — ${(modelA.context_caching_discount * 100).toFixed(0)}% off cached tokens`
-                        : "Yes"
-                      : "No"}
+                        ? t("compare.cachingYesDiscount", { pct: String((modelA.context_caching_discount * 100).toFixed(0)) })
+                        : t("compare.cachingYes")
+                      : t("compare.cachingNo")}
                   </td>
                   <td className="px-4 py-3 text-gray-900">
                     {modelB.supports_context_caching
                       ? modelB.context_caching_discount !== null
-                        ? `Yes — ${(modelB.context_caching_discount * 100).toFixed(0)}% off cached tokens`
-                        : "Yes"
-                      : "No"}
+                        ? t("compare.cachingYesDiscount", { pct: String((modelB.context_caching_discount * 100).toFixed(0)) })
+                        : t("compare.cachingYes")
+                      : t("compare.cachingNo")}
                   </td>
                 </tr>
                 <tr>
@@ -369,17 +404,17 @@ export default async function ComparisonPage({
                     scope="row"
                     className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
                   >
-                    Batch API discount
+                    {t("compare.batchApiDiscount")}
                   </th>
                   <td className="px-4 py-3 text-gray-900">
                     {modelA.supports_batch_api && modelA.batch_api_discount !== null
-                      ? `${(modelA.batch_api_discount * 100).toFixed(0)}% off`
-                      : "Not available"}
+                      ? t("compare.batchOff", { pct: String((modelA.batch_api_discount * 100).toFixed(0)) })
+                      : t("compare.batchNotAvailable")}
                   </td>
                   <td className="px-4 py-3 text-gray-900">
                     {modelB.supports_batch_api && modelB.batch_api_discount !== null
-                      ? `${(modelB.batch_api_discount * 100).toFixed(0)}% off`
-                      : "Not available"}
+                      ? t("compare.batchOff", { pct: String((modelB.batch_api_discount * 100).toFixed(0)) })
+                      : t("compare.batchNotAvailable")}
                   </td>
                 </tr>
                 <tr>
@@ -387,13 +422,13 @@ export default async function ComparisonPage({
                     scope="row"
                     className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
                   >
-                    Context window
+                    {t("compare.contextWindow")}
                   </th>
                   <td className="px-4 py-3 text-gray-900 font-mono">
-                    {formatContextWindow(modelA.context_window)} tokens
+                    {t("compare.contextTokens", { count: formatContextWindow(modelA.context_window) })}
                   </td>
                   <td className="px-4 py-3 text-gray-900 font-mono">
-                    {formatContextWindow(modelB.context_window)} tokens
+                    {t("compare.contextTokens", { count: formatContextWindow(modelB.context_window) })}
                   </td>
                 </tr>
                 <tr>
@@ -401,7 +436,7 @@ export default async function ComparisonPage({
                     scope="row"
                     className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
                   >
-                    Tokenizer
+                    {t("compare.tokenizer")}
                   </th>
                   <td className="px-4 py-3 text-gray-700 text-xs">
                     {formatTokenizer(modelA.tokenizer)}
@@ -421,14 +456,16 @@ export default async function ComparisonPage({
             id="example-heading"
             className="text-lg font-semibold text-gray-900 mb-2"
           >
-            Real-world cost example
+            {t("compare.realWorldExample")}
           </h2>
           <p className="text-gray-600 text-sm mb-6">
-            {EXAMPLE_REQUESTS.toLocaleString()} API requests per month, each
-            with {EXAMPLE_INPUT_TOKENS} input tokens and {EXAMPLE_OUTPUT_TOKENS}{" "}
-            output tokens (
-            {(totalInputTokens / 1_000).toLocaleString()}K input +{" "}
-            {(totalOutputTokens / 1_000).toLocaleString()}K output total).
+            {t("compare.exampleDesc", {
+              requests: EXAMPLE_REQUESTS.toLocaleString(dateLocale),
+              inputTokens: String(EXAMPLE_INPUT_TOKENS),
+              outputTokens: String(EXAMPLE_OUTPUT_TOKENS),
+              totalInputK: String(totalInputTokens / 1_000),
+              totalOutputK: String(totalOutputTokens / 1_000),
+            })}
           </p>
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="border border-gray-200 rounded-xl p-5 bg-white">
@@ -439,8 +476,8 @@ export default async function ComparisonPage({
                 ${costA.toFixed(4)}
               </div>
               <div className="text-xs text-gray-500">
-                Input: ${((totalInputTokens / 1_000_000) * modelA.input_cost_per_1m).toFixed(4)} +
-                Output: ${((totalOutputTokens / 1_000_000) * modelA.output_cost_per_1m).toFixed(4)}
+                {t("compare.inputLabel")} ${((totalInputTokens / 1_000_000) * modelA.input_cost_per_1m).toFixed(4)} +
+                {t("compare.outputLabel")} ${((totalOutputTokens / 1_000_000) * modelA.output_cost_per_1m).toFixed(4)}
               </div>
             </div>
             <div className="border border-gray-200 rounded-xl p-5 bg-white">
@@ -451,21 +488,18 @@ export default async function ComparisonPage({
                 ${costB.toFixed(4)}
               </div>
               <div className="text-xs text-gray-500">
-                Input: ${((totalInputTokens / 1_000_000) * modelB.input_cost_per_1m).toFixed(4)} +
-                Output: ${((totalOutputTokens / 1_000_000) * modelB.output_cost_per_1m).toFixed(4)}
+                {t("compare.inputLabel")} ${((totalInputTokens / 1_000_000) * modelB.input_cost_per_1m).toFixed(4)} +
+                {t("compare.outputLabel")} ${((totalOutputTokens / 1_000_000) * modelB.output_cost_per_1m).toFixed(4)}
               </div>
             </div>
           </div>
           {pricierCost > cheaperCost && (
             <p className="text-sm text-gray-700 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
-              <span className="font-semibold">{cheaperModel.display_name}</span>{" "}
-              is{" "}
-              <span className="font-semibold text-blue-700">{savings}% cheaper</span>{" "}
-              for this workload — saving{" "}
-              <span className="font-mono font-semibold">
-                ${(pricierCost - cheaperCost).toFixed(4)}
-              </span>{" "}
-              per month at this volume.
+              {t("compare.cheaperSummary", {
+                model: cheaperModel.display_name,
+                pct: savings,
+                saving: `$${(pricierCost - cheaperCost).toFixed(4)}`,
+              })}
             </p>
           )}
         </section>
@@ -476,65 +510,53 @@ export default async function ComparisonPage({
             id="faq-heading"
             className="text-lg font-semibold text-gray-900 mb-6"
           >
-            Frequently asked questions
+            {t("compare.faqHeading")}
           </h2>
           <dl className="space-y-6">
             <div>
               <dt className="font-medium text-gray-900 mb-1">
-                Is {modelA.display_name} cheaper than {modelB.display_name}?
+                {t("compare.faqCheaperQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
               </dt>
               <dd className="text-gray-600 text-sm leading-relaxed">
-                {costA < costB ? (
-                  <>
-                    Yes, {modelA.display_name} is cheaper for the typical
-                    workload above. At {formatCost(modelA.input_cost_per_1m)}/1M
-                    input and {formatCost(modelA.output_cost_per_1m)}/1M output
-                    tokens, it costs{" "}
-                    <span className="font-mono">${costA.toFixed(4)}</span>{" "}
-                    versus{" "}
-                    <span className="font-mono">${costB.toFixed(4)}</span> for{" "}
-                    {modelB.display_name} — a {savings}% difference. Costs scale
-                    linearly, so larger workloads amplify this gap.
-                  </>
-                ) : costB < costA ? (
-                  <>
-                    No, {modelB.display_name} is cheaper for the typical
-                    workload above. At {formatCost(modelB.input_cost_per_1m)}/1M
-                    input and {formatCost(modelB.output_cost_per_1m)}/1M output
-                    tokens, it costs{" "}
-                    <span className="font-mono">${costB.toFixed(4)}</span>{" "}
-                    versus{" "}
-                    <span className="font-mono">${costA.toFixed(4)}</span> for{" "}
-                    {modelA.display_name} — a {savings}% difference.
-                  </>
-                ) : (
-                  <>
-                    Both models cost the same for this workload ($
-                    <span className="font-mono">{costA.toFixed(4)}</span>).
-                  </>
-                )}
+                {costA < costB
+                  ? t("compare.faqCheaperAYes", {
+                      modelA: modelA.display_name,
+                      modelB: modelB.display_name,
+                      inputA: formatCost(modelA.input_cost_per_1m),
+                      outputA: formatCost(modelA.output_cost_per_1m),
+                      costA: `$${costA.toFixed(4)}`,
+                      costB: `$${costB.toFixed(4)}`,
+                      pct: savings,
+                    })
+                  : costB < costA
+                  ? t("compare.faqCheaperANo", {
+                      modelA: modelA.display_name,
+                      modelB: modelB.display_name,
+                      inputB: formatCost(modelB.input_cost_per_1m),
+                      outputB: formatCost(modelB.output_cost_per_1m),
+                      costA: `$${costA.toFixed(4)}`,
+                      costB: `$${costB.toFixed(4)}`,
+                      pct: savings,
+                    })
+                  : t("compare.faqCheaperAEqual", { cost: `$${costA.toFixed(4)}` })}
               </dd>
             </div>
             <div>
               <dt className="font-medium text-gray-900 mb-1">
-                What is the context window of {modelA.display_name} vs{" "}
-                {modelB.display_name}?
+                {t("compare.faqContextQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
               </dt>
               <dd className="text-gray-600 text-sm leading-relaxed">
-                {modelA.display_name} supports a{" "}
-                <strong>{formatContextWindow(modelA.context_window)}</strong>{" "}
-                token context window.{" "}
-                {modelB.display_name} supports a{" "}
-                <strong>{formatContextWindow(modelB.context_window)}</strong>{" "}
-                token context window. A larger context window lets you include
-                more text — documents, conversation history, or code — in a
-                single API call.
+                {t("compare.faqContextA", {
+                  modelA: modelA.display_name,
+                  modelB: modelB.display_name,
+                  windowA: formatContextWindow(modelA.context_window),
+                  windowB: formatContextWindow(modelB.context_window),
+                })}
               </dd>
             </div>
             <div>
               <dt className="font-medium text-gray-900 mb-1">
-                Do {modelA.display_name} or {modelB.display_name} support
-                context caching or batch discounts?
+                {t("compare.faqCachingQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
               </dt>
               <dd className="text-gray-600 text-sm leading-relaxed">
                 {modelA.supports_context_caching
@@ -563,17 +585,16 @@ export default async function ComparisonPage({
             id="cta-heading"
             className="text-base font-semibold text-gray-900 mb-2"
           >
-            Calculate costs for your actual prompt
+            {t("compare.ctaHeading")}
           </h2>
           <p className="text-sm text-gray-600 mb-4">
-            Paste your prompt into the calculator and get exact token counts
-            using each model&apos;s real tokenizer — all in your browser.
+            {t("compare.ctaBody")}
           </p>
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 bg-gray-900 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
           >
-            Open calculator
+            {t("compare.openCalculator")}
             <span aria-hidden="true">&rarr;</span>
           </Link>
         </section>
@@ -582,12 +603,12 @@ export default async function ComparisonPage({
         <footer className="text-xs text-gray-500 border-t border-gray-100 pt-6 space-y-1">
           <p>
             <strong className="font-medium text-gray-700">
-              Data provenance:
+              {t("compare.dataProvenance")}
             </strong>{" "}
-            Prices sourced directly from provider pricing pages.
+            {t("compare.pricesSourced")}
           </p>
           <p>
-            {modelA.display_name} prices last verified{" "}
+            {t("compare.pricesLastVerified", { model: modelA.display_name })}{" "}
             <time dateTime={modelA.last_human_verified}>{lastVerifiedA}</time>{" "}
             from{" "}
             <a
@@ -596,12 +617,12 @@ export default async function ComparisonPage({
               rel="noopener noreferrer"
               className="underline hover:text-gray-700"
             >
-              {modelA.provider} pricing page
+              {t("compare.pricingPageLink", { provider: modelA.provider })}
             </a>
             .
           </p>
           <p>
-            {modelB.display_name} prices last verified{" "}
+            {t("compare.pricesLastVerified", { model: modelB.display_name })}{" "}
             <time dateTime={modelB.last_human_verified}>{lastVerifiedB}</time>{" "}
             from{" "}
             <a
@@ -610,13 +631,12 @@ export default async function ComparisonPage({
               rel="noopener noreferrer"
               className="underline hover:text-gray-700"
             >
-              {modelB.provider} pricing page
+              {t("compare.pricingPageLink", { provider: modelB.provider })}
             </a>
             .
           </p>
           <p className="pt-1">
-            Prices may change. Always verify against the provider&apos;s current
-            pricing page before making purchasing decisions.
+            {t("compare.pricesDisclaimer")}
           </p>
         </footer>
       </div>

@@ -3,6 +3,7 @@
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useCalculatorStore } from '../../store/calculatorStore';
 import { renderTokenHighlights, getTokenStringsForHighlight } from '../../lib/highlighter';
+import { t } from '../../lib/i18n';
 
 const HIGHLIGHT_CHAR_LIMIT = 50_000;
 
@@ -37,7 +38,7 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
     const tokenDisplay = firstState ? (
       firstState.status === 'wasm' ? (
         <>
-          <span className="text-green-600 mr-0.5" title="Exact count" aria-label="Exact count">✓</span>
+          <span className="text-green-600 mr-0.5" title={t('calculator.exactCount')} aria-label={t('calculator.exactCount')}>✓</span>
           {firstState.tokenCount.toLocaleString()} tokens
         </>
       ) : (
@@ -59,6 +60,7 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
           window.umami?.track('tokenize', {
             tokenizer_type: tokenizerType ?? 'heuristic',
             char_count: Math.round(value.length / 100) * 100,
+            locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en',
           });
         }, 2000);
       },
@@ -83,7 +85,7 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
     const handleHighlightToggle = useCallback(() => {
       const next = !highlightEnabled;
       setHighlightEnabled(next);
-      window.umami?.track('token_highlighter_toggled', { enabled: next ? '1' : '0' });
+      window.umami?.track('token_highlighter_toggled', { enabled: next ? '1' : '0', locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
     }, [highlightEnabled]);
 
     // Update mirror div with highlighted tokens — debounced 150ms
@@ -125,10 +127,10 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
     // Determine toggle disabled state and title
     const isToggleDisabled = isWasmLoading;
     const toggleTitle = isToggleDisabled
-      ? 'Loading tokenizer…'
+      ? t('calculator.highlightTooltipLoading')
       : highlightEnabled
-      ? 'Hide token highlights (Shift+H)'
-      : 'Highlight tokens (Shift+H)';
+      ? t('calculator.highlightTooltipOn')
+      : t('calculator.highlightTooltipOff');
 
     // Show unsupported encoding message
     const showEncodingUnsupported = highlightEnabled && highlightEncoding == null;
@@ -159,18 +161,19 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
             role="textbox"
             value={text}
             onChange={handleChange}
-            placeholder="Paste your prompt here to calculate token counts and costs across all models…"
+            placeholder={t('calculator.placeholder')}
             className={[
               'w-full min-h-[160px] sm:min-h-[200px] px-4 py-3 text-sm text-gray-900 border border-gray-300 rounded-xl resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 leading-relaxed',
               showMirror ? 'bg-transparent relative z-10' : 'bg-white',
             ].join(' ')}
-            aria-label="Enter your AI prompt or text"
+            aria-label={t('calculator.ariaLabel')}
+            data-testid="prompt-textarea"
             spellCheck={false}
           />
         </div>
 
         <p className="flex items-center gap-1 text-xs text-gray-500 mt-1.5 px-1">
-          <span aria-hidden="true">🔒</span>Your text is never sent to our servers
+          <span aria-hidden="true">🔒</span>{t('calculator.privacyNote')}
         </p>
 
         <div className="flex items-center justify-between mt-1.5 px-1">
@@ -194,15 +197,15 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
                 isToggleDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
               ].join(' ')}
             >
-              {highlightLoading ? 'Loading…' : 'Highlight tokens'}
+              {highlightLoading ? t('calculator.highlightLoading') : highlightEnabled ? t('calculator.hideHighlights') : t('calculator.highlightTokens')}
             </button>
             {text && (
               <button
                 onClick={() => { setText(''); onTextChange?.(''); }}
                 className="text-xs text-gray-500 hover:text-gray-600 transition-colors"
-                aria-label="Clear text"
+                aria-label={t('calculator.clearText')}
               >
-                Clear
+                {t('calculator.clearText')}
               </button>
             )}
           </div>
@@ -211,7 +214,7 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
         {/* Informational messages below controls */}
         {showCharLimit && (
           <p className="text-xs text-amber-600 mt-1 px-1">
-            Token highlighting is available for inputs up to 50,000 characters.
+            {t('calculator.charLimitWarning')}
           </p>
         )}
         {showEncodingUnsupported && (

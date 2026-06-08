@@ -1,6 +1,7 @@
 'use client';
 
 import type { ModelEntry } from '../../types/prices';
+import { t } from '../../lib/i18n';
 
 interface ModelFilterProps {
   models: ModelEntry[];
@@ -38,7 +39,7 @@ export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll
       {/* Header row */}
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-          Models
+          {t('calculator.modelsHeading')}
         </span>
         {isFiltered && (
           <button
@@ -46,7 +47,7 @@ export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll
             onClick={onSelectAll}
             className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
           >
-            Compare All ({totalCount})
+            {t('calculator.compareAll', { count: totalCount })}
           </button>
         )}
       </div>
@@ -71,7 +72,7 @@ export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll
                   'text-gray-700 hover:bg-gray-50 transition-colors select-none',
                   wouldViolateMin ? 'opacity-50' : '',
                 ].join(' ')}
-                title={wouldViolateMin ? 'At least 2 models must remain selected' : undefined}
+                title={wouldViolateMin ? t('calculator.modelsMinSelectedTooltip') : undefined}
               >
                 <input
                   type="checkbox"

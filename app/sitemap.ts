@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next';
 import pricesData from '../public/api/v1/prices.json';
+import { locale, getBaseUrl } from '../src/lib/i18n';
 
 export const dynamic = 'force-static';
 
-const BASE_URL = 'https://calculatetokens.com';
+const BASE_URL = getBaseUrl();
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const activeModels = pricesData.models.filter((m) => m.active);
@@ -38,18 +39,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1.0,
     },
-    {
+    ...(locale === 'en' ? [{
       url: `${BASE_URL}/learn/what-is-a-token`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: 'monthly' as const,
       priority: 0.8,
-    },
-    {
+    }] : []),
+    ...(locale === 'en' ? [{
       url: `${BASE_URL}/privacy`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: 'monthly' as const,
       priority: 0.3,
-    },
+    }] : []),
     {
       url: `${BASE_URL}/compare`,
       lastModified: new Date(),

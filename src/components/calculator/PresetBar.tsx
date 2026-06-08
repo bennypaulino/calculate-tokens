@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import presets from '../../data/presets.json';
+import { t } from '../../lib/i18n';
 
 interface Preset {
   id: string;
@@ -21,12 +22,12 @@ export default function PresetBar({ onSelect, activePresetId, className }: Props
 
   const handleSelect = (preset: Preset) => {
     onSelect(preset.text, preset.id);
-    window.umami?.track('preset_selected', { preset_name: preset.id });
+    window.umami?.track('preset_selected', { preset_name: preset.id, locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
   };
 
   return (
     <div className={className ?? 'flex items-center gap-2 flex-wrap'}>
-      <span className="text-xs text-gray-500 font-medium shrink-0">Presets:</span>
+      <span className="text-xs text-gray-500 font-medium shrink-0">{t('presets.label')}</span>
       {(presets as Preset[]).map((preset) => {
         const isActive = preset.id === activePresetId;
         const tooltipText = preset.charCountWarning
