@@ -19,11 +19,26 @@ const ALWAYS_ENGLISH = new Set([
   //   DE: "Kontextfenster", ES: "ventana de contexto",
   //   FR: "fenêtre de contexte", PT-BR: "janela de contexto", JA: "コンテキストウィンドウ"
 ])
-// Keys explicitly approved to be identical to English — interpolation-only or technical filenames.
+// Keys explicitly approved to be identical to English — interpolation-only, technical filenames,
+// or industry-standard terms kept in English per the technical glossary.
 // Add here (with comment) rather than suppressing whole prefixes.
 const EXEMPT_KEYS = new Set([
-  'compare.contextTokens',   // "{{count}} tokens" — interpolation only, no translatable text
-  'models.pricingSource',    // "prices.json" — technical filename, not user-facing text
+  // Interpolation-only — no human-readable text to translate
+  'compare.contextTokens',   // "{{count}} tokens"
+  // Technical filenames / identifiers
+  'models.pricingSource',    // "prices.json"
+  // Technical ML/API terms — universally used in English across all locales
+  'compare.tokenizer',       // "Tokenizer"
+  'models.attrTokenizer',    // "Tokenizer" (model detail attribute)
+  'models.featureBatch',     // "Batch" — same concept as spec technical glossary 'batch'
+  'models.featureCaching',   // "Caching" — infrastructure term
+  // Pricing column headers — mixed technical notation kept in English for brevity
+  'models.colInput',         // "Input / 1M"
+  'models.colOutput',        // "Output / 1M"
+  // Terse UI labels intentionally kept in English
+  'compare.inputLabel',      // "Input:"
+  'compare.outputLabel',     // "Output:"
+  'models.detailsLink',      // "Details →"
 ])
 
 function flattenPairs(obj, prefix = '') {
