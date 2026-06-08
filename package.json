@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-headers.js",
+    "prebuild": "node scripts/generate-headers.js && node scripts/build-workers.js",
     "build": "next build && node scripts/compute-csp-hashes.js",
     "start": "next start",
     "check:bundle": "node scripts/check-bundle-size.js",
@@ -35,6 +35,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "ajv-cli": "^5.0.0",
     "axe-playwright": "^2.2.2",
+    "esbuild": "^0.28.0",
     "jest-axe": "^10.0.0",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4",

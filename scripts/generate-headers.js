@@ -19,12 +19,27 @@ if (!mode || (mode !== 'analytics' && mode !== 'adsense')) {
 
 const HEADERS_PATH = path.resolve(__dirname, '../public/_headers');
 
-const SHARED_HEADERS = [
+// In adsense mode the workers subdomain (workers.calculatetokens.com) serves the
+// worker bundles cross-origin. Module workers require CORS, so the subdomain must
+// send Access-Control-Allow-Origin and Cross-Origin-Resource-Policy headers.
+const BASE_HEADERS = [
   'X-Frame-Options: DENY',
   'X-Content-Type-Options: nosniff',
   'Referrer-Policy: strict-origin-when-cross-origin',
   'Permissions-Policy: camera=(), microphone=(), geolocation=()',
-].map(h => `  ${h}`).join('\n');
+];
+
+const ADSENSE_EXTRA_HEADERS = [
+  'Access-Control-Allow-Origin: *',
+  'Cross-Origin-Resource-Policy: cross-origin',
+];
+
+const sharedHeaderLines =
+  mode === 'adsense'
+    ? [...BASE_HEADERS, ...ADSENSE_EXTRA_HEADERS]
+    : BASE_HEADERS;
+
+const SHARED_HEADERS = sharedHeaderLines.map(h => `  ${h}`).join('\n');
 
 const ANALYTICS_CSP =
   "default-src 'self'; " +

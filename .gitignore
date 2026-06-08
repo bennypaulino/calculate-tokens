@@ -47,3 +47,6 @@ specs/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated worker bundles (produced by scripts/build-workers.js at build time)
+public/*.worker.js
