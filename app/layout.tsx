@@ -60,8 +60,8 @@ function LogoMark() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 32 32"
-      width="24"
-      height="24"
+      width="28"
+      height="28"
       role="img"
       aria-hidden="true"
     >
@@ -116,7 +116,7 @@ export default function RootLayout({
               aria-label={t("nav.home")}
             >
               <LogoMark />
-              <span className="font-semibold tracking-tight text-sm leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+              <span className="font-semibold tracking-tight text-base leading-none" style={{ fontFamily: 'var(--font-display)' }}>
                 <span className="text-ct-strong">Calculate</span>
                 <span className="text-ct-muted ml-1">Tokens</span>
               </span>
