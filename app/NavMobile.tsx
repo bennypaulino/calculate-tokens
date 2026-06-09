@@ -4,6 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { t } from "../src/lib/i18n";
 
+const LOCALES = [
+  { label: 'EN', href: 'https://calculatetokens.com/' },
+  { label: 'DE', href: 'https://de.calculatetokens.com/' },
+  { label: 'ES', href: 'https://es.calculatetokens.com/' },
+  { label: 'FR', href: 'https://fr.calculatetokens.com/' },
+  { label: 'PT', href: 'https://pt-br.calculatetokens.com/' },
+];
+
 export default function NavMobile() {
   const [open, setOpen] = useState(false);
 
@@ -63,6 +71,18 @@ export default function NavMobile() {
               {t("nav.privacy")}
             </Link>
           </nav>
+          <div className="border-t border-ct-border px-6 py-3 flex items-center gap-1" role="navigation" aria-label="Switch language">
+            {LOCALES.map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                className="text-xs text-ct-muted hover:text-ct-strong px-2 py-1.5 transition-colors"
+                onClick={() => setOpen(false)}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
         </div>
       )}
     </>

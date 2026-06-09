@@ -139,7 +139,7 @@ export default function RootLayout({
               <div
                 role="navigation"
                 aria-label={t("langSwitcher.ariaLabel")}
-                className="flex items-center gap-1 text-xs sm:border-l sm:border-ct-border-subtle sm:pl-4 sm:ml-2"
+                className="hidden sm:flex items-center gap-1 text-xs sm:border-l sm:border-ct-border-subtle sm:pl-4 sm:ml-2"
               >
                 {Object.entries(LOCALE_URLS).map(([loc, url]) => (
                   <a
