@@ -94,12 +94,12 @@ export default function RootLayout({
               >
                 {t("nav.privacy")}
               </Link>
-              <nav aria-label={t("langSwitcher.ariaLabel")} className="flex items-center gap-2 text-xs text-gray-500 border-l border-gray-200 pl-4 ml-2">
+              <nav aria-label={t("langSwitcher.ariaLabel")} className="flex items-center gap-1 text-xs text-gray-500 border-l border-gray-200 pl-4 ml-2">
                 {Object.entries(LOCALE_URLS).map(([loc, url]) => (
                   <a
                     key={loc}
                     href={url}
-                    className={`hover:text-gray-900 transition-colors ${loc === locale ? "font-bold text-gray-900 underline" : ""}`}
+                    className={`inline-flex items-center justify-center min-w-[24px] min-h-[24px] px-1 rounded hover:text-gray-900 transition-colors ${loc === locale ? "font-bold text-gray-900 underline" : ""}`}
                     aria-current={loc === locale ? "true" : undefined}
                   >
                     {LOCALE_LABELS[loc]}
