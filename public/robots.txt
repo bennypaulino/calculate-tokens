@@ -1,9 +1,13 @@
 User-agent: *
 Allow: /
 Allow: /api/v1/prices.json
-Sitemap: https://calculatetokens.com/sitemap.xml
-Sitemap: https://calculatetokens.com/sitemap_index.xml
 
 # LLM content index
 Allow: /llms.txt
 Allow: /llms-full.txt
+
+# Internal Next.js build manifests — not intended for crawlers
+Disallow: /__next*
+
+Sitemap: https://calculatetokens.com/sitemap.xml
+Sitemap: https://calculatetokens.com/sitemap_index.xml
