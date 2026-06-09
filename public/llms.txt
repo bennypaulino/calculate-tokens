@@ -1,0 +1,36 @@
+# Calculate Tokens
+
+> Browser-native LLM token calculator — exact per-model tokenization and real-time USD cost estimates for all major AI models, entirely client-side. Your text never leaves your browser.
+
+Calculate Tokens runs each model's actual tokenizer compiled to WebAssembly in a dedicated Web Worker, so token counts are exact — not approximations based on character division. Most token calculators use OpenAI's o200k_base for every model, which produces ~65% error on Gemini and ~32% error on Llama 3. This tool uses the correct tokenizer per model family. Available in English, German, Spanish, French, and Portuguese (BR).
+
+## Core Tools
+
+- [Token Calculator](https://calculatetokens.com/): Paste any prompt and instantly see token counts and USD costs side-by-side across all 9 major models. No server calls — tokenization runs in browser via WebAssembly.
+- [All Models & Pricing](https://calculatetokens.com/models): Full list of supported models with current input/output pricing, context window sizes, batch API discounts, and caching support.
+- [What Is a Token?](https://calculatetokens.com/learn/what-is-a-token): Plain-English explanation of LLM tokenization, why token counts vary by model, and how API pricing works.
+
+## Model Detail Pages
+
+- [GPT-4o](https://calculatetokens.com/models/gpt-4o): OpenAI. Tokenizer: o200k_base. Input $2.50/M, Output $10.00/M. Context: 128K tokens.
+- [GPT-4.1](https://calculatetokens.com/models/gpt-4-1): OpenAI. Tokenizer: o200k_base. Input $2.00/M, Output $8.00/M. Context: 1M tokens.
+- [o4-mini](https://calculatetokens.com/models/o4-mini): OpenAI. Thinking model. Tokenizer: o200k_base. Input $1.10/M, Output $4.40/M. Context: 200K tokens.
+- [Claude Sonnet 4.6](https://calculatetokens.com/models/claude-sonnet-4-6): Anthropic. Tokenizer: Anthropic SentencePiece. Input $3.00/M, Output $15.00/M. Context: 200K tokens.
+- [Claude Haiku 4.5](https://calculatetokens.com/models/claude-haiku-4-5): Anthropic. Tokenizer: Anthropic SentencePiece. Input $0.80/M, Output $4.00/M. Context: 200K tokens.
+- [Gemini 2.5 Pro](https://calculatetokens.com/models/gemini-2-5-pro): Google. Tokenizer: Gemini-specific (not o200k_base — competitors miscalculate Gemini tokens by ~65%). Input $1.25/M, Output $10.00/M. Context: 1M tokens.
+- [DeepSeek V3](https://calculatetokens.com/models/deepseek-v3): DeepSeek. Tokenizer: LLaMA SentencePiece. Input $0.27/M, Output $1.10/M. Context: 128K tokens.
+- [DeepSeek R1](https://calculatetokens.com/models/deepseek-r1): DeepSeek. Thinking model — thinking tokens bundled in output price (not billed separately). Input $0.55/M, Output $2.19/M. Context: 128K tokens.
+- [Llama 4 Scout](https://calculatetokens.com/models/llama-4-scout): Meta. Tokenizer: heuristic. Input $0.20/M, Output $0.88/M. Context: 10M tokens.
+
+## Model Comparisons
+
+- [GPT-4o vs Claude Sonnet 4.6](https://calculatetokens.com/compare/claude-sonnet-4-6-vs-gpt-4o): Side-by-side token count and cost. Claude uses SentencePiece; GPT-4o uses o200k_base — same text yields different counts.
+- [GPT-4o vs Gemini 2.5 Pro](https://calculatetokens.com/compare/gemini-2-5-pro-vs-gpt-4o): Highlights tokenizer accuracy gap — most tools get Gemini wrong.
+- [DeepSeek R1 vs o4-mini](https://calculatetokens.com/compare/deepseek-r1-vs-o4-mini): Thinking model cost comparison. R1 bundles thinking in output price; o4-mini bills thinking separately.
+- [Claude Sonnet 4.6 vs DeepSeek V3](https://calculatetokens.com/compare/claude-sonnet-4-6-vs-deepseek-v3): Premium vs budget model cost analysis.
+- [GPT-4.1 vs Gemini 2.5 Pro](https://calculatetokens.com/compare/gemini-2-5-pro-vs-gpt-4-1): Long-context comparison — both support 1M token context windows.
+- [All 36 model comparison pages](https://calculatetokens.com/compare): Every combination of the 9 supported models.
+
+## Optional
+
+- [Privacy Policy](https://calculatetokens.com/privacy): No server-side text processing. Prompt text is never transmitted, logged, or stored.

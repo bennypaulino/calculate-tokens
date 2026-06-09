@@ -1,0 +1,151 @@
+# Calculate Tokens — Full Content
+
+> Browser-native LLM token calculator. Exact per-model tokenization via WebAssembly. Real-time USD cost estimates. Your text never leaves your browser.
+
+---
+
+## What Is a Token?
+
+Source: https://calculatetokens.com/learn/what-is-a-token
+
+A **token** is a chunk of text that an AI language model reads and generates one piece at a time. Tokens are not the same as words, characters, or syllables — they are sub-word units determined by the model's tokenizer, a vocabulary of roughly 50,000–200,000 common fragments learned during training.
+
+For most English text, one token is roughly four characters or three-quarters of a word. Common words like "the", "is", and "and" are each a single token. Longer or rarer words split into multiple tokens: "tokenization" → ["token", "ization"].
+
+### Why token counts vary by model
+
+Every model family uses a different tokenizer with a different vocabulary. The same sentence produces different token counts depending on which model you're using:
+
+- **OpenAI GPT-3.5/4 family**: cl100k_base (~100K vocabulary)
+- **OpenAI GPT-4o, o-series**: o200k_base (~200K vocabulary)
+- **Anthropic Claude**: Custom SentencePiece tokenizer
+- **Google Gemini**: Gemini-specific tokenizer
+- **Meta Llama, DeepSeek**: LLaMA SentencePiece tokenizer
+
+Most token calculators use o200k_base for all models. This produces approximately 65% error on Gemini and 32% error on Llama 3. Calculate Tokens uses the correct tokenizer per model family.
+
+### Why tokens cost money
+
+AI APIs charge per token consumed — both input (your prompt) and output (the model's response). Prices vary significantly: from $0.20/M tokens (Llama 4 Scout) to $15.00/M tokens (Claude Sonnet 4.6 output).
+
+Cost formula: `(input_tokens / 1,000,000) × input_price + (output_tokens / 1,000,000) × output_price`
+
+### Token limits by model (context window)
+
+The context window is the maximum number of tokens a model can process in a single request (input + output combined).
+
+| Model | Context Window |
+|---|---|
+| Llama 4 Scout | 10,000,000 tokens |
+| GPT-4.1 | 1,000,000 tokens |
+| Gemini 2.5 Pro | 1,000,000 tokens |
+| Claude Sonnet 4.6 | 200,000 tokens |
+| Claude Haiku 4.5 | 200,000 tokens |
+| o4-mini | 200,000 tokens |
+| GPT-4o | 128,000 tokens |
+| DeepSeek V3 | 128,000 tokens |
+| DeepSeek R1 | 128,000 tokens |
+
+---
+
+## Supported Models & Pricing
+
+Source: https://calculatetokens.com/models
+
+All prices in USD per 1 million tokens. Verified against provider pricing pages.
+
+### GPT-4o (OpenAI)
+- Tokenizer: o200k_base
+- Input: $2.50/M | Output: $10.00/M
+- Context window: 128,000 tokens
+- Batch API: 50% discount
+- Context caching: supported
+
+### GPT-4.1 (OpenAI)
+- Tokenizer: o200k_base
+- Input: $2.00/M | Output: $8.00/M
+- Context window: 1,000,000 tokens
+- Batch API: 50% discount
+
+### o4-mini (OpenAI)
+- Tokenizer: o200k_base
+- Thinking model: yes (thinking tokens billed separately on top of output)
+- Input: $1.10/M | Output: $4.40/M
+- Context window: 200,000 tokens
+- Batch API: 50% discount
+
+### Claude Sonnet 4.6 (Anthropic)
+- Tokenizer: Anthropic SentencePiece
+- Input: $3.00/M | Output: $15.00/M
+- Context window: 200,000 tokens
+- Context caching: supported (90% discount on cached input)
+- Batch API: 50% discount
+
+### Claude Haiku 4.5 (Anthropic)
+- Tokenizer: Anthropic SentencePiece
+- Input: $0.80/M | Output: $4.00/M
+- Context window: 200,000 tokens
+- Context caching: supported
+- Batch API: 50% discount
+
+### Gemini 2.5 Pro (Google)
+- Tokenizer: Gemini-specific (important: not o200k_base)
+- Input: $1.25/M | Output: $10.00/M
+- Context window: 1,000,000 tokens
+- Note: Most token calculators incorrectly use o200k_base for Gemini, producing ~65% token count error.
+
+### DeepSeek V3 (DeepSeek)
+- Tokenizer: LLaMA SentencePiece
+- Input: $0.27/M | Output: $1.10/M
+- Context window: 128,000 tokens
+- Batch API: 50% discount
+
+### DeepSeek R1 (DeepSeek)
+- Tokenizer: LLaMA SentencePiece
+- Thinking model: yes (thinking tokens bundled in output price — NOT billed separately, unlike OpenAI o-series)
+- Input: $0.55/M | Output: $2.19/M
+- Context window: 128,000 tokens
+
+### Llama 4 Scout (Meta)
+- Tokenizer: heuristic (≈ chars / 4)
+- Input: $0.20/M | Output: $0.88/M
+- Context window: 10,000,000 tokens
+
+---
+
+## Technical Architecture
+
+Calculate Tokens is a browser-native static Next.js application (App Router, output: 'export') deployed on Cloudflare Pages.
+
+### How tokenization works
+
+Each model family runs its actual tokenizer compiled to WebAssembly in a dedicated Web Worker:
+
+| Tokenizer | Models | Implementation |
+|---|---|---|
+| cl100k_base | GPT-3.5/4 family | js-tiktoken (Wasm) |
+| o200k_base | GPT-4o, o-series | js-tiktoken (Wasm) |
+| claude | Claude family | Anthropic tokenizer (community Wasm) |
+| gemini | Gemini family | Gemini tokenizer (community Wasm) |
+| llama | Llama, DeepSeek | SentencePiece Wasm |
+| heuristic | Llama 4 Scout | Math.ceil(chars / 4) |
+
+Workers are lazy-loaded on first textarea input. Until a worker resolves, a heuristic estimate is shown with a `~` prefix. When Wasm resolves, the count updates silently.
+
+### Privacy guarantee
+
+Prompt text never leaves the browser. No URL parameter, no analytics event, no server call ever encodes or transmits textarea content. The share URL encodes only configuration (model selection, output slider, toggle states).
+
+---
+
+## Localization
+
+Available in 5 locales, each on its own subdomain:
+
+- English: https://calculatetokens.com
+- German: https://de.calculatetokens.com
+- Spanish: https://es.calculatetokens.com
+- French: https://fr.calculatetokens.com
+- Portuguese (BR): https://pt-br.calculatetokens.com
+
+All locale builds use the same tokenizer implementations and pricing data. The `context window` term is translated in each locale (DE: Kontextfenster, ES: ventana de contexto, FR: fenêtre de contexte, PT-BR: janela de contexto).
