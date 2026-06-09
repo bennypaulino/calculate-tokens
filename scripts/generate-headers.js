@@ -64,6 +64,23 @@ const ADSENSE_CSP =
 
 const csp = mode === 'analytics' ? ANALYTICS_CSP : ADSENSE_CSP;
 
+// Cache-Control rules — Cloudflare _headers uses most-specific-wins ordering.
+const CACHE_SECTIONS = [
+  // Fingerprinted immutable assets — hash in filename guarantees safe long-term cache
+  '/_next/static/*\n  Cache-Control: public, max-age=31536000, immutable',
+  // WASM and worker bundles — also fingerprinted at build time
+  '/*.wasm\n  Cache-Control: public, max-age=31536000, immutable',
+  '/*.worker.js\n  Cache-Control: public, max-age=31536000, immutable',
+  // Static images and icons (not fingerprinted, 1-day TTL)
+  '/images/*\n  Cache-Control: public, max-age=86400',
+  '/*.svg\n  Cache-Control: public, max-age=86400',
+  '/*.jpg\n  Cache-Control: public, max-age=86400',
+  '/*.png\n  Cache-Control: public, max-age=86400',
+  '/*.ico\n  Cache-Control: public, max-age=86400',
+  // HTML pages — must-revalidate so deploys propagate immediately at CDN
+  '/*.html\n  Cache-Control: public, max-age=0, must-revalidate',
+].join('\n\n');
+
 // Read existing _headers to preserve the /api/v1/prices.json section (set by compute-prices-hash.js).
 let pricesSection =
   '/api/v1/prices.json\n' +
@@ -79,7 +96,8 @@ if (fs.existsSync(HEADERS_PATH)) {
 }
 
 const content =
-  `/*\n${SHARED_HEADERS}\n  Content-Security-Policy: ${csp}\n\n${pricesSection}\n`;
+  `/*\n${SHARED_HEADERS}\n  Content-Security-Policy: ${csp}\n\n` +
+  `${CACHE_SECTIONS}\n\n${pricesSection}\n`;
 
 fs.writeFileSync(HEADERS_PATH, content, 'utf8');
 console.log(`[generate-headers] Wrote public/_headers (mode=${mode})`);
