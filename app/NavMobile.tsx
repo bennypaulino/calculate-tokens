@@ -57,6 +57,13 @@ export default function NavMobile() {
         >
           <nav aria-label="Mobile navigation">
             <Link
+              href="/models"
+              className="block px-6 py-3 text-sm text-ct-body hover:text-ct-strong hover:bg-ct-canvas transition-colors"
+              onClick={() => setOpen(false)}
+            >
+              {t("nav.models")}
+            </Link>
+            <Link
               href="/learn/what-is-a-token"
               className="block px-6 py-3 text-sm text-ct-body hover:text-ct-strong hover:bg-ct-canvas transition-colors"
               onClick={() => setOpen(false)}
