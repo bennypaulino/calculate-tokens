@@ -160,7 +160,7 @@ export default function RootLayout({
                     className={`inline-flex items-center justify-center min-w-[24px] min-h-[24px] px-1 rounded hover:text-ct-strong transition-colors ${
                       loc === locale
                         ? "font-semibold text-ct-accent underline"
-                        : "text-ct-subtle"
+                        : "text-ct-muted"
                     }`}
                     aria-current={loc === locale ? "true" : undefined}
                   >

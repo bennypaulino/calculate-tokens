@@ -65,6 +65,10 @@ const ADSENSE_CSP =
 const csp = mode === 'analytics' ? ANALYTICS_CSP : ADSENSE_CSP;
 
 // Cache-Control rules — Cloudflare _headers uses most-specific-wins ordering.
+// Note: Next.js static export serves HTML at directory paths (e.g. /compare/foo/),
+// NOT at .html paths — so /*.html never fires. The /* catch-all must carry the HTML
+// cache policy. s-maxage lets the CDN edge cache pages; Cloudflare Pages
+// auto-purges the edge cache on every deploy so stale HTML is never served.
 const CACHE_SECTIONS = [
   // Fingerprinted immutable assets — hash in filename guarantees safe long-term cache
   '/_next/static/*\n  Cache-Control: public, max-age=31536000, immutable',
@@ -77,8 +81,6 @@ const CACHE_SECTIONS = [
   '/*.jpg\n  Cache-Control: public, max-age=86400',
   '/*.png\n  Cache-Control: public, max-age=86400',
   '/*.ico\n  Cache-Control: public, max-age=86400',
-  // HTML pages — must-revalidate so deploys propagate immediately at CDN
-  '/*.html\n  Cache-Control: public, max-age=0, must-revalidate',
 ].join('\n\n');
 
 // Read existing _headers to preserve the /api/v1/prices.json section (set by compute-prices-hash.js).
@@ -95,8 +97,14 @@ if (fs.existsSync(HEADERS_PATH)) {
   if (match) pricesSection = match[0].trimEnd();
 }
 
+// HTML pages are served at directory paths (/compare/foo/) not .html paths,
+// so the /* rule must carry the Cache-Control for all HTML. s-maxage allows
+// Cloudflare edge caching while max-age=0 forces browsers to revalidate.
+// Cloudflare Pages purges the edge cache on every deploy.
+const HTML_CACHE = '  Cache-Control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
+
 const content =
-  `/*\n${SHARED_HEADERS}\n  Content-Security-Policy: ${csp}\n\n` +
+  `/*\n${SHARED_HEADERS}\n  Content-Security-Policy: ${csp}\n${HTML_CACHE}\n\n` +
   `${CACHE_SECTIONS}\n\n${pricesSection}\n`;
 
 fs.writeFileSync(HEADERS_PATH, content, 'utf8');
