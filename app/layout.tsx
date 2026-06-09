@@ -3,6 +3,7 @@ import Script from "next/script";
 import Link from "next/link";
 import "./globals.css";
 import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, locale } from "../src/lib/i18n";
+import NavMobile from "./NavMobile";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
@@ -135,7 +136,8 @@ export default function RootLayout({
               >
                 {t("nav.privacy")}
               </Link>
-              <nav
+              <div
+                role="navigation"
                 aria-label={t("langSwitcher.ariaLabel")}
                 className="flex items-center gap-1 text-xs border-l border-ct-border-subtle pl-4 ml-2"
               >
@@ -153,7 +155,8 @@ export default function RootLayout({
                     {LOCALE_LABELS[loc]}
                   </a>
                 ))}
-              </nav>
+              </div>
+              <NavMobile />
             </nav>
           </div>
         </header>
