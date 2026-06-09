@@ -123,7 +123,7 @@ export default function RootLayout({
               </span>
             </Link>
 
-            <nav className="flex items-center gap-6 text-sm text-ct-muted">
+            <nav className="flex items-center gap-2 sm:gap-6 text-sm text-ct-muted">
               <Link
                 href="/learn/what-is-a-token"
                 className="hidden sm:inline hover:text-ct-strong transition-colors"
@@ -139,7 +139,7 @@ export default function RootLayout({
               <div
                 role="navigation"
                 aria-label={t("langSwitcher.ariaLabel")}
-                className="flex items-center gap-1 text-xs border-l border-ct-border-subtle pl-4 ml-2"
+                className="flex items-center gap-1 text-xs sm:border-l sm:border-ct-border-subtle sm:pl-4 sm:ml-2"
               >
                 {Object.entries(LOCALE_URLS).map(([loc, url]) => (
                   <a
