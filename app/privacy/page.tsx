@@ -37,10 +37,10 @@ function Section({
 }) {
   return (
     <section id={id} className="mb-10 scroll-mt-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+      <h2 className="text-xl font-bold text-ct-strong mb-4 pb-2 border-b border-ct-border-subtle">
         {title}
       </h2>
-      <div className="space-y-4 text-gray-700 leading-relaxed">{children}</div>
+      <div className="space-y-4 text-ct-body leading-relaxed">{children}</div>
     </section>
   );
 }
@@ -49,13 +49,13 @@ export default function PrivacyPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <header className="mb-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">
+        <h1 className="text-3xl font-bold text-ct-strong mb-3">
           Privacy Policy
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ct-muted">
           Effective date: 6 June 2026. Last updated: 6 June 2026.
         </p>
-        <p className="mt-4 text-gray-600 leading-relaxed">
+        <p className="mt-4 text-ct-body leading-relaxed">
           Calculate Tokens (&ldquo;we&rdquo;, &ldquo;us&rdquo;) operates{" "}
           <span className="font-medium">calculatetokens.com</span>. This policy
           explains exactly what data we collect, what we do not collect, and
@@ -63,8 +63,8 @@ export default function PrivacyPage() {
         </p>
       </header>
 
-      <nav className="mb-10 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+      <nav className="mb-10 p-4 bg-ct-sunken rounded-lg border border-ct-border">
+        <p className="text-xs font-semibold text-ct-muted uppercase tracking-wider mb-3">
           Contents
         </p>
         <ol className="space-y-1 text-sm columns-2 gap-x-4">
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
             <li key={href}>
               <a
                 href={href}
-                className="text-indigo-600 hover:text-indigo-800 hover:underline"
+                className="text-ct-accent hover:text-ct-accent-h hover:underline"
               >
                 {label}
               </a>
@@ -99,7 +99,7 @@ export default function PrivacyPage() {
           identifiers.
         </p>
 
-        <h3 className="font-semibold text-gray-800">
+        <h3 className="font-semibold text-ct-strong">
           Cloudflare Web Analytics (page-level)
         </h3>
         <ul className="list-disc list-inside ml-2 space-y-1 text-sm">
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
           <li>Core Web Vitals: LCP, CLS, FID/INP, TTFB</li>
         </ul>
 
-        <h3 className="font-semibold text-gray-800 mt-4">
+        <h3 className="font-semibold text-ct-strong mt-4">
           Umami (custom events)
         </h3>
         <p className="text-sm">
@@ -122,16 +122,16 @@ export default function PrivacyPage() {
         <div className="overflow-x-auto mt-2">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left py-2 px-3 font-semibold text-gray-700">
+              <tr className="bg-ct-sunken border-b border-ct-border">
+                <th className="text-left py-2 px-3 font-semibold text-ct-body">
                   Event name
                 </th>
-                <th className="text-left py-2 px-3 font-semibold text-gray-700">
+                <th className="text-left py-2 px-3 font-semibold text-ct-body">
                   Payload
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-ct-border-subtle">
               {[
                 [
                   "tokenize",
@@ -145,11 +145,11 @@ export default function PrivacyPage() {
                 ["compare_tab_switched", "tab_name"],
                 ["token_highlighter_toggled", "(no payload)"],
               ].map(([event, payload]) => (
-                <tr key={event} className="hover:bg-gray-50 transition-colors">
-                  <td className="py-2 px-3 font-mono text-xs text-gray-800">
+                <tr key={event} className="hover:bg-ct-sunken transition-colors">
+                  <td className="py-2 px-3 font-mono text-xs text-ct-strong">
                     {event}
                   </td>
-                  <td className="py-2 px-3 text-gray-600">{payload}</td>
+                  <td className="py-2 px-3 text-ct-body">{payload}</td>
                 </tr>
               ))}
             </tbody>
@@ -158,7 +158,7 @@ export default function PrivacyPage() {
       </Section>
 
       <Section id="what-is-not-collected" title="What is not collected">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-800">
+        <div className="rounded-lg p-4 text-sm text-ct-body border" style={{ background: 'var(--status-exact-tint)', borderColor: 'var(--status-exact-line)' }}>
           <strong>Core privacy guarantee:</strong> The text you paste into the
           calculator is processed entirely inside your browser using
           WebAssembly. It is never transmitted to any server — not to us, not
@@ -177,7 +177,7 @@ export default function PrivacyPage() {
       </Section>
 
       <Section id="third-party-scripts" title="Third-party scripts">
-        <h3 className="font-semibold text-gray-800">
+        <h3 className="font-semibold text-ct-strong">
           Cloudflare Web Analytics
         </h3>
         <p className="text-sm">
@@ -187,14 +187,14 @@ export default function PrivacyPage() {
             href="https://www.cloudflare.com/privacypolicy/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-indigo-600 hover:underline"
+            className="text-ct-accent hover:underline"
           >
             Cloudflare&apos;s privacy policy
           </a>
           .
         </p>
 
-        <h3 className="font-semibold text-gray-800 mt-4">
+        <h3 className="font-semibold text-ct-strong mt-4">
           Umami Analytics (self-hosted)
         </h3>
         <p className="text-sm">
@@ -203,7 +203,7 @@ export default function PrivacyPage() {
           Event payloads are limited to the eight events listed above.
         </p>
 
-        <h3 className="font-semibold text-gray-800 mt-4">
+        <h3 className="font-semibold text-ct-strong mt-4">
           Google AdSense (pending approval)
         </h3>
         <p className="text-sm">
@@ -214,12 +214,12 @@ export default function PrivacyPage() {
             href="https://policies.google.com/privacy"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-indigo-600 hover:underline"
+            className="text-ct-accent hover:underline"
           >
             Google&apos;s privacy policy
           </a>{" "}
           and the opt-out instructions in the{" "}
-          <a href="#opt-out" className="text-indigo-600 hover:underline">
+          <a href="#opt-out" className="text-ct-accent hover:underline">
             Opt-out section
           </a>{" "}
           below. Tokenization accuracy is unaffected by AdSense — all
@@ -244,7 +244,7 @@ export default function PrivacyPage() {
             edge nodes globally.
           </li>
         </ul>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800 mt-4">
+        <div className="rounded-lg p-4 text-sm text-ct-body border mt-4" style={{ background: 'var(--accent-tint)', borderColor: 'var(--accent-line)' }}>
           <strong>EU users — important notice:</strong> Umami custom event
           tracking is disabled for EU users in v1. No Data Processing Agreement
           (DPA) is in place with Railway free tier as required under GDPR for
@@ -268,7 +268,7 @@ export default function PrivacyPage() {
               href="https://www.cloudflare.com/privacypolicy/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline"
+              className="text-ct-accent hover:underline"
             >
               Cloudflare&apos;s privacy policy
             </a>{" "}
@@ -315,7 +315,7 @@ export default function PrivacyPage() {
           To exercise any right, email{" "}
           <a
             href="mailto:privacy@calculatetokens.com"
-            className="text-indigo-600 hover:underline"
+            className="text-ct-accent hover:underline"
           >
             privacy@calculatetokens.com
           </a>
@@ -327,7 +327,7 @@ export default function PrivacyPage() {
         <ul className="list-disc list-inside ml-2 space-y-2 text-sm">
           <li>
             <strong>Umami</strong> — Umami respects the browser{" "}
-            <code className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono">
+            <code className="bg-ct-control px-1 py-0.5 rounded text-xs font-mono">
               Do Not Track
             </code>{" "}
             (DNT) header. Enabling DNT in your browser settings will prevent
@@ -337,7 +337,7 @@ export default function PrivacyPage() {
             <strong>Cloudflare Web Analytics</strong> — Cloudflare does not
             currently offer a visitor-level opt-out mechanism. You may use a
             content blocker that blocks{" "}
-            <code className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono">
+            <code className="bg-ct-control px-1 py-0.5 rounded text-xs font-mono">
               static.cloudflareinsights.com
             </code>
             .
@@ -349,7 +349,7 @@ export default function PrivacyPage() {
               href="https://myadcenter.google.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline"
+              className="text-ct-accent hover:underline"
             >
               My Ad Center
             </a>{" "}
@@ -358,7 +358,7 @@ export default function PrivacyPage() {
               href="https://optout.networkadvertising.org/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline"
+              className="text-ct-accent hover:underline"
             >
               NAI opt-out tool
             </a>
@@ -393,7 +393,7 @@ export default function PrivacyPage() {
             <strong>Email:</strong>{" "}
             <a
               href="mailto:privacy@calculatetokens.com"
-              className="text-indigo-600 hover:underline"
+              className="text-ct-accent hover:underline"
             >
               privacy@calculatetokens.com
             </a>
@@ -402,13 +402,13 @@ export default function PrivacyPage() {
             <strong>Site:</strong>{" "}
             <a
               href="https://calculatetokens.com"
-              className="text-indigo-600 hover:underline"
+              className="text-ct-accent hover:underline"
             >
               calculatetokens.com
             </a>
           </div>
         </address>
-        <p className="text-sm mt-3 text-gray-500">
+        <p className="text-sm mt-3 text-ct-muted">
           We are not required to appoint a Data Protection Officer under
           current processing volumes, but we take privacy obligations
           seriously and respond to all enquiries within 30 days.
@@ -417,24 +417,24 @@ export default function PrivacyPage() {
 
       <section
         id="security"
-        className="mb-10 scroll-mt-6 border-2 border-gray-200 rounded-lg p-6"
+        className="mb-10 scroll-mt-6 border-2 border-ct-border rounded-lg p-6"
       >
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl font-bold text-ct-strong mb-4">
           Security policy
         </h2>
-        <div className="space-y-4 text-gray-700 leading-relaxed text-sm">
+        <div className="space-y-4 text-ct-body leading-relaxed text-sm">
           <p>
             We take security vulnerabilities seriously. If you discover a
             security issue in calculatetokens.com, please report it
             responsibly.
           </p>
 
-          <h3 className="font-semibold text-gray-800">How to report</h3>
+          <h3 className="font-semibold text-ct-strong">How to report</h3>
           <p>
             Email{" "}
             <a
               href="mailto:security@calculatetokens.com"
-              className="text-indigo-600 hover:underline"
+              className="text-ct-accent hover:underline"
             >
               security@calculatetokens.com
             </a>{" "}
@@ -444,7 +444,7 @@ export default function PrivacyPage() {
             publicly if you wish.
           </p>
 
-          <h3 className="font-semibold text-gray-800">
+          <h3 className="font-semibold text-ct-strong">
             Response commitments
           </h3>
           <ul className="list-disc list-inside ml-2 space-y-1">
@@ -461,7 +461,7 @@ export default function PrivacyPage() {
             </li>
           </ul>
 
-          <h3 className="font-semibold text-gray-800">Scope</h3>
+          <h3 className="font-semibold text-ct-strong">Scope</h3>
           <p>
             In-scope: the calculatetokens.com domain, JavaScript and
             WebAssembly code delivered to browsers, and the Cloudflare Pages
@@ -472,7 +472,7 @@ export default function PrivacyPage() {
             Umami) — report those directly to the respective vendors.
           </p>
 
-          <h3 className="font-semibold text-gray-800">
+          <h3 className="font-semibold text-ct-strong">
             Coordinated disclosure
           </h3>
           <p>
@@ -481,12 +481,12 @@ export default function PrivacyPage() {
             the issue requires more time.
           </p>
 
-          <h3 className="font-semibold text-gray-800">Machine-readable policy</h3>
+          <h3 className="font-semibold text-ct-strong">Machine-readable policy</h3>
           <p>
             See{" "}
             <a
               href="/.well-known/security.txt"
-              className="text-indigo-600 hover:underline"
+              className="text-ct-accent hover:underline"
             >
               /.well-known/security.txt
             </a>{" "}
@@ -495,7 +495,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      <p className="text-xs text-gray-400 mt-8">
+      <p className="text-xs text-ct-subtle mt-8">
         This policy may be updated to reflect changes in our data practices or
         applicable law. Material changes will be reflected in the &ldquo;Last
         updated&rdquo; date at the top of this page.

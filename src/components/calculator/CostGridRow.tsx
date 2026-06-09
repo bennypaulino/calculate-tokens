@@ -11,10 +11,10 @@ interface Props {
 }
 
 const statusSymbol = {
-  pending: { symbol: '·', title: t('grid.statusPending'), className: 'text-gray-300' },
-  heuristic: { symbol: '~', title: t('grid.statusApprox'), className: 'text-gray-500' },
-  wasm: { symbol: '', title: t('grid.statusExact'), className: 'text-green-600' },
-  error: { symbol: '?', title: t('grid.statusUnavailable'), className: 'text-red-400' },
+  pending: { symbol: '·', title: t('grid.statusPending'), className: 'text-ct-faint' },
+  heuristic: { symbol: '~', title: t('grid.statusApprox'), className: 'text-ct-muted' },
+  wasm: { symbol: '', title: t('grid.statusExact'), className: 'text-ct-exact' },
+  error: { symbol: '?', title: t('grid.statusUnavailable'), className: 'text-ct-error' },
 };
 
 export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerified }: Props) {
@@ -23,30 +23,37 @@ export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerif
 
   return (
     <tr
-      className={`border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors ${isCheapest ? 'bg-green-50/50' : ''}`}
+      className="border-b border-ct-border-subtle last:border-0 transition-colors"
+      style={isCheapest ? { background: 'var(--status-exact-tint)' } : undefined}
+      onMouseEnter={(e) => {
+        if (!isCheapest) (e.currentTarget as HTMLElement).style.background = 'var(--surface-raised)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.background = isCheapest ? 'var(--status-exact-tint)' : '';
+      }}
     >
       <td className="py-3 pl-4 pr-2">
         <div className="flex flex-col">
-          <span className="text-sm font-medium text-gray-900 leading-tight">
+          <span className="text-sm font-medium text-ct-strong leading-tight">
             {stalenessLevel === 'amber' && (
               <span
-                className="text-amber-500 mr-1"
+                className="text-ct-accent mr-1"
                 aria-label={t('grid.stalenessWarningAria', { date: lastVerified })}
               >●</span>
             )}
             {stalenessLevel === 'red' && (
               <span
-                className="text-red-500 mr-1"
+                className="text-ct-error mr-1"
                 aria-label={t('grid.stalenessOutdatedAria')}
               >⚠</span>
             )}
             {row.modelName}
           </span>
-          <span className="text-xs text-gray-500">{row.provider}</span>
+          <span className="text-xs text-ct-subtle">{row.provider}</span>
         </div>
       </td>
 
-      <td className="py-3 px-2 text-right tabular-nums">
+      <td className="py-3 px-2 text-right font-mono tabular-nums">
         <span
           className={`text-sm ${inputStatus.className}`}
           title={inputStatus.title}
@@ -56,38 +63,38 @@ export default function CostGridRow({ row, isCheapest, stalenessLevel, lastVerif
         </span>
       </td>
 
-      <td className="py-3 px-2 text-right tabular-nums">
-        <span className="text-sm text-gray-700">{row.outputTokens.toLocaleString()}</span>
+      <td className="py-3 px-2 text-right font-mono tabular-nums">
+        <span className="text-sm text-ct-body">{row.outputTokens.toLocaleString()}</span>
       </td>
 
       <td
-        className="py-3 px-2 text-right tabular-nums"
+        className="py-3 px-2 text-right font-mono tabular-nums"
         data-model={row.modelId}
         data-price-input={row.inputCost.toFixed(6)}
       >
-        <span className="text-sm text-gray-700">{formatCost(row.inputCost)}</span>
+        <span className="text-sm text-ct-body">{formatCost(row.inputCost)}</span>
       </td>
 
       <td
-        className="py-3 px-2 text-right tabular-nums"
+        className="py-3 px-2 text-right font-mono tabular-nums"
         data-price-output={row.outputCost.toFixed(6)}
       >
-        <span className="text-sm text-gray-700">{formatCost(row.outputCost)}</span>
+        <span className="text-sm text-ct-body">{formatCost(row.outputCost)}</span>
       </td>
 
-      <td className="py-3 pl-2 pr-4 text-right tabular-nums">
+      <td className="py-3 pl-2 pr-4 text-right font-mono tabular-nums">
         <div className="flex flex-col items-end gap-0.5">
           <span
-            className={`text-sm font-semibold ${isCheapest ? 'text-green-700' : 'text-gray-900'}`}
+            className={`text-sm font-semibold ${isCheapest ? 'text-ct-exact' : 'text-ct-strong'}`}
             title={totalStatus.title}
           >
             {row.inputStatus === 'heuristic' && (
-              <span className="text-xs font-normal mr-0.5 text-gray-500">~</span>
+              <span className="text-xs font-normal mr-0.5 text-ct-muted">~</span>
             )}
             {formatCost(row.totalCost)}
           </span>
           {isCheapest && (
-            <span className="text-xs text-green-700 font-medium leading-none">{t('simulator.cheapestBadge')}</span>
+            <span className="text-xs text-ct-exact font-medium leading-none">{t('simulator.cheapestBadge')}</span>
           )}
         </div>
       </td>

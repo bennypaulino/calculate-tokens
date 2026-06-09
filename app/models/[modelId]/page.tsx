@@ -182,31 +182,31 @@ export default async function ModelPage({
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {/* Breadcrumb */}
-        <nav className="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+        <nav className="text-sm text-ct-muted mb-6" aria-label="Breadcrumb">
           <ol className="flex items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-gray-900 transition-colors">
+              <Link href="/" className="hover:text-ct-strong transition-colors">
                 {t("models.breadcrumbHome")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
             <li>
-              <Link href="/models" className="hover:text-gray-900 transition-colors">
+              <Link href="/models" className="hover:text-ct-strong transition-colors">
                 {t("models.breadcrumbModels")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
-            <li className="text-gray-900 font-medium" aria-current="page">
+            <li className="text-ct-strong font-medium" aria-current="page">
               {model.display_name}
             </li>
           </ol>
         </nav>
 
         {/* H1 */}
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-3">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-ct-strong mb-3">
           {t("models.pageTitle", { model: model.display_name })}
         </h1>
-        <p className="text-gray-600 mb-10">
+        <p className="text-ct-body mb-10">
           {t("models.pageSubheading", { model: model.display_name, provider: model.provider })}
         </p>
 
@@ -214,77 +214,77 @@ export default async function ModelPage({
         <section aria-labelledby="pricing-table-heading" className="mb-10">
           <h2
             id="pricing-table-heading"
-            className="text-xl font-semibold text-gray-900 mb-4"
+            className="text-xl font-semibold text-ct-strong mb-4"
           >
             {t("models.pricingDetails")}
           </h2>
-          <div className="overflow-x-auto rounded-xl border border-gray-200">
+          <div className="overflow-x-auto rounded-xl border border-ct-border">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700 w-1/2">
+                <tr className="bg-ct-sunken border-b border-ct-border">
+                  <th className="text-left px-4 py-3 font-semibold text-ct-body w-1/2">
                     {t("models.attrAttribute")}
                   </th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700 w-1/2">
+                  <th className="text-left px-4 py-3 font-semibold text-ct-body w-1/2">
                     {t("models.attrValue")}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-ct-border-subtle">
                 <tr>
-                  <td className="px-4 py-3 text-gray-600">{t("models.attrProvider")}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 text-ct-body">{t("models.attrProvider")}</td>
+                  <td className="px-4 py-3 font-medium text-ct-strong">
                     {model.provider}
                   </td>
                 </tr>
-                <tr className="bg-gray-50/50">
-                  <td className="px-4 py-3 text-gray-600">
+                <tr className="bg-ct-raised/20">
+                  <td className="px-4 py-3 text-ct-body">
                     {t("models.attrInputCost")}
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 font-medium text-ct-strong">
                     {formatCost(model.input_cost_per_1m)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-ct-body">
                     {t("models.attrOutputCost")}
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 font-medium text-ct-strong">
                     {formatCost(model.output_cost_per_1m)}
                   </td>
                 </tr>
-                <tr className="bg-gray-50/50">
-                  <td className="px-4 py-3 text-gray-600">{t("models.attrContextCaching")}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                <tr className="bg-ct-raised/20">
+                  <td className="px-4 py-3 text-ct-body">{t("models.attrContextCaching")}</td>
+                  <td className="px-4 py-3 font-medium text-ct-strong">
                     {model.supports_context_caching && model.context_caching_discount != null
                       ? t("models.cachingYesDiscount", { pct: String(Math.round(model.context_caching_discount * 100)) })
                       : t("models.cachingNotSupported")}
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 text-gray-600">{t("models.attrBatchDiscount")}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 text-ct-body">{t("models.attrBatchDiscount")}</td>
+                  <td className="px-4 py-3 font-medium text-ct-strong">
                     {model.supports_batch_api && model.batch_api_discount != null
                       ? t("models.batchOff", { pct: String(Math.round(model.batch_api_discount * 100)) })
                       : t("models.batchNotAvailable")}
                   </td>
                 </tr>
-                <tr className="bg-gray-50/50">
-                  <td className="px-4 py-3 text-gray-600">{t("models.attrContextWindow")}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                <tr className="bg-ct-raised/20">
+                  <td className="px-4 py-3 text-ct-body">{t("models.attrContextWindow")}</td>
+                  <td className="px-4 py-3 font-medium text-ct-strong">
                     {formatContextWindow(model.context_window)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 text-gray-600">{t("models.attrTokenizer")}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 text-ct-body">{t("models.attrTokenizer")}</td>
+                  <td className="px-4 py-3 font-medium text-ct-strong">
                     {getTokenizerLabel(model.tokenizer)}
                   </td>
                 </tr>
                 {model.thinking_model && (
-                  <tr className="bg-gray-50/50">
-                    <td className="px-4 py-3 text-gray-600">{t("models.attrThinking")}</td>
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                  <tr className="bg-ct-raised/20">
+                    <td className="px-4 py-3 text-ct-body">{t("models.attrThinking")}</td>
+                    <td className="px-4 py-3 font-medium text-ct-strong">
                       {model.thinking_billed_separately
                         ? model.thinking_multiplier
                           ? t("models.thinkingBilledSeparatelyMultiplier", { multiplier: String(model.thinking_multiplier) })
@@ -301,18 +301,19 @@ export default async function ModelPage({
         {/* Plain-English cost example */}
         <section
           aria-labelledby="cost-example-heading"
-          className="mb-10 border border-blue-100 bg-blue-50 rounded-xl px-6 py-5"
+          className="mb-10 rounded-xl px-6 py-5 border"
+          style={{ background: 'var(--accent-tint)', borderColor: 'var(--accent-line)' }}
         >
           <h2
             id="cost-example-heading"
-            className="text-base font-semibold text-blue-900 mb-2"
+            className="text-base font-semibold text-ct-accent mb-2"
           >
             {t("models.costExampleHeading")}
           </h2>
-          <p className="text-blue-800 text-sm leading-relaxed">
+          <p className="text-ct-body text-sm leading-relaxed">
             {t("models.costExampleBody", { cost: monthlyCost, model: model.display_name, provider: model.provider })}
           </p>
-          <p className="text-blue-700 text-xs mt-2">
+          <p className="text-ct-muted text-xs mt-2">
             {t("models.costExampleRates", { inputCost: String(model.input_cost_per_1m), outputCost: String(model.output_cost_per_1m) })}
           </p>
         </section>
@@ -321,7 +322,8 @@ export default async function ModelPage({
         <section className="mb-10">
           <Link
             href={`/?models=${model.id}`}
-            className="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-semibold px-5 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+            className="inline-flex items-center gap-2 bg-ct-accent text-sm font-semibold px-5 py-3 rounded-lg hover:bg-ct-accent-h transition-colors"
+            style={{ color: '#1a1205' }}
           >
             {t("models.calculateCta", { model: model.display_name })}
             <span aria-hidden="true">&rarr;</span>
@@ -333,7 +335,7 @@ export default async function ModelPage({
           <section aria-labelledby="comparisons-heading" className="mb-10">
             <h2
               id="comparisons-heading"
-              className="text-xl font-semibold text-gray-900 mb-4"
+              className="text-xl font-semibold text-ct-strong mb-4"
             >
               {t("models.compareWith", { model: model.display_name })}
             </h2>
@@ -342,14 +344,14 @@ export default async function ModelPage({
                 <li key={slug}>
                   <Link
                     href={slug}
-                    className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-gray-400 hover:text-gray-900 transition-colors bg-white"
+                    className="flex items-center justify-between border border-ct-border rounded-lg px-4 py-3 text-sm text-ct-body hover:border-ct-accent hover:text-ct-strong transition-colors bg-ct-card"
                   >
                     <span>
                       <span className="font-medium">{model.display_name}</span>
-                      <span className="text-gray-400 mx-2">{t("models.vs")}</span>
+                      <span className="text-ct-subtle mx-2">{t("models.vs")}</span>
                       <span className="font-medium">{otherName}</span>
                     </span>
-                    <span className="text-gray-400" aria-hidden="true">
+                    <span className="text-ct-subtle" aria-hidden="true">
                       &rarr;
                     </span>
                   </Link>
@@ -360,7 +362,7 @@ export default async function ModelPage({
         )}
 
         {/* Data provenance footer */}
-        <footer className="border-t border-gray-100 pt-6 text-xs text-gray-500 space-y-1">
+        <footer className="border-t border-ct-border-subtle pt-6 text-xs text-ct-muted space-y-1">
           <p data-testid="pricing-last-verified">
             {t("models.pricingLastVerified")}{" "}
             <time dateTime={model.last_human_verified}>
@@ -371,7 +373,7 @@ export default async function ModelPage({
               href={model.provider_pricing_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-gray-700 transition-colors"
+              className="underline hover:text-ct-body transition-colors"
             >
               {t("models.pricingPageLink", { provider: model.provider })}
             </a>

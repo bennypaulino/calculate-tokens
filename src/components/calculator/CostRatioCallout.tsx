@@ -18,7 +18,7 @@ export default function CostRatioCallout({ rows }: Props) {
   if (ratio < 10) return null;
 
   return (
-    <p role="status" aria-live="polite" className="text-xs text-gray-500 text-center">
+    <p role="status" aria-live="polite" className="text-xs text-ct-subtle text-center">
       {t('grid.cheaperCallout', {
         cheapest: cheapest.modelName,
         ratio: String(Math.round(ratio)),

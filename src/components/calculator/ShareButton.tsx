@@ -20,7 +20,8 @@ export default function ShareButton() {
       type="button"
       data-testid="share-button"
       onClick={handleClick}
-      className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-md border border-ct-border px-3 py-1.5 text-xs font-medium text-ct-muted shadow-sm transition-colors hover:border-ct-accent hover:text-ct-body"
+      style={{ background: 'var(--surface-control)' }}
     >
       {copied ? t('share.copied') : t('share.copyLink')}
     </button>

@@ -96,24 +96,24 @@ export default function ModelsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
       {/* Breadcrumb */}
-      <nav className="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+      <nav className="text-sm text-ct-muted mb-6" aria-label="Breadcrumb">
         <ol className="flex items-center gap-1.5">
           <li>
-            <Link href="/" className="hover:text-gray-900 transition-colors">
+            <Link href="/" className="hover:text-ct-strong transition-colors">
               {t("models.breadcrumbHome")}
             </Link>
           </li>
           <li aria-hidden="true">/</li>
-          <li className="text-gray-900 font-medium" aria-current="page">
+          <li className="text-ct-strong font-medium" aria-current="page">
             {t("models.breadcrumbModels")}
           </li>
         </ol>
       </nav>
 
-      <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-3">
+      <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-ct-strong mb-3">
         {t("models.indexHeading")}
       </h1>
-      <p className="text-gray-600 mb-10 max-w-2xl">
+      <p className="text-ct-body mb-10 max-w-2xl">
         {t("models.indexSubheading", { count: String(activeModels.length) })}
       </p>
 
@@ -123,70 +123,70 @@ export default function ModelsPage() {
           <section key={provider} aria-labelledby={`provider-${provider}`}>
             <h2
               id={`provider-${provider}`}
-              className="text-lg font-semibold text-gray-900 mb-4"
+              className="text-lg font-semibold text-ct-strong mb-4"
             >
               {provider}
             </h2>
 
-            <div className="overflow-x-auto rounded-xl border border-gray-200">
+            <div className="overflow-x-auto rounded-xl border border-ct-border" style={{ background: 'var(--surface-card)' }}>
               <table className="w-full text-sm min-w-[640px]">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  <tr className="border-b border-ct-border" style={{ background: 'var(--surface-sunken)' }}>
+                    <th className="text-left px-4 py-3 font-semibold text-ct-muted">
                       {t("models.colModel")}
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-gray-700">
+                    <th className="text-right px-4 py-3 font-semibold text-ct-muted">
                       {t("models.colInput")}
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-gray-700">
+                    <th className="text-right px-4 py-3 font-semibold text-ct-muted">
                       {t("models.colOutput")}
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-gray-700">
+                    <th className="text-right px-4 py-3 font-semibold text-ct-muted">
                       {t("models.colContext")}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                    <th className="text-left px-4 py-3 font-semibold text-ct-muted">
                       {t("models.colFeatures")}
                     </th>
                     <th className="px-4 py-3"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {providerModels.map((model, i) => (
+                <tbody className="divide-y divide-ct-border-subtle">
+                  {providerModels.map((model) => (
                     <tr
                       key={model.id}
-                      className={i % 2 === 1 ? "bg-gray-50/50" : undefined}
+                      className="hover:bg-ct-raised transition-colors"
                     >
                       <td className="px-4 py-3">
                         <Link
                           href={`/models/${model.id}`}
-                          className="font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                          className="font-medium text-ct-strong hover:text-ct-accent transition-colors"
                         >
                           {model.display_name}
                         </Link>
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-700 tabular-nums">
+                      <td className="px-4 py-3 text-right text-ct-body font-mono tabular-nums">
                         {formatCost(model.input_cost_per_1m)}
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-700 tabular-nums">
+                      <td className="px-4 py-3 text-right text-ct-body font-mono tabular-nums">
                         {formatCost(model.output_cost_per_1m)}
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-700 tabular-nums">
+                      <td className="px-4 py-3 text-right text-ct-body font-mono tabular-nums">
                         {formatContextWindow(model.context_window)}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-1">
                           {model.supports_context_caching && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border" style={{ background: 'var(--status-exact-tint)', borderColor: 'var(--status-exact-line)', color: 'var(--status-exact)' }}>
                               {t("models.featureCaching")}
                             </span>
                           )}
                           {model.supports_batch_api && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border" style={{ background: 'var(--accent-tint)', borderColor: 'var(--accent-line)', color: 'var(--accent)' }}>
                               {t("models.featureBatch")}
                             </span>
                           )}
                           {model.thinking_model && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border border-ct-border text-ct-muted bg-ct-control">
                               {t("models.featureThinking")}
                             </span>
                           )}
@@ -195,7 +195,7 @@ export default function ModelsPage() {
                       <td className="px-4 py-3 text-right">
                         <Link
                           href={`/models/${model.id}`}
-                          className="text-xs text-gray-500 hover:text-gray-900 transition-colors whitespace-nowrap"
+                          className="text-xs text-ct-subtle hover:text-ct-accent transition-colors whitespace-nowrap"
                           aria-label={t("models.detailsAriaLabel", { model: model.display_name })}
                         >
                           {t("models.detailsLink")}
@@ -211,13 +211,14 @@ export default function ModelsPage() {
       </div>
 
       {/* CTA */}
-      <div className="mt-12 pt-8 border-t border-gray-100">
-        <p className="text-sm text-gray-600 mb-4">
+      <div className="mt-12 pt-8 border-t border-ct-border-subtle">
+        <p className="text-sm text-ct-body mb-4">
           {t("models.openCalculatorCta")}
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-semibold px-5 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+          className="inline-flex items-center gap-2 bg-ct-accent text-sm font-semibold px-5 py-3 rounded-lg hover:bg-ct-accent-h transition-colors"
+          style={{ color: '#1a1205' }}
         >
           {t("models.openCalculatorButton")}
           <span aria-hidden="true">&rarr;</span>

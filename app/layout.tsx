@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import Script from "next/script";
 import Link from "next/link";
 import "./globals.css";
 import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, locale } from "../src/lib/i18n";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
@@ -60,6 +54,45 @@ const LOCALE_URLS: Record<string, string> = {
   "pt-BR": "https://pt-br.calculatetokens.com/",
 };
 
+/* Hexagon-Σ mark — inline so it inherits no font dependency. */
+function LogoMark() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      width="24"
+      height="24"
+      role="img"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="ctAmberNav" gradientUnits="userSpaceOnUse" x1="4" y1="4" x2="28" y2="28">
+          <stop offset="0%" stopColor="#fcd34d" />
+          <stop offset="100%" stopColor="#f59e0b" />
+        </linearGradient>
+      </defs>
+      <polygon
+        points="29,16 22.5,4.75 9.5,4.75 3,16 9.5,27.25 22.5,27.25"
+        fill="none"
+        stroke="url(#ctAmberNav)"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <text
+        x="16"
+        y="21.2"
+        textAnchor="middle"
+        fontFamily="'IBM Plex Mono', ui-monospace, monospace"
+        fontSize="13"
+        fontWeight="700"
+        fill="url(#ctAmberNav)"
+      >
+        Σ
+      </text>
+    </svg>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -68,38 +101,53 @@ export default function RootLayout({
   const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
 
   return (
-    <html lang={getLocaleConfig().htmlLang} className={`${inter.variable} h-full antialiased`}>
+    <html lang={getLocaleConfig().htmlLang} className="h-full antialiased">
       <body
-        className="min-h-full flex flex-col font-[var(--font-inter)] bg-white text-[#0a0a0a]"
-        style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}
+        className="min-h-full flex flex-col bg-ct-canvas text-ct-body font-sans"
       >
-        <header className="border-b border-gray-200">
+        <header
+          className="sticky top-0 z-40 border-b border-ct-border-subtle"
+          style={{ background: "rgba(12,13,16,0.88)", backdropFilter: "blur(10px)" }}
+        >
           <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
             <Link
               href="/"
-              className="text-base font-semibold tracking-tight text-gray-900 hover:text-gray-700 transition-colors"
+              className="flex items-center gap-2.5 text-ct-strong hover:text-ct-accent transition-colors"
+              aria-label={t("nav.home")}
             >
-              {t("nav.home")}
+              <LogoMark />
+              <span className="font-semibold tracking-tight text-sm leading-none">
+                <span className="text-ct-strong">Calculate</span>
+                <span className="text-ct-muted ml-1">Tokens</span>
+              </span>
             </Link>
-            <nav className="flex items-center gap-6 text-sm text-gray-600">
+
+            <nav className="flex items-center gap-6 text-sm text-ct-muted">
               <Link
                 href="/learn/what-is-a-token"
-                className="hover:text-gray-900 transition-colors"
+                className="hover:text-ct-strong transition-colors"
               >
                 {t("nav.whatIsToken")}
               </Link>
               <Link
                 href="/privacy"
-                className="hover:text-gray-900 transition-colors"
+                className="hover:text-ct-strong transition-colors"
               >
                 {t("nav.privacy")}
               </Link>
-              <nav aria-label={t("langSwitcher.ariaLabel")} className="flex items-center gap-1 text-xs text-gray-500 border-l border-gray-200 pl-4 ml-2">
+              <nav
+                aria-label={t("langSwitcher.ariaLabel")}
+                className="flex items-center gap-1 text-xs border-l border-ct-border-subtle pl-4 ml-2"
+              >
                 {Object.entries(LOCALE_URLS).map(([loc, url]) => (
                   <a
                     key={loc}
                     href={url}
-                    className={`inline-flex items-center justify-center min-w-[24px] min-h-[24px] px-1 rounded hover:text-gray-900 transition-colors ${loc === locale ? "font-bold text-gray-900 underline" : ""}`}
+                    className={`inline-flex items-center justify-center min-w-[24px] min-h-[24px] px-1 rounded hover:text-ct-strong transition-colors ${
+                      loc === locale
+                        ? "font-semibold text-ct-accent underline"
+                        : "text-ct-subtle"
+                    }`}
                     aria-current={loc === locale ? "true" : undefined}
                   >
                     {LOCALE_LABELS[loc]}
@@ -112,10 +160,10 @@ export default function RootLayout({
 
         <main className="flex-1">{children}</main>
 
-        <footer className="border-t border-gray-200 mt-auto">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between text-sm text-gray-500">
+        <footer className="border-t border-ct-border-subtle mt-auto">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between text-sm text-ct-muted">
             <span>{t("footer.copyright", { year: "2026" })}</span>
-            <Link href="/privacy" className="hover:text-gray-900 transition-colors">
+            <Link href="/privacy" className="hover:text-ct-strong transition-colors">
               {t("footer.privacy")}
             </Link>
           </div>

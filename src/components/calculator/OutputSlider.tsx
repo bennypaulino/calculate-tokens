@@ -34,10 +34,10 @@ export default function OutputSlider({ activeModels }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <label htmlFor="output-slider" className="text-sm font-medium text-gray-700">
+        <label htmlFor="output-slider" className="text-sm font-medium text-ct-body">
           {t('output.label')}
         </label>
-        <span className="text-sm text-gray-500 tabular-nums">
+        <span className="text-sm text-ct-muted font-mono tabular-nums">
           {outputTokens.toLocaleString()} tokens
         </span>
       </div>
@@ -50,14 +50,15 @@ export default function OutputSlider({ activeModels }: Props) {
         step={1}
         value={outputTokens}
         onChange={handleSliderChange}
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+        className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-ct-accent"
+        style={{ background: `linear-gradient(90deg, var(--accent) 0%, var(--accent) ${(outputTokens / 8000) * 100}%, var(--surface-control) ${(outputTokens / 8000) * 100}%, var(--surface-control) 100%)` }}
         aria-label={t('output.sliderAriaLabel')}
         aria-valuemin={0}
         aria-valuemax={8000}
         aria-valuenow={outputTokens}
       />
 
-      <div className="flex justify-between text-xs text-gray-500 -mt-1 select-none" aria-hidden>
+      <div className="flex justify-between text-xs text-ct-subtle font-mono -mt-1 select-none" aria-hidden>
         {TICKS.map((tick) => (
           <span key={tick.value}>{tick.label}</span>
         ))}
@@ -80,9 +81,9 @@ export default function OutputSlider({ activeModels }: Props) {
                   });
                 }
               }}
-              className="w-4 h-4 rounded accent-blue-600"
+              className="w-4 h-4 rounded accent-ct-accent"
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-ct-body">
               {t('output.includeThinking')}
             </span>
           </label>
@@ -92,17 +93,14 @@ export default function OutputSlider({ activeModels }: Props) {
             .map((m) => {
               if (m.thinking_billed_separately && m.thinking_multiplier !== null) {
                 return (
-                  <p key={m.id} className="text-xs text-gray-500 ml-6">
+                  <p key={m.id} className="text-xs text-ct-muted ml-6">
                     {m.display_name}: {t('output.thinkingEstimate', { n: Math.round(outputTokens * m.thinking_multiplier).toLocaleString() })}
                   </p>
                 );
               }
               if (!m.thinking_billed_separately) {
                 return (
-                  <p
-                    key={m.id}
-                    className="text-xs text-gray-500 ml-6"
-                  >
+                  <p key={m.id} className="text-xs text-ct-muted ml-6">
                     {m.display_name}: {t('output.thinking')}
                   </p>
                 );

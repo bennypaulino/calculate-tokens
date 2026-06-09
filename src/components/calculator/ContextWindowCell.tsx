@@ -12,17 +12,24 @@ export default function ContextWindowCell({ contextWindow, inputTokens }: Props)
   return (
     <div className="flex flex-col gap-0.5 items-end">
       <span
-        className={`text-xs font-medium tabular-nums ${overLimit ? 'text-red-600 font-semibold' : 'text-gray-600'}`}
+        className={`text-xs font-medium font-mono tabular-nums ${overLimit ? 'text-ct-error font-semibold' : 'text-ct-muted'}`}
         title={overLimit ? `Exceeds context window (${inputTokens.toLocaleString()} > ${contextWindow.toLocaleString()})` : undefined}
       >
         {overLimit && <span className="mr-0.5" aria-label="Exceeds limit">⚠</span>}
         {formatContextWindow(contextWindow)}
       </span>
       {inputTokens > 0 && (
-        <div className="w-12 h-1 bg-gray-200 rounded-full overflow-hidden">
+        <div className="w-12 h-1 rounded-full overflow-hidden" style={{ background: 'var(--border-default)' }}>
           <div
-            className={`h-full rounded-full transition-all ${overLimit ? 'bg-red-500' : pct > 80 ? 'bg-amber-500' : 'bg-green-500'}`}
-            style={{ width: `${pct}%` }}
+            className="h-full rounded-full transition-all"
+            style={{
+              width: `${pct}%`,
+              background: overLimit
+                ? 'var(--status-error)'
+                : pct > 80
+                ? 'var(--accent)'
+                : 'var(--status-exact)',
+            }}
           />
         </div>
       )}

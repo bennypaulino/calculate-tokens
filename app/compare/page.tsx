@@ -80,17 +80,17 @@ export default function ComparePage() {
       <nav aria-label="Breadcrumb" className="mb-8">
         <Link
           href="/"
-          className="text-sm text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-1"
+          className="text-sm text-ct-accent hover:text-ct-accent-h transition-colors inline-flex items-center gap-1"
         >
           <span aria-hidden="true">&larr;</span>
           {t("compare.breadcrumb")}
         </Link>
       </nav>
 
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-3">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-ct-strong mb-3">
         {t("compare.indexHeading")}
       </h1>
-      <p className="text-gray-600 mb-10 text-base">
+      <p className="text-ct-body mb-10 text-base">
         {t("compare.indexSubheading", { count: String(activeModels.length), pairs: String(pairs.length) })}
       </p>
 
@@ -99,7 +99,7 @@ export default function ComparePage() {
           <section key={provider} aria-labelledby={`group-${provider}`}>
             <h2
               id={`group-${provider}`}
-              className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3"
+              className="text-sm font-semibold text-ct-muted uppercase tracking-wide mb-3"
             >
               {t("compare.providerGroup", { provider })}
             </h2>
@@ -108,14 +108,14 @@ export default function ComparePage() {
                 <li key={`${pair.slugA}-vs-${pair.slugB}`}>
                   <Link
                     href={`/compare/${pair.slugA}-vs-${pair.slugB}`}
-                    className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-gray-400 hover:text-gray-900 transition-colors bg-white"
+                    className="flex items-center justify-between border border-ct-border rounded-lg px-4 py-3 text-sm text-ct-body hover:border-ct-accent hover:text-ct-strong transition-colors bg-ct-card"
                   >
                     <span>
                       <span className="font-medium">{pair.nameA}</span>
-                      <span className="text-gray-400 mx-2">{t("home.vs")}</span>
+                      <span className="text-ct-subtle mx-2">{t("home.vs")}</span>
                       <span className="font-medium">{pair.nameB}</span>
                     </span>
-                    <span className="text-gray-400 ml-2 shrink-0" aria-hidden="true">
+                    <span className="text-ct-subtle ml-2 shrink-0" aria-hidden="true">
                       &rarr;
                     </span>
                   </Link>
@@ -127,13 +127,14 @@ export default function ComparePage() {
       </div>
 
       {/* CTA */}
-      <div className="mt-12 border border-gray-200 rounded-xl p-6 text-center bg-gray-50">
-        <p className="text-sm text-gray-600 mb-3">
+      <div className="mt-12 border border-ct-border rounded-xl p-6 text-center bg-ct-card">
+        <p className="text-sm text-ct-body mb-3">
           {t("compare.openCalculatorCta")}
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 bg-gray-900 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
+          className="inline-flex items-center gap-1.5 bg-ct-accent text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-ct-accent-h transition-colors"
+          style={{ color: '#1a1205' }}
         >
           {t("compare.openCalculator")}
           <span aria-hidden="true">&rarr;</span>

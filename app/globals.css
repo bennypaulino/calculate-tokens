@@ -1,16 +1,136 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
+/* ── Self-hosted fonts ───────────────────────────────────── */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/assets/fonts/IBMPlexSans-Variable.ttf') format('truetype');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/assets/fonts/IBMPlexMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/assets/fonts/IBMPlexMono-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/assets/fonts/IBMPlexMono-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/assets/fonts/IBMPlexMono-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Design token palette (Tailwind @theme) ──────────────── */
+@theme {
+  /* Surfaces */
+  --color-ct-canvas:        #0c0d10;
+  --color-ct-sunken:        #111317;
+  --color-ct-card:          #15171c;
+  --color-ct-raised:        #1b1e24;
+  --color-ct-control:       #23262e;
+
+  /* Borders */
+  --color-ct-border-subtle: #23262e;
+  --color-ct-border:        #2e323c;
+
+  /* Text */
+  --color-ct-strong:  #f4f5f7;
+  --color-ct-body:    #d3d7df;
+  --color-ct-muted:   #9aa1ae;
+  --color-ct-subtle:  #6b7280;
+  --color-ct-faint:   #4b515c;
+
+  /* Accent — amber */
+  --color-ct-accent:   #fbbf24;
+  --color-ct-accent-h: #fcd34d;
+  --color-ct-accent-p: #f59e0b;
+
+  /* Status */
+  --color-ct-exact: #34d399;
+  --color-ct-error: #f87171;
+  --color-ct-teal:  #2dd4bf;
+
+  /* Typography */
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', 'JetBrains Mono', monospace;
+}
+
+/* ── CSS custom properties (semantic aliases) ────────────── */
+:root {
+  --surface-canvas:  #0c0d10;
+  --surface-sunken:  #111317;
+  --surface-card:    #15171c;
+  --surface-raised:  #1b1e24;
+  --surface-control: #23262e;
+
+  --text-strong:    #f4f5f7;
+  --text-body:      #d3d7df;
+  --text-muted:     #9aa1ae;
+  --text-subtle:    #6b7280;
+  --text-faint:     #4b515c;
+  --text-on-accent: #1a1205;
+
+  --border-subtle:  #23262e;
+  --border-default: #2e323c;
+  --border-focus:   #fbbf24;
+
+  --accent:       #fbbf24;
+  --accent-hover: #fcd34d;
+  --accent-press: #f59e0b;
+  --accent-tint:  rgba(251, 191, 36, 0.10);
+  --accent-glow:  rgba(251, 191, 36, 0.16);
+  --accent-line:  rgba(251, 191, 36, 0.32);
+
+  --status-exact:      #34d399;
+  --status-exact-tint: rgba(52, 211, 153, 0.12);
+  --status-exact-line: rgba(52, 211, 153, 0.30);
+  --status-warn:       #fbbf24;
+  --status-error:      #f87171;
+  --status-error-tint: rgba(248, 113, 113, 0.12);
+  --status-error-line: rgba(248, 113, 113, 0.30);
+
+  --token-hl-a: rgba(251, 191, 36, 0.10);
+  --token-hl-b: rgba(45, 212, 191, 0.14);
+
+  --focus-ring: 0 0 0 2px #0c0d10, 0 0 0 4px #fbbf24;
+}
+
+/* ── Base layer ──────────────────────────────────────────── */
+@layer base {
+  html {
+    background: var(--surface-canvas);
+    color: var(--text-body);
+  }
+}
+
+/* ── Token highlighter ───────────────────────────────────── */
 .token-highlight-a {
-  background: rgba(59, 130, 246, 0.2);
+  background: var(--token-hl-a);
   border-radius: 2px;
 }
 
 .token-highlight-b {
-  background: rgba(16, 185, 129, 0.2);
+  background: var(--token-hl-b);
   border-radius: 2px;
 }
