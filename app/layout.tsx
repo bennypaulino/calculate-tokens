@@ -116,7 +116,7 @@ export default function RootLayout({
               aria-label={t("nav.home")}
             >
               <LogoMark />
-              <span className="font-semibold tracking-tight text-sm leading-none">
+              <span className="font-semibold tracking-tight text-sm leading-none" style={{ fontFamily: 'var(--font-display)' }}>
                 <span className="text-ct-strong">Calculate</span>
                 <span className="text-ct-muted ml-1">Tokens</span>
               </span>

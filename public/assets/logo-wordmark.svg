@@ -7,5 +7,5 @@
   </defs>
   <polygon points="29,16 22.5,4.75 9.5,4.75 3,16 9.5,27.25 22.5,27.25" fill="none" stroke="url(#ctAmberWm)" stroke-width="1.6" stroke-linejoin="round"></polygon>
   <text x="16" y="21.2" text-anchor="middle" font-family="&#39;IBM Plex Mono&#39;, ui-monospace, monospace" font-size="13" font-weight="700" fill="url(#ctAmberWm)">Σ</text>
-  <text x="42" y="21" font-family="&#39;IBM Plex Sans&#39;, system-ui, sans-serif" font-size="16" font-weight="600" letter-spacing="-0.01em" fill="#f4f5f7">Calculate <tspan fill="#9aa1ae">Tokens</tspan></text>
+  <text x="42" y="21" font-family="&#39;Comfortaa&#39;, system-ui, sans-serif" font-size="16" font-weight="600" letter-spacing="-0.01em" fill="#f4f5f7">Calculate <tspan fill="#9aa1ae">Tokens</tspan></text>
 </svg>
