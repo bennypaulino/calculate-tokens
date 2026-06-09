@@ -100,6 +100,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+  const adProvider = process.env.NEXT_PUBLIC_AD_PROVIDER;
 
   return (
     <html lang={getLocaleConfig().htmlLang} className="h-full antialiased">
@@ -179,12 +180,14 @@ export default function RootLayout({
             strategy="afterInteractive"
           />
         )}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2070140496775055"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        {(adProvider === 'adsense' || adProvider === 'ab') && (
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2070140496775055"
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );

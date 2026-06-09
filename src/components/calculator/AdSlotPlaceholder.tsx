@@ -3,6 +3,8 @@ interface Props {
 }
 
 export default function AdSlotPlaceholder({ type = 'inline' }: Props) {
+  const provider = process.env.NEXT_PUBLIC_AD_PROVIDER;
+  if (!provider) return null;
   const minHeight = type === 'leaderboard' ? 90 : 280;
   return (
     <div
