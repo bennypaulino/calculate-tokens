@@ -131,6 +131,12 @@ export default function RootLayout({
 
             <nav className="flex items-center gap-2 sm:gap-6 text-sm text-ct-muted">
               <Link
+                href="/models"
+                className="hidden sm:inline hover:text-ct-strong transition-colors"
+              >
+                {t("nav.models")}
+              </Link>
+              <Link
                 href="/learn/what-is-a-token"
                 className="hidden sm:inline hover:text-ct-strong transition-colors"
               >

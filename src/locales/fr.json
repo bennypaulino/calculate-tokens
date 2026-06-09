@@ -7,6 +7,7 @@
   },
   "nav": {
     "home": "Calculer les tokens",
+    "models": "Modèles",
     "whatIsToken": "Qu'est-ce qu'un token ?",
     "privacy": "Confidentialité"
   },
