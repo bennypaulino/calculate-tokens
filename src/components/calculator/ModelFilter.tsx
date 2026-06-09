@@ -10,7 +10,6 @@ interface ModelFilterProps {
   onSelectAll: () => void;
 }
 
-/** Groups models by provider, preserving insertion order */
 function groupByProvider(models: ModelEntry[]): Map<string, ModelEntry[]> {
   const groups = new Map<string, ModelEntry[]>();
   for (const model of models) {
@@ -25,7 +24,6 @@ function groupByProvider(models: ModelEntry[]): Map<string, ModelEntry[]> {
 }
 
 export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll }: ModelFilterProps) {
-  // null means all selected
   const effectiveSelected = selectedIds ?? models.map((m) => m.id);
   const selectedSet = new Set(effectiveSelected);
   const totalCount = models.length;
@@ -36,31 +34,28 @@ export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Header row */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        <span className="text-xs font-semibold text-ct-muted uppercase tracking-wide">
           {t('calculator.modelsHeading')}
         </span>
         {isFiltered && (
           <button
             type="button"
             onClick={onSelectAll}
-            className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            className="text-xs text-ct-accent hover:text-ct-accent-h font-medium transition-colors"
           >
             {t('calculator.compareAll', { count: totalCount })}
           </button>
         )}
       </div>
 
-      {/* Provider groups */}
       {Array.from(groups.entries()).map(([provider, providerModels]) => (
         <div key={provider} className="flex flex-col gap-1">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide leading-none mb-1">
+          <p className="text-xs font-medium text-ct-subtle uppercase tracking-wide leading-none mb-1">
             {provider}
           </p>
           {providerModels.map((model) => {
             const checked = selectedSet.has(model.id);
-            // Block deselect when it would drop below 2 selected
             const wouldViolateMin = checked && selectedCount <= 2;
 
             return (
@@ -69,8 +64,8 @@ export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll
                 data-testid={`model-filter-${model.id}`}
                 className={[
                   'flex items-center gap-2 cursor-pointer rounded px-1 py-0.5 text-sm',
-                  'text-gray-700 hover:bg-gray-50 transition-colors select-none',
-                  wouldViolateMin ? 'opacity-50' : '',
+                  'text-ct-body transition-colors select-none',
+                  wouldViolateMin ? 'opacity-50' : 'hover:bg-ct-raised',
                 ].join(' ')}
                 title={wouldViolateMin ? t('calculator.modelsMinSelectedTooltip') : undefined}
               >
@@ -83,7 +78,7 @@ export default function ModelFilter({ models, selectedIds, onToggle, onSelectAll
                       onToggle(model.id);
                     }
                   }}
-                  className="h-3.5 w-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:cursor-not-allowed"
+                  className="h-3.5 w-3.5 rounded border-ct-border accent-ct-accent disabled:cursor-not-allowed"
                 />
                 <span className="leading-snug">{model.display_name}</span>
               </label>

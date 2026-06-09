@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Calculate Tokens app icon">
+  <defs>
+    <linearGradient id="ctAmberIcon" gradientUnits="userSpaceOnUse" x1="4" y1="4" x2="28" y2="28">
+      <stop offset="0%" stop-color="#fcd34d"></stop>
+      <stop offset="100%" stop-color="#f59e0b"></stop>
+    </linearGradient>
+    <filter id="ctGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="b"></feGaussianBlur>
+      <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+    </filter>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="#0c0d10"></rect>
+  <polygon points="29,16 22.5,4.75 9.5,4.75 3,16 9.5,27.25 22.5,27.25" fill="none" stroke="url(#ctAmberIcon)" stroke-width="1.5" stroke-linejoin="round" filter="url(#ctGlow)"></polygon>
+  <text x="16" y="21.2" text-anchor="middle" font-family="&#39;IBM Plex Mono&#39;, ui-monospace, monospace" font-size="13" font-weight="700" fill="url(#ctAmberIcon)" filter="url(#ctGlow)">Σ</text>
+</svg>

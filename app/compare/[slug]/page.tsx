@@ -167,13 +167,13 @@ export default async function ComparisonPage({
   if (!pair) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-ct-strong mb-4">
           {t("compare.notFound")}
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-ct-body mb-6">
           {t("compare.notFoundBody")}
         </p>
-        <Link href="/compare" className="text-blue-600 hover:text-blue-700">
+        <Link href="/compare" className="text-ct-accent hover:text-ct-accent-h">
           {t("compare.viewAllComparisons")}
         </Link>
       </div>
@@ -271,12 +271,12 @@ export default async function ComparisonPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-ct-body">
         {/* Back link */}
         <nav aria-label="Breadcrumb" className="mb-8">
           <Link
             href="/compare"
-            className="text-sm text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-1"
+            className="text-sm text-ct-accent hover:text-ct-accent-h transition-colors inline-flex items-center gap-1"
           >
             <span aria-hidden="true">&larr;</span>
             {t("compare.allComparisons")}
@@ -284,10 +284,10 @@ export default async function ComparisonPage({
         </nav>
 
         {/* H1 */}
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-ct-strong mb-3 leading-tight">
           {modelA.display_name} vs {modelB.display_name} — {t("compare.sideBySidePricing")}
         </h1>
-        <p className="text-gray-600 mb-10 text-base">
+        <p className="text-ct-body mb-10 text-base">
           {t("compare.pageSubheading", {
             modelA: modelA.display_name,
             modelB: modelB.display_name,
@@ -300,54 +300,56 @@ export default async function ComparisonPage({
         <section aria-labelledby="pricing-table-heading" className="mb-12">
           <h2
             id="pricing-table-heading"
-            className="text-lg font-semibold text-gray-900 mb-4"
+            className="text-lg font-semibold text-ct-strong mb-4"
           >
             {t("compare.sideBySidePricing")}
           </h2>
-          <div className="overflow-x-auto rounded-xl border border-gray-200">
+          <div className="overflow-x-auto rounded-xl border border-ct-border" style={{ background: 'var(--surface-card)' }}>
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
+                <tr className="border-b border-ct-border" style={{ background: 'var(--surface-sunken)' }}>
                   <th
                     scope="col"
-                    className="text-left px-4 py-3 font-medium text-gray-700 w-40"
+                    className="text-left px-4 py-3 font-medium text-ct-muted w-40"
                   >
                     {t("compare.featureCol")}
                   </th>
                   <th
                     scope="col"
-                    className="text-left px-4 py-3 font-semibold text-gray-900"
+                    className="text-left px-4 py-3 font-semibold text-ct-strong"
                   >
                     {modelA.display_name}
                   </th>
                   <th
                     scope="col"
-                    className="text-left px-4 py-3 font-semibold text-gray-900"
+                    className="text-left px-4 py-3 font-semibold text-ct-strong"
                   >
                     {modelB.display_name}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-ct-border-subtle">
                 <tr>
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
+                    className="px-4 py-3 font-medium text-ct-muted text-left"
+                    style={{ background: 'var(--surface-sunken)' }}
                   >
                     {t("compare.provider")}
                   </th>
-                  <td className="px-4 py-3 text-gray-900">{modelA.provider}</td>
-                  <td className="px-4 py-3 text-gray-900">{modelB.provider}</td>
+                  <td className="px-4 py-3 text-ct-body">{modelA.provider}</td>
+                  <td className="px-4 py-3 text-ct-body">{modelB.provider}</td>
                 </tr>
                 <tr>
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
+                    className="px-4 py-3 font-medium text-ct-muted text-left"
+                    style={{ background: 'var(--surface-sunken)' }}
                   >
                     {t("compare.inputPer1M")}
                   </th>
                   <td
-                    className="px-4 py-3 text-gray-900 font-mono"
+                    className="px-4 py-3 text-ct-strong font-mono"
                     data-model={modelA.id}
                     data-price-input={modelA.input_cost_per_1m}
                     data-price-output={modelA.output_cost_per_1m}
@@ -355,7 +357,7 @@ export default async function ComparisonPage({
                     {formatCost(modelA.input_cost_per_1m)}
                   </td>
                   <td
-                    className="px-4 py-3 text-gray-900 font-mono"
+                    className="px-4 py-3 text-ct-strong font-mono"
                     data-model={modelB.id}
                     data-price-input={modelB.input_cost_per_1m}
                     data-price-output={modelB.output_cost_per_1m}
@@ -366,32 +368,34 @@ export default async function ComparisonPage({
                 <tr>
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
+                    className="px-4 py-3 font-medium text-ct-muted text-left"
+                    style={{ background: 'var(--surface-sunken)' }}
                   >
                     {t("compare.outputPer1M")}
                   </th>
-                  <td className="px-4 py-3 text-gray-900 font-mono">
+                  <td className="px-4 py-3 text-ct-strong font-mono">
                     {formatCost(modelA.output_cost_per_1m)}
                   </td>
-                  <td className="px-4 py-3 text-gray-900 font-mono">
+                  <td className="px-4 py-3 text-ct-strong font-mono">
                     {formatCost(modelB.output_cost_per_1m)}
                   </td>
                 </tr>
                 <tr>
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
+                    className="px-4 py-3 font-medium text-ct-muted text-left"
+                    style={{ background: 'var(--surface-sunken)' }}
                   >
                     {t("compare.contextCaching")}
                   </th>
-                  <td className="px-4 py-3 text-gray-900">
+                  <td className="px-4 py-3 text-ct-body">
                     {modelA.supports_context_caching
                       ? modelA.context_caching_discount !== null
                         ? t("compare.cachingYesDiscount", { pct: String((modelA.context_caching_discount * 100).toFixed(0)) })
                         : t("compare.cachingYes")
                       : t("compare.cachingNo")}
                   </td>
-                  <td className="px-4 py-3 text-gray-900">
+                  <td className="px-4 py-3 text-ct-body">
                     {modelB.supports_context_caching
                       ? modelB.context_caching_discount !== null
                         ? t("compare.cachingYesDiscount", { pct: String((modelB.context_caching_discount * 100).toFixed(0)) })
@@ -402,16 +406,17 @@ export default async function ComparisonPage({
                 <tr>
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
+                    className="px-4 py-3 font-medium text-ct-muted text-left"
+                    style={{ background: 'var(--surface-sunken)' }}
                   >
                     {t("compare.batchApiDiscount")}
                   </th>
-                  <td className="px-4 py-3 text-gray-900">
+                  <td className="px-4 py-3 text-ct-body">
                     {modelA.supports_batch_api && modelA.batch_api_discount !== null
                       ? t("compare.batchOff", { pct: String((modelA.batch_api_discount * 100).toFixed(0)) })
                       : t("compare.batchNotAvailable")}
                   </td>
-                  <td className="px-4 py-3 text-gray-900">
+                  <td className="px-4 py-3 text-ct-body">
                     {modelB.supports_batch_api && modelB.batch_api_discount !== null
                       ? t("compare.batchOff", { pct: String((modelB.batch_api_discount * 100).toFixed(0)) })
                       : t("compare.batchNotAvailable")}
@@ -420,28 +425,30 @@ export default async function ComparisonPage({
                 <tr>
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
+                    className="px-4 py-3 font-medium text-ct-muted text-left"
+                    style={{ background: 'var(--surface-sunken)' }}
                   >
                     {t("compare.contextWindow")}
                   </th>
-                  <td className="px-4 py-3 text-gray-900 font-mono">
+                  <td className="px-4 py-3 text-ct-strong font-mono">
                     {t("compare.contextTokens", { count: formatContextWindow(modelA.context_window) })}
                   </td>
-                  <td className="px-4 py-3 text-gray-900 font-mono">
+                  <td className="px-4 py-3 text-ct-strong font-mono">
                     {t("compare.contextTokens", { count: formatContextWindow(modelB.context_window) })}
                   </td>
                 </tr>
                 <tr>
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-600 bg-gray-50 text-left"
+                    className="px-4 py-3 font-medium text-ct-muted text-left"
+                    style={{ background: 'var(--surface-sunken)' }}
                   >
                     {t("compare.tokenizer")}
                   </th>
-                  <td className="px-4 py-3 text-gray-700 text-xs">
+                  <td className="px-4 py-3 text-ct-body text-xs">
                     {formatTokenizer(modelA.tokenizer)}
                   </td>
-                  <td className="px-4 py-3 text-gray-700 text-xs">
+                  <td className="px-4 py-3 text-ct-body text-xs">
                     {formatTokenizer(modelB.tokenizer)}
                   </td>
                 </tr>
@@ -454,11 +461,11 @@ export default async function ComparisonPage({
         <section aria-labelledby="example-heading" className="mb-12">
           <h2
             id="example-heading"
-            className="text-lg font-semibold text-gray-900 mb-2"
+            className="text-lg font-semibold text-ct-strong mb-2"
           >
             {t("compare.realWorldExample")}
           </h2>
-          <p className="text-gray-600 text-sm mb-6">
+          <p className="text-ct-body text-sm mb-6">
             {t("compare.exampleDesc", {
               requests: EXAMPLE_REQUESTS.toLocaleString(dateLocale),
               inputTokens: String(EXAMPLE_INPUT_TOKENS),
@@ -468,33 +475,33 @@ export default async function ComparisonPage({
             })}
           </p>
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
-            <div className="border border-gray-200 rounded-xl p-5 bg-white">
-              <div className="text-sm font-medium text-gray-700 mb-1">
+            <div className="border border-ct-border rounded-xl p-5 bg-ct-card">
+              <div className="text-sm font-medium text-ct-body mb-1">
                 {modelA.display_name}
               </div>
-              <div className="text-2xl font-bold text-gray-900 font-mono mb-1">
+              <div className="text-2xl font-bold text-ct-strong font-mono mb-1">
                 ${costA.toFixed(4)}
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-ct-muted">
                 {t("compare.inputLabel")} ${((totalInputTokens / 1_000_000) * modelA.input_cost_per_1m).toFixed(4)} +
                 {t("compare.outputLabel")} ${((totalOutputTokens / 1_000_000) * modelA.output_cost_per_1m).toFixed(4)}
               </div>
             </div>
-            <div className="border border-gray-200 rounded-xl p-5 bg-white">
-              <div className="text-sm font-medium text-gray-700 mb-1">
+            <div className="border border-ct-border rounded-xl p-5 bg-ct-card">
+              <div className="text-sm font-medium text-ct-body mb-1">
                 {modelB.display_name}
               </div>
-              <div className="text-2xl font-bold text-gray-900 font-mono mb-1">
+              <div className="text-2xl font-bold text-ct-strong font-mono mb-1">
                 ${costB.toFixed(4)}
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-ct-muted">
                 {t("compare.inputLabel")} ${((totalInputTokens / 1_000_000) * modelB.input_cost_per_1m).toFixed(4)} +
                 {t("compare.outputLabel")} ${((totalOutputTokens / 1_000_000) * modelB.output_cost_per_1m).toFixed(4)}
               </div>
             </div>
           </div>
           {pricierCost > cheaperCost && (
-            <p className="text-sm text-gray-700 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+            <p className="text-sm text-ct-body rounded-lg px-4 py-3 border border-ct-border" style={{ background: 'var(--accent-tint)' }}>
               {t("compare.cheaperSummary", {
                 model: cheaperModel.display_name,
                 pct: savings,
@@ -508,16 +515,16 @@ export default async function ComparisonPage({
         <section aria-labelledby="faq-heading" className="mb-12">
           <h2
             id="faq-heading"
-            className="text-lg font-semibold text-gray-900 mb-6"
+            className="text-lg font-semibold text-ct-strong mb-6"
           >
             {t("compare.faqHeading")}
           </h2>
           <dl className="space-y-6">
             <div>
-              <dt className="font-medium text-gray-900 mb-1">
+              <dt className="font-medium text-ct-strong mb-1">
                 {t("compare.faqCheaperQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
               </dt>
-              <dd className="text-gray-600 text-sm leading-relaxed">
+              <dd className="text-ct-body text-sm leading-relaxed">
                 {costA < costB
                   ? t("compare.faqCheaperAYes", {
                       modelA: modelA.display_name,
@@ -542,10 +549,10 @@ export default async function ComparisonPage({
               </dd>
             </div>
             <div>
-              <dt className="font-medium text-gray-900 mb-1">
+              <dt className="font-medium text-ct-strong mb-1">
                 {t("compare.faqContextQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
               </dt>
-              <dd className="text-gray-600 text-sm leading-relaxed">
+              <dd className="text-ct-body text-sm leading-relaxed">
                 {t("compare.faqContextA", {
                   modelA: modelA.display_name,
                   modelB: modelB.display_name,
@@ -555,10 +562,10 @@ export default async function ComparisonPage({
               </dd>
             </div>
             <div>
-              <dt className="font-medium text-gray-900 mb-1">
+              <dt className="font-medium text-ct-strong mb-1">
                 {t("compare.faqCachingQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
               </dt>
-              <dd className="text-gray-600 text-sm leading-relaxed">
+              <dd className="text-ct-body text-sm leading-relaxed">
                 {modelA.supports_context_caching
                   ? `${modelA.display_name} supports context caching${modelA.context_caching_discount !== null ? ` (${(modelA.context_caching_discount * 100).toFixed(0)}% off repeated tokens)` : ""}.`
                   : `${modelA.display_name} does not support context caching.`}{" "}
@@ -579,20 +586,21 @@ export default async function ComparisonPage({
         {/* CTA */}
         <section
           aria-labelledby="cta-heading"
-          className="border border-gray-200 rounded-xl p-6 sm:p-8 text-center mb-12 bg-gray-50"
+          className="border border-ct-border rounded-xl p-6 sm:p-8 text-center mb-12 bg-ct-card"
         >
           <h2
             id="cta-heading"
-            className="text-base font-semibold text-gray-900 mb-2"
+            className="text-base font-semibold text-ct-strong mb-2"
           >
             {t("compare.ctaHeading")}
           </h2>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-ct-body mb-4">
             {t("compare.ctaBody")}
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 bg-gray-900 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
+            className="inline-flex items-center gap-1.5 bg-ct-accent text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-ct-accent-h transition-colors"
+            style={{ color: '#1a1205' }}
           >
             {t("compare.openCalculator")}
             <span aria-hidden="true">&rarr;</span>
@@ -600,9 +608,9 @@ export default async function ComparisonPage({
         </section>
 
         {/* Data provenance */}
-        <footer className="text-xs text-gray-500 border-t border-gray-100 pt-6 space-y-1">
+        <footer className="text-xs text-ct-subtle border-t border-ct-border-subtle pt-6 space-y-1">
           <p>
-            <strong className="font-medium text-gray-700">
+            <strong className="font-medium text-ct-body">
               {t("compare.dataProvenance")}
             </strong>{" "}
             {t("compare.pricesSourced")}
@@ -615,7 +623,7 @@ export default async function ComparisonPage({
               href={modelA.provider_pricing_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-gray-700"
+              className="underline text-ct-accent hover:text-ct-accent-h"
             >
               {t("compare.pricingPageLink", { provider: modelA.provider })}
             </a>
@@ -629,7 +637,7 @@ export default async function ComparisonPage({
               href={modelB.provider_pricing_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-gray-700"
+              className="underline text-ct-accent hover:text-ct-accent-h"
             >
               {t("compare.pricingPageLink", { provider: modelB.provider })}
             </a>

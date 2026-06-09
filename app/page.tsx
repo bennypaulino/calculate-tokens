@@ -52,15 +52,15 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         {/* Hero */}
         <section className="text-center max-w-2xl mx-auto mb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-ct-strong mb-4 leading-tight">
             {t("home.heroHeading")}
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 mb-4">
+          <p className="text-lg sm:text-xl text-ct-muted mb-4">
             {t("home.heroSubheading")}
           </p>
           <Link
             href="/learn/what-is-a-token"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-ct-accent hover:text-ct-accent-h transition-colors"
           >
             {t("home.learnTokenLink")}
             <span aria-hidden="true">&rarr;</span>
@@ -68,17 +68,33 @@ export default function Home() {
         </section>
 
         {/* Privacy callout */}
-        <section className="flex items-start gap-4 border border-green-200 bg-green-50 rounded-xl px-6 py-4 mb-8">
-          <span className="text-green-600 text-xl mt-0.5" aria-hidden="true">
-            &#128274;
-          </span>
+        <section
+          className="flex items-start gap-4 border border-ct-border rounded-xl px-6 py-4 mb-8 bg-ct-card"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-ct-accent mt-0.5"
+            style={{ flexShrink: 0 }}
+            aria-hidden="true"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
           <div>
-            <p className="font-semibold text-green-900 text-sm">
+            <p className="font-semibold text-ct-strong text-sm">
               {t("home.privacyCalloutTitle")}
             </p>
-            <p className="text-green-800 text-sm mt-0.5">
+            <p className="text-ct-muted text-sm mt-0.5">
               {t("home.privacyCalloutBody")}{" "}
-              <Link href="/privacy" className="underline hover:no-underline">
+              <Link href="/privacy" className="underline text-ct-accent hover:text-ct-accent-h">
                 {t("home.privacyPolicy")}
               </Link>
             </p>
@@ -92,7 +108,7 @@ export default function Home() {
 
         {/* Comparison links */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-ct-strong mb-4">
             {t("home.modelComparisons")}
           </h2>
           <ul className="grid sm:grid-cols-2 gap-3">
@@ -100,14 +116,14 @@ export default function Home() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 hover:border-gray-400 hover:text-gray-900 transition-colors bg-white"
+                  className="flex items-center justify-between border border-ct-border rounded-lg px-4 py-3 text-sm text-ct-body hover:border-ct-accent hover:text-ct-strong transition-colors bg-ct-card"
                 >
                   <span>
                     <span className="font-medium">{link.a}</span>
-                    <span className="text-gray-500 mx-2">{t("home.vs")}</span>
+                    <span className="text-ct-subtle mx-2">{t("home.vs")}</span>
                     <span className="font-medium">{link.b}</span>
                   </span>
-                  <span className="text-gray-400" aria-hidden="true">
+                  <span className="text-ct-subtle" aria-hidden="true">
                     &rarr;
                   </span>
                 </Link>

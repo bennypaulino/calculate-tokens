@@ -27,7 +27,7 @@ export default function PresetBar({ onSelect, activePresetId, className }: Props
 
   return (
     <div className={className ?? 'flex items-center gap-2 flex-wrap'}>
-      <span className="text-xs text-gray-500 font-medium shrink-0">{t('presets.label')}</span>
+      <span className="text-xs text-ct-muted font-medium shrink-0">{t('presets.label')}</span>
       {(presets as Preset[]).map((preset) => {
         const isActive = preset.id === activePresetId;
         const tooltipText = preset.charCountWarning
@@ -43,12 +43,20 @@ export default function PresetBar({ onSelect, activePresetId, className }: Props
               onMouseLeave={() => setTooltip(null)}
               onFocus={() => setTooltip(preset.id)}
               onBlur={() => setTooltip(null)}
-              className={[
-                'inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full border transition-colors',
+              className="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full border transition-colors"
+              style={
                 isActive
-                  ? 'bg-blue-100 border-blue-300 text-blue-800'
-                  : 'bg-gray-100 border-gray-200 text-gray-600 hover:bg-gray-200 hover:border-gray-300',
-              ].join(' ')}
+                  ? {
+                      background: 'var(--accent-tint)',
+                      borderColor: 'var(--accent-line)',
+                      color: 'var(--accent)',
+                    }
+                  : {
+                      background: 'var(--surface-control)',
+                      borderColor: 'var(--border-subtle)',
+                      color: 'var(--text-muted)',
+                    }
+              }
             >
               {preset.label}
             </button>
@@ -56,7 +64,8 @@ export default function PresetBar({ onSelect, activePresetId, className }: Props
             {tooltip === preset.id && (
               <div
                 role="tooltip"
-                className="absolute bottom-full left-0 mb-1.5 z-10 w-56 rounded-md bg-gray-900 px-2.5 py-1.5 text-xs text-white shadow-lg pointer-events-none"
+                className="absolute bottom-full left-0 mb-1.5 z-10 w-56 rounded-md px-2.5 py-1.5 text-xs text-ct-body shadow-lg pointer-events-none border border-ct-border"
+                style={{ background: 'var(--surface-raised)' }}
               >
                 {tooltipText}
                 {tooltipText.length === 100 && '…'}

@@ -247,18 +247,24 @@ export default function CalculatorShell() {
 
   if (loadError) {
     return (
-      <div className="border border-red-200 bg-red-50 rounded-xl p-8 text-center">
-        <p className="text-red-700 text-sm font-medium">{t('calculator.loadError')}</p>
-        <p className="text-red-500 text-xs mt-1">{t('calculator.loadErrorRetry')}</p>
+      <div
+        className="rounded-xl p-8 text-center border"
+        style={{
+          background: 'var(--status-error-tint)',
+          borderColor: 'var(--status-error-line)',
+        }}
+      >
+        <p className="text-ct-error text-sm font-medium">{t('calculator.loadError')}</p>
+        <p className="text-ct-error text-xs mt-1 opacity-70">{t('calculator.loadErrorRetry')}</p>
       </div>
     );
   }
 
   if (!pricesData) {
     return (
-      <div className="border border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center min-h-[600px]">
-        <div className="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-500 text-sm mt-2">{t('calculator.loadingPricing')}</p>
+      <div className="border border-ct-border rounded-xl p-8 flex flex-col items-center justify-center min-h-[600px]" style={{ background: 'var(--surface-card)' }}>
+        <div className="inline-block w-6 h-6 border-2 border-ct-accent border-t-transparent rounded-full animate-spin" />
+        <p className="text-ct-muted text-sm mt-2">{t('calculator.loadingPricing')}</p>
       </div>
     );
   }
@@ -334,11 +340,11 @@ export default function CalculatorShell() {
             <button
               type="button"
               onClick={handleSelectAllModels}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2 transition-colors"
+              className="text-sm text-ct-accent hover:text-ct-accent-h font-medium underline underline-offset-2 transition-colors"
             >
               {t('calculator.compareAll', { count: activeModels.length })}
             </button>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-ct-subtle">
               {t('calculator.showing', { filtered: filteredModels.length, total: activeModels.length })}
             </span>
           </div>

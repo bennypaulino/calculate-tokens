@@ -2,7 +2,8 @@
   "meta": {
     "siteTitle": "Calcular Tokens — Calculadora de Tokens LLM e Estimador de Custos",
     "siteDescription": "Calcule contagens exatas de tokens e custos para GPT-4o, Claude, Gemini, Llama e mais. Nativo do navegador — seu texto nunca sai do seu dispositivo.",
-    "siteName": "Calcular Tokens"
+    "siteName": "Calcular Tokens",
+    "ogImageAlt": "Calcular Tokens — compare contagens de tokens e custos entre GPT, Claude, Gemini, Llama e DeepSeek."
   },
   "nav": {
     "home": "Calcular Tokens",

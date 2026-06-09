@@ -16,16 +16,6 @@ interface Props {
 
 type SortCol = 'name' | 'input' | 'output' | 'total' | 'context';
 
-const HEADERS: { key: SortCol; label: string; align: string }[] = [
-  { key: 'name', label: 'Model', align: 'text-left' },
-  { key: 'input', label: 'Input tokens', align: 'text-right' },
-  { key: 'output', label: 'Output tokens', align: 'text-right' },
-  { key: 'input', label: 'Input cost', align: 'text-right' },
-  { key: 'output', label: 'Output cost', align: 'text-right' },
-  { key: 'total', label: 'Total cost', align: 'text-right' },
-  { key: 'context', label: 'Context', align: 'text-right' },
-];
-
 export default function CostGrid({ models }: Props) {
   const modelTokenStates = useCalculatorStore((s) => s.modelTokenStates);
   const outputTokens = useCalculatorStore((s) => s.outputTokens);
@@ -75,10 +65,10 @@ export default function CostGrid({ models }: Props) {
 
   const SortIcon = ({ col }: { col: string }) => {
     if (col !== sortColumn) {
-      return <span className="ml-1 text-gray-300 text-xs">↕</span>;
+      return <span className="ml-1 text-ct-faint text-xs">↕</span>;
     }
     return (
-      <span className="ml-1 text-blue-500 text-xs">
+      <span className="ml-1 text-ct-accent text-xs">
         {sortDirection === 'asc' ? '↑' : '↓'}
       </span>
     );
@@ -86,45 +76,54 @@ export default function CostGrid({ models }: Props) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-x-auto rounded-xl border border-gray-200" tabIndex={0} role="region" aria-label={t('grid.ariaLabel')}>
+      <div
+        className="overflow-x-auto rounded-xl border border-ct-border"
+        tabIndex={0}
+        role="region"
+        aria-label={t('grid.ariaLabel')}
+        style={{ background: 'var(--surface-card)' }}
+      >
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 bg-gray-50">
+            <tr
+              className="border-b border-ct-border"
+              style={{ background: 'var(--surface-sunken)' }}
+            >
               <th
                 scope="col"
-                className="py-2.5 pl-4 pr-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
+                className="py-2.5 pl-4 pr-2 text-left text-xs font-semibold text-ct-muted uppercase tracking-wide cursor-pointer hover:text-ct-strong select-none"
                 onClick={() => setSortColumn('name')}
               >
                 {t('grid.colModel')} <SortIcon col="name" />
               </th>
-              <th scope="col" className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <th scope="col" className="py-2.5 px-2 text-right text-xs font-semibold text-ct-muted uppercase tracking-wide">
                 {t('grid.colInputTokens')}
               </th>
-              <th scope="col" className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <th scope="col" className="py-2.5 px-2 text-right text-xs font-semibold text-ct-muted uppercase tracking-wide">
                 {t('grid.colOutputTokens')}
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
+                className="py-2.5 px-2 text-right text-xs font-semibold text-ct-muted uppercase tracking-wide cursor-pointer hover:text-ct-strong select-none"
                 onClick={() => setSortColumn('input')}
               >
                 {t('grid.colInputCost')} <SortIcon col="input" />
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
+                className="py-2.5 px-2 text-right text-xs font-semibold text-ct-muted uppercase tracking-wide cursor-pointer hover:text-ct-strong select-none"
                 onClick={() => setSortColumn('output')}
               >
                 {t('grid.colOutputCost')} <SortIcon col="output" />
               </th>
               <th
                 scope="col"
-                className="py-2.5 pl-2 pr-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none"
+                className="py-2.5 pl-2 pr-4 text-right text-xs font-semibold text-ct-muted uppercase tracking-wide cursor-pointer hover:text-ct-strong select-none"
                 onClick={() => setSortColumn('total')}
               >
                 {t('grid.colTotalCost')} <SortIcon col="total" />
               </th>
-              <th scope="col" className="py-2.5 pl-2 pr-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <th scope="col" className="py-2.5 pl-2 pr-4 text-right text-xs font-semibold text-ct-muted uppercase tracking-wide">
                 {t('grid.colContext')}
               </th>
             </tr>

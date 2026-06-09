@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 32" role="img" aria-label="Calculate Tokens">
+  <defs>
+    <linearGradient id="ctAmberWm" gradientUnits="userSpaceOnUse" x1="4" y1="4" x2="28" y2="28">
+      <stop offset="0%" stop-color="#fcd34d"></stop>
+      <stop offset="100%" stop-color="#f59e0b"></stop>
+    </linearGradient>
+  </defs>
+  <polygon points="29,16 22.5,4.75 9.5,4.75 3,16 9.5,27.25 22.5,27.25" fill="none" stroke="url(#ctAmberWm)" stroke-width="1.6" stroke-linejoin="round"></polygon>
+  <text x="16" y="21.2" text-anchor="middle" font-family="&#39;IBM Plex Mono&#39;, ui-monospace, monospace" font-size="13" font-weight="700" fill="url(#ctAmberWm)">Σ</text>
+  <text x="42" y="21" font-family="&#39;Comfortaa&#39;, system-ui, sans-serif" font-size="16" font-weight="600" letter-spacing="-0.01em" fill="#f4f5f7">Calculate <tspan fill="#9aa1ae">Tokens</tspan></text>
+</svg>

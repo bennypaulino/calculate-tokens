@@ -38,7 +38,7 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
     const tokenDisplay = firstState ? (
       firstState.status === 'wasm' ? (
         <>
-          <span className="text-green-600 mr-0.5" title={t('calculator.exactCount')} aria-label={t('calculator.exactCount')}>✓</span>
+          <span className="text-ct-exact mr-0.5" title={t('calculator.exactCount')} aria-label={t('calculator.exactCount')}>✓</span>
           {firstState.tokenCount.toLocaleString()} tokens
         </>
       ) : (
@@ -54,7 +54,6 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
         debounceRef.current = setTimeout(() => {
           onTextChange?.(value);
         }, 100);
-        // Umami tokenize event — separate 2000ms debounce
         if (umamiDebounceRef.current) clearTimeout(umamiDebounceRef.current);
         umamiDebounceRef.current = setTimeout(() => {
           window.umami?.track('tokenize', {
@@ -67,11 +66,9 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
       [setText, onTextChange, tokenizerType]
     );
 
-    // Keyboard shortcut: Shift+H toggles highlighting
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.shiftKey && e.key === 'H') {
-          // Avoid toggling when typing in other inputs
           const tag = (e.target as HTMLElement).tagName;
           if (tag === 'INPUT' || tag === 'SELECT') return;
           setHighlightEnabled((prev) => !prev);
@@ -81,17 +78,14 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
       return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Fire Umami event when highlighting is toggled
     const handleHighlightToggle = useCallback(() => {
       const next = !highlightEnabled;
       setHighlightEnabled(next);
       window.umami?.track('token_highlighter_toggled', { enabled: next ? '1' : '0', locale: process.env.NEXT_PUBLIC_LOCALE ?? 'en' });
     }, [highlightEnabled]);
 
-    // Update mirror div with highlighted tokens — debounced 150ms
     useEffect(() => {
       if (!highlightEnabled) {
-        // Clear mirror when disabled
         const mirror = mirrorRef.current;
         if (mirror) {
           while (mirror.firstChild) mirror.removeChild(mirror.firstChild);
@@ -115,7 +109,6 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
       }, 150);
     }, [highlightEnabled, text, highlightEncoding, charCount]);
 
-    // Cleanup timers
     useEffect(() => {
       return () => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -124,7 +117,6 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
       };
     }, []);
 
-    // Determine toggle disabled state and title
     const isToggleDisabled = isWasmLoading;
     const toggleTitle = isToggleDisabled
       ? t('calculator.highlightTooltipLoading')
@@ -132,18 +124,13 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
       ? t('calculator.highlightTooltipOn')
       : t('calculator.highlightTooltipOff');
 
-    // Show unsupported encoding message
     const showEncodingUnsupported = highlightEnabled && highlightEncoding == null;
-    // Show char limit message
     const showCharLimit = highlightEnabled && charCount > HIGHLIGHT_CHAR_LIMIT;
-
     const showMirror = highlightEnabled && !showEncodingUnsupported && !showCharLimit;
 
     return (
       <div className="relative">
-        {/* Textarea wrapper — layered when highlighting is active */}
         <div className="relative">
-          {/* Mirror div: absolutely positioned behind the textarea */}
           {showMirror && (
             <div
               ref={mirrorRef}
@@ -152,7 +139,6 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
               style={{ wordBreak: 'break-word' }}
             />
           )}
-          {/* When mirror is inactive, still mount ref target off-screen to avoid null checks */}
           {!showMirror && (
             <div ref={mirrorRef} aria-hidden="true" className="hidden" />
           )}
@@ -163,8 +149,10 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
             onChange={handleChange}
             placeholder={t('calculator.placeholder')}
             className={[
-              'w-full min-h-[160px] sm:min-h-[200px] px-4 py-3 text-sm text-gray-900 border border-gray-300 rounded-xl resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400 leading-relaxed',
-              showMirror ? 'bg-transparent relative z-10' : 'bg-white',
+              'w-full min-h-[160px] sm:min-h-[200px] px-4 py-3 text-sm text-ct-strong border border-ct-border rounded-xl resize-y',
+              'placeholder:text-ct-faint leading-relaxed font-sans',
+              'focus:outline-none focus:ring-2 focus:ring-ct-accent focus:border-ct-accent',
+              showMirror ? 'bg-transparent relative z-10' : 'bg-ct-sunken',
             ].join(' ')}
             aria-label={t('calculator.ariaLabel')}
             data-testid="prompt-textarea"
@@ -172,16 +160,30 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
           />
         </div>
 
-        <p className="flex items-center gap-1 text-xs text-gray-500 mt-1.5 px-1">
-          <span aria-hidden="true">🔒</span>{t('calculator.privacyNote')}
+        <p className="flex items-center gap-1 text-xs text-ct-subtle mt-1.5 px-1">
+          <svg
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            width="14"
+            height="14"
+            style={{ display: 'inline-block', verticalAlign: 'text-bottom', flexShrink: 0 }}
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>{t('calculator.privacyNote')}
         </p>
 
         <div className="flex items-center justify-between mt-1.5 px-1">
-          <div className="flex items-center gap-3 text-xs text-gray-500">
+          <div className="flex items-center gap-3 text-xs text-ct-muted font-mono">
             <span>{charCount.toLocaleString()} chars · {wordCount.toLocaleString()} words{tokenDisplay ? <> · {tokenDisplay}</> : null}</span>
           </div>
           <div className="flex items-center gap-2">
-            {/* Highlight toggle button */}
             <button
               type="button"
               data-testid="highlight-toggle"
@@ -192,17 +194,18 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
               className={[
                 'text-xs px-2 py-0.5 rounded transition-colors border',
                 highlightEnabled
-                  ? 'bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200'
-                  : 'bg-white border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-700',
+                  ? 'border-ct-accent text-ct-accent'
+                  : 'border-ct-border text-ct-muted hover:border-ct-accent hover:text-ct-body',
                 isToggleDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
               ].join(' ')}
+              style={highlightEnabled ? { background: 'var(--accent-tint)' } : { background: 'var(--surface-control)' }}
             >
               {highlightLoading ? t('calculator.highlightLoading') : highlightEnabled ? t('calculator.hideHighlights') : t('calculator.highlightTokens')}
             </button>
             {text && (
               <button
                 onClick={() => { setText(''); onTextChange?.(''); }}
-                className="text-xs text-gray-500 hover:text-gray-600 transition-colors"
+                className="text-xs text-ct-subtle hover:text-ct-muted transition-colors"
                 aria-label={t('calculator.clearText')}
               >
                 {t('calculator.clearText')}
@@ -211,14 +214,13 @@ const PromptTextarea = forwardRef<HTMLTextAreaElement, Props>(
           </div>
         </div>
 
-        {/* Informational messages below controls */}
         {showCharLimit && (
-          <p className="text-xs text-amber-600 mt-1 px-1">
+          <p className="text-xs text-ct-accent mt-1 px-1">
             {t('calculator.charLimitWarning')}
           </p>
         )}
         {showEncodingUnsupported && (
-          <p className="text-xs text-amber-600 mt-1 px-1">
+          <p className="text-xs text-ct-accent mt-1 px-1">
             Token highlighting requires OpenAI or GPT-4 model selected.
           </p>
         )}

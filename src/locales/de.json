@@ -2,7 +2,8 @@
   "meta": {
     "siteTitle": "Token berechnen — LLM Token-Rechner & Kostenschätzung",
     "siteDescription": "Berechnen Sie genaue Token-Anzahlen und Kosten für GPT-4o, Claude, Gemini, Llama und mehr. Browser-nativ — Ihr Text verlässt niemals Ihr Gerät.",
-    "siteName": "Token berechnen"
+    "siteName": "Token berechnen",
+    "ogImageAlt": "Token berechnen — Token-Anzahl und Kosten für GPT, Claude, Gemini, Llama und DeepSeek vergleichen."
   },
   "nav": {
     "home": "Token-Rechner",

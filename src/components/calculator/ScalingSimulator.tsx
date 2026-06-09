@@ -55,7 +55,6 @@ export default function ScalingSimulator({
 
   const anySupportsCaching = models.some((m) => m.supports_context_caching);
 
-  // Compute simulation rows
   const rows: SimRow[] = models.map((m) => {
     const inputTokens = tokenStates[m.id]?.tokenCount ?? 0;
 
@@ -88,7 +87,6 @@ export default function ScalingSimulator({
     };
   });
 
-  // Sort ascending by monthly cost
   const sorted = [...rows].sort((a, b) => a.monthlyTotal - b.monthlyTotal);
   const cheapest = sorted[0]?.monthlyTotal ?? 0;
 
@@ -152,19 +150,20 @@ export default function ScalingSimulator({
   return (
     <section
       aria-labelledby="scaling-simulator-heading"
-      className="border border-gray-200 rounded-xl p-5 flex flex-col gap-5"
+      className="border border-ct-border rounded-xl p-5 flex flex-col gap-5"
+      style={{ background: 'var(--surface-card)' }}
     >
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <h2
           id="scaling-simulator-heading"
-          className="text-sm font-semibold text-gray-800"
+          className="text-sm font-semibold text-ct-strong"
         >
           {t('simulator.heading')}
         </h2>
         <button
           type="button"
           onClick={handleExportCsv}
-          className="text-xs text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2 transition-colors"
+          className="text-xs text-ct-accent hover:text-ct-accent-h font-medium underline underline-offset-2 transition-colors"
         >
           {t('simulator.exportCsv')}
         </button>
@@ -172,11 +171,10 @@ export default function ScalingSimulator({
 
       {/* Controls */}
       <div className="flex flex-col gap-4">
-        {/* Monthly requests input + presets */}
         <div className="flex flex-col gap-2">
           <label
             htmlFor="volume-requests"
-            className="text-xs font-medium text-gray-600"
+            className="text-xs font-medium text-ct-muted"
           >
             {t('simulator.monthlyRequests')}
           </label>
@@ -188,7 +186,8 @@ export default function ScalingSimulator({
               max={100000000}
               value={volumeRequests}
               onChange={handleVolumeChange}
-              className="w-32 border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-32 border border-ct-border rounded-md px-3 py-1.5 text-sm text-ct-strong font-mono focus:outline-none focus:ring-2 focus:ring-ct-accent"
+              style={{ background: 'var(--surface-sunken)' }}
             />
             <div className="flex items-center gap-1.5 flex-wrap">
               {VOLUME_PRESETS.map((p) => (
@@ -196,11 +195,20 @@ export default function ScalingSimulator({
                   key={p.value}
                   type="button"
                   onClick={() => handlePresetClick(p.value)}
-                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                  className="px-2.5 py-1 rounded-md text-xs font-medium transition-colors border"
+                  style={
                     volumeRequests === p.value
-                      ? 'bg-blue-100 text-blue-700 ring-1 ring-blue-300'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                      ? {
+                          background: 'var(--accent-tint)',
+                          borderColor: 'var(--accent-line)',
+                          color: 'var(--accent)',
+                        }
+                      : {
+                          background: 'var(--surface-control)',
+                          borderColor: 'var(--border-subtle)',
+                          color: 'var(--text-muted)',
+                        }
+                  }
                 >
                   {p.label}
                 </button>
@@ -217,9 +225,9 @@ export default function ScalingSimulator({
                 type="checkbox"
                 checked={cachingEnabled}
                 onChange={(e) => setCachingEnabled(e.target.checked)}
-                className="w-4 h-4 accent-blue-600"
+                className="w-4 h-4 accent-ct-accent"
               />
-              <span className="text-xs text-gray-700">{t('simulator.cachingLabel')}</span>
+              <span className="text-xs text-ct-body">{t('simulator.cachingLabel')}</span>
             </label>
           )}
           <label className="flex items-center gap-2 cursor-pointer">
@@ -227,9 +235,9 @@ export default function ScalingSimulator({
               type="checkbox"
               checked={batchEnabled}
               onChange={(e) => setBatchEnabled(e.target.checked)}
-              className="w-4 h-4 accent-blue-600"
+              className="w-4 h-4 accent-ct-accent"
             />
-            <span className="text-xs text-gray-700">{t('simulator.batchLabel')}</span>
+            <span className="text-xs text-ct-body">{t('simulator.batchLabel')}</span>
           </label>
         </div>
       </div>
@@ -238,14 +246,14 @@ export default function ScalingSimulator({
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-collapse">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left py-2 pr-4 font-medium text-gray-500">
+            <tr className="border-b border-ct-border">
+              <th className="text-left py-2 pr-4 font-medium text-ct-muted">
                 {t('grid.colModel')}
               </th>
-              <th className="text-right py-2 pr-4 font-medium text-gray-500">
+              <th className="text-right py-2 pr-4 font-medium text-ct-muted">
                 {t('simulator.colMonthlyCost')}
               </th>
-              <th className="text-right py-2 font-medium text-gray-500">
+              <th className="text-right py-2 font-medium text-ct-muted">
                 {t('simulator.colVsCheapest')}
               </th>
             </tr>
@@ -257,30 +265,30 @@ export default function ScalingSimulator({
               return (
                 <tr
                   key={row.modelId}
-                  className="border-b border-gray-100 last:border-0"
+                  className="border-b border-ct-border-subtle last:border-0"
                 >
-                  <td className="py-2 pr-4 text-gray-800">
+                  <td className="py-2 pr-4 text-ct-body">
                     <span className="font-medium">{row.modelName}</span>
-                    <span className="text-gray-500 ml-1">({row.provider})</span>
+                    <span className="text-ct-subtle ml-1">({row.provider})</span>
                     {row.cachingApplied && (
-                      <span className="ml-1 text-green-600" title="Caching applied">
+                      <span className="ml-1 text-ct-exact" title="Caching applied">
                         cache
                       </span>
                     )}
                     {row.batchApplied && (
-                      <span className="ml-1 text-blue-600" title="Batch applied">
+                      <span className="ml-1 text-ct-accent" title="Batch applied">
                         batch
                       </span>
                     )}
                   </td>
-                  <td className="py-2 pr-4 text-right font-mono text-gray-800">
+                  <td className="py-2 pr-4 text-right font-mono text-ct-strong">
                     {formatMonthly(row.monthlyTotal)}
                   </td>
                   <td className="py-2 text-right font-mono">
                     {isCheapest ? (
-                      <span className="text-green-700 font-medium">{t('simulator.cheapestBadge')}</span>
+                      <span className="text-ct-exact font-medium">{t('simulator.cheapestBadge')}</span>
                     ) : (
-                      <span className="text-gray-500">
+                      <span className="text-ct-subtle">
                         +{formatCost(delta)}/mo
                       </span>
                     )}
@@ -292,7 +300,7 @@ export default function ScalingSimulator({
         </table>
       </div>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-ct-subtle">
         {t('simulator.disclaimer')}
       </p>
     </section>
