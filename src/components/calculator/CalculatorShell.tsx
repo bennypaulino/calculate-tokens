@@ -256,7 +256,7 @@ export default function CalculatorShell() {
 
   if (!pricesData) {
     return (
-      <div className="border border-gray-200 rounded-xl p-8 text-center">
+      <div className="border border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center min-h-[600px]">
         <div className="inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
         <p className="text-gray-500 text-sm mt-2">{t('calculator.loadingPricing')}</p>
       </div>
