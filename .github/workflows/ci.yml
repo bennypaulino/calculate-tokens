@@ -60,3 +60,13 @@ jobs:
         run: node scripts/compute-prices-hash.js
       - name: Verify build integrity
         run: node scripts/verify-build-integrity.js
+      - name: Install Playwright (chromium only)
+        run: npx playwright install --with-deps chromium
+      - name: Start static server
+        run: |
+          npx serve out/ -p 3000 &
+          npx wait-on http://localhost:3000 --timeout 30000
+      - name: Smoke tests (visual regression)
+        run: npx playwright test tests/e2e/visual-smoke.spec.ts --project=chromium
+      - name: Lighthouse CI
+        run: npx lhci autorun
