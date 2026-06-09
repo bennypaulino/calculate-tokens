@@ -29,7 +29,7 @@ export default function StalenessIndicator({ level, lastVerified }: Props) {
             }
       }
     >
-      <span aria-hidden="true">{isAmber ? '⚠' : '⛔'}</span>
+      <span aria-hidden="true">⚠</span>
       <span>{label}</span>
       <span className="font-normal opacity-70">({lastVerified})</span>
     </div>
