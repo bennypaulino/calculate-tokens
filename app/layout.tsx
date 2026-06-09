@@ -19,10 +19,10 @@ export const metadata: Metadata = {
     siteName: t("meta.siteName"),
     images: [
       {
-        url: "/ai-token-cost-calculator.jpg",
+        url: "https://calculatetokens.com/og/calculate-tokens-og.png",
         width: 1200,
         height: 630,
-        alt: t("meta.siteTitle"),
+        alt: t("meta.ogImageAlt"),
       },
     ],
     locale: getLocaleConfig().ogLocale,
@@ -32,7 +32,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: t("meta.siteTitle"),
     description: t("meta.siteDescription"),
-    images: ["/ai-token-cost-calculator.jpg"],
+    images: [
+      {
+        url: "https://calculatetokens.com/og/calculate-tokens-og.png",
+        alt: t("meta.ogImageAlt"),
+      },
+    ],
   },
   alternates: {
     languages: getHreflangAlternates("/"),
