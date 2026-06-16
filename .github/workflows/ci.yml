@@ -47,7 +47,9 @@ jobs:
       - name: Validate security.txt
         run: node scripts/check-security-txt.js
       - name: Validate CSP configuration
-        run: node scripts/validate-csp.js
+        run: |
+          node scripts/generate-headers.js
+          node scripts/validate-csp.js
       - name: Validate CSP configuration (adsense mode)
         run: |
           NEXT_PUBLIC_CSP_MODE=adsense node scripts/generate-headers.js
