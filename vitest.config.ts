@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
@@ -10,6 +11,6 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
   },
   resolve: {
-    alias: { '@': '/Users/benny/code/projects/calculate-tokens/src' },
+    alias: { '@': path.resolve(__dirname, 'src') },
   },
 })
