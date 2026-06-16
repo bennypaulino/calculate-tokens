@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "ghsa": "GHSA-qx2v-qp2m-jg93",
+    "package": "postcss",
+    "severity": "moderate",
+    "reason": "postcss bundled inside next (build-time only). Vulnerable CSS stringify output cannot affect our static export production site. No patched next version exists above 16.3.0-canary.5 without a breaking downgrade. Monitor for a next stable release that resolves this.",
+    "expires": "2026-09-16"
+  }
+]
