@@ -21,13 +21,13 @@ export default defineConfig({
     {
       command: 'NEXT_PUBLIC_CSP_MODE=analytics npm run dev',
       url: 'http://localhost:3000',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: true,
       timeout: 60000,
     },
     {
       command: 'NEXT_PUBLIC_CSP_MODE=adsense NEXT_PUBLIC_WORKERS_ORIGIN=https://workers.calculatetokens.com PORT=3001 npm run dev',
       url: 'http://localhost:3001',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: true,
       timeout: 60000,
     },
   ],
