@@ -291,7 +291,7 @@ export default async function ComparisonPage({
           "@type": "Answer",
           text: sameTokenizer
             ? `Yes, both ${modelA.display_name} and ${modelB.display_name} use the ${formatTokenizer(modelA.tokenizer)}. The same text produces identical token counts on both models, so any cost difference is purely due to the rate each provider charges per token.`
-            : `No. ${modelA.display_name} uses the ${formatTokenizer(modelA.tokenizer)}, while ${modelB.display_name} uses ${formatTokenizer(modelB.tokenizer)}. Different tokenizers split text differently, so the same prompt will produce different token counts on each model — the effective cost difference may be larger or smaller than the per-token price difference alone suggests.`,
+            : `No, they use different tokenizers. ${modelA.display_name} uses the ${formatTokenizer(modelA.tokenizer)}, while ${modelB.display_name} uses ${formatTokenizer(modelB.tokenizer)}. Different tokenizers split text differently, so the same prompt will produce different token counts on each model — the effective cost difference may be larger or smaller than the per-token price difference alone suggests.`,
         },
       },
       {
@@ -634,7 +634,7 @@ export default async function ComparisonPage({
                 question: t("compare.faqTokenizerQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
                 answer: sameTokenizer
                   ? `Yes, both ${modelA.display_name} and ${modelB.display_name} use the ${formatTokenizer(modelA.tokenizer)}. The same text produces identical token counts on both models, so any cost difference is purely due to the rate each provider charges per token.`
-                  : `No. ${modelA.display_name} uses the ${formatTokenizer(modelA.tokenizer)}, while ${modelB.display_name} uses ${formatTokenizer(modelB.tokenizer)}. Different tokenizers split text differently, so the same prompt will produce different token counts on each model — the effective cost difference may be larger or smaller than the per-token price difference alone suggests.`,
+                  : `No, they use different tokenizers. ${modelA.display_name} uses the ${formatTokenizer(modelA.tokenizer)}, while ${modelB.display_name} uses ${formatTokenizer(modelB.tokenizer)}. Different tokenizers split text differently, so the same prompt will produce different token counts on each model — the effective cost difference may be larger or smaller than the per-token price difference alone suggests.`,
               },
               {
                 question: t("compare.faqCostPerMillionQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
