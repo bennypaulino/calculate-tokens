@@ -135,7 +135,7 @@ export async function generateMetadata({
       siteName: t("meta.siteName"),
       images: [
         {
-          url: "/ai-token-cost-calculator.jpg",
+          url: "/og/calculate-tokens-og.png",
           width: 1200,
           height: 630,
           alt: t("meta.siteTitle"),
@@ -147,7 +147,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["/ai-token-cost-calculator.jpg"],
+      images: ["/og/calculate-tokens-og.png"],
     },
     alternates: {
       canonical: `${getBaseUrl()}/compare/${slug}`,

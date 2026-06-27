@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: "Calculate Tokens",
     images: [
       {
-        url: "/ai-token-cost-calculator.jpg",
+        url: "/og/calculate-tokens-og.png",
         width: 1200,
         height: 630,
         alt: "Calculate Tokens — LLM Token Calculator & Cost Estimator",

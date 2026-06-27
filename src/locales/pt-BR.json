@@ -17,6 +17,8 @@
   },
   "footer": {
     "copyright": "© {{year}} Calculate Tokens. Licença MIT.",
+    "about": "Sobre",
+    "contact": "Contato",
     "privacy": "Privacidade"
   },
   "home": {

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     siteName: "Calculate Tokens",
     images: [
       {
-        url: "/ai-token-cost-calculator.jpg",
+        url: "/og/calculate-tokens-og.png",
         width: 1200,
         height: 630,
         alt: "Calculate Tokens — LLM Token Calculator & Cost Estimator",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: "What is a Token in AI? A Complete Guide",
     description:
       "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
-    images: ["/ai-token-cost-calculator.jpg"],
+    images: ["/og/calculate-tokens-og.png"],
   },
 };
 

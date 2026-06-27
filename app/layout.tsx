@@ -178,9 +178,17 @@ export default function RootLayout({
         <footer className="border-t border-ct-border-subtle mt-auto">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between text-sm text-ct-muted">
             <span>{t("footer.copyright", { year: "2026" })}</span>
-            <Link href="/privacy" className="hover:text-ct-strong transition-colors">
-              {t("footer.privacy")}
-            </Link>
+            <nav className="flex items-center gap-4" aria-label="Footer navigation">
+              <Link href="/about" className="hover:text-ct-strong transition-colors">
+                {t("footer.about")}
+              </Link>
+              <Link href="/contact" className="hover:text-ct-strong transition-colors">
+                {t("footer.contact")}
+              </Link>
+              <Link href="/privacy" className="hover:text-ct-strong transition-colors">
+                {t("footer.privacy")}
+              </Link>
+            </nav>
           </div>
         </footer>
 
