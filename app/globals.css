@@ -182,6 +182,98 @@
   }
 }
 
+/* ── Design system tokens (spacing, typography, effects) ─── */
+/* These match the Calculate Tokens Design System token files exactly */
+:root {
+  /* Spacing (4px base grid) */
+  --space-1:  2px;  --space-2:  4px;  --space-3:  8px;
+  --space-4:  12px; --space-5:  16px; --space-6:  20px;
+  --space-7:  24px; --space-8:  32px; --space-9:  40px;
+
+  /* Corner radii */
+  --radius-xs: 3px; --radius-sm: 6px; --radius-md: 10px;
+  --radius-lg: 14px; --radius-pill: 999px;
+
+  /* Border widths */
+  --border-hair: 1px; --border-thick: 1.5px;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms; --dur-base: 180ms; --dur-slow: 280ms;
+
+  /* Focus ring */
+  --focus-ring-tight: 0 0 0 2px #fbbf24;
+
+  /* Type scale */
+  --text-xs: 12px; --text-sm: 13px; --text-base: 15px;
+  --text-md: 17px; --text-lg: 20px; --text-xl: 25px;
+
+  /* Line heights */
+  --leading-tight: 1.12; --leading-snug: 1.28;
+  --leading-normal: 1.5; --leading-relaxed: 1.65;
+
+  /* Weights */
+  --weight-regular: 400; --weight-medium: 500;
+  --weight-semibold: 600; --weight-bold: 700;
+}
+
+/* ── FAQ accordion (ct-faq) ──────────────────────────────── */
+.ct-faq { display: flex; flex-direction: column; font-family: var(--font-sans); }
+.ct-faq--bordered {
+  border: var(--border-hair) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  overflow: hidden;
+}
+.ct-faq__item { border-top: var(--border-hair) solid var(--border-subtle); }
+.ct-faq__item:first-child { border-top: none; }
+.ct-faq--gap { gap: var(--space-3); }
+.ct-faq--gap .ct-faq__item {
+  border: var(--border-hair) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+}
+.ct-faq--gap .ct-faq__item[data-open="true"] { border-color: var(--accent-line); }
+
+.ct-faq__q {
+  width: 100%; box-sizing: border-box;
+  display: flex; align-items: flex-start; gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  background: transparent; border: none; cursor: pointer; text-align: left;
+  font-family: inherit;
+  color: var(--text-strong);
+  font-size: var(--text-base); font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  transition: color var(--dur-fast) var(--ease-standard);
+}
+.ct-faq__q:hover { color: var(--accent-hover); }
+.ct-faq__q:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); border-radius: var(--radius-sm); }
+.ct-faq__q-text { flex: 1 1 auto; min-width: 0; }
+.ct-faq__icon {
+  flex: none; margin-top: 1px; width: 20px; height: 20px;
+  display: grid; place-items: center;
+  color: var(--text-subtle);
+  transition: transform var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-standard);
+}
+.ct-faq__icon svg { width: 18px; height: 18px; }
+.ct-faq__item[data-open="true"] .ct-faq__icon { transform: rotate(180deg); color: var(--accent); }
+.ct-faq__q:hover .ct-faq__icon { color: var(--accent); }
+
+.ct-faq__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-base) var(--ease-standard); }
+.ct-faq__item[data-open="true"] .ct-faq__panel { grid-template-rows: 1fr; }
+.ct-faq__panel-inner { overflow: hidden; min-height: 0; }
+.ct-faq__a {
+  padding: 0 var(--space-6) var(--space-5);
+  padding-right: calc(var(--space-6) + 20px + var(--space-4));
+  font-size: var(--text-sm); color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ct-faq__panel, .ct-faq__icon { transition: none; }
+}
+
 /* ── Token highlighter ───────────────────────────────────── */
 .token-highlight-a {
   background: var(--token-hl-a);

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
 import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, locale } from "@/lib/i18n";
+import { FaqAccordion } from "../FaqAccordion";
 
 interface Model {
   id: string;
@@ -65,6 +66,18 @@ function formatDate(iso: string): string {
     month: "long",
     day: "numeric",
   });
+}
+
+function contextCapacityWords(tokens: number): string {
+  const approxWords = Math.round((tokens * 3) / 4);
+  if (approxWords >= 1_000_000) return `${(approxWords / 1_000_000).toFixed(1)}M words`;
+  return `${Math.round(approxWords / 1_000)}K words`;
+}
+
+function contextCapacityPages(tokens: number): string {
+  const approxPages = Math.round((tokens * 3) / (4 * 250));
+  if (approxPages >= 1_000) return `~${Math.round(approxPages / 1_000)}K pages`;
+  return `~${approxPages.toLocaleString()} pages`;
 }
 
 function parsePair(slug: string): { modelA: Model; modelB: Model } | null {
@@ -207,6 +220,16 @@ export default async function ComparisonPage({
   const lastVerifiedA = formatDate(modelA.last_human_verified);
   const lastVerifiedB = formatDate(modelB.last_human_verified);
 
+  const sameTokenizer = modelA.tokenizer === modelB.tokenizer;
+
+  // 80% output / 20% input scenario (per 1M total tokens billed)
+  const outputHeavyCostA = 0.2 * modelA.input_cost_per_1m + 0.8 * modelA.output_cost_per_1m;
+  const outputHeavyCostB = 0.2 * modelB.input_cost_per_1m + 0.8 * modelB.output_cost_per_1m;
+  const outputHeavyCheaper = outputHeavyCostA <= outputHeavyCostB ? modelA : modelB;
+  const outputHeavySavingsPct = outputHeavyCostA !== outputHeavyCostB
+    ? Math.abs(((outputHeavyCostA - outputHeavyCostB) / Math.max(outputHeavyCostA, outputHeavyCostB)) * 100).toFixed(0)
+    : "0";
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -259,6 +282,42 @@ export default async function ComparisonPage({
         acceptedAnswer: {
           "@type": "Answer",
           text: `${modelA.supports_context_caching ? `${modelA.display_name} supports context caching${modelA.context_caching_discount !== null ? ` with a ${(modelA.context_caching_discount * 100).toFixed(0)}% discount on cached tokens` : ""}.` : `${modelA.display_name} does not support context caching.`} ${modelB.supports_context_caching ? `${modelB.display_name} supports context caching${modelB.context_caching_discount !== null ? ` with a ${(modelB.context_caching_discount * 100).toFixed(0)}% discount on cached tokens` : ""}.` : `${modelB.display_name} does not support context caching.`}`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: t("compare.faqTokenizerQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: sameTokenizer
+            ? `Yes, both ${modelA.display_name} and ${modelB.display_name} use the ${formatTokenizer(modelA.tokenizer)} tokenizer. The same text produces identical token counts on both models, so any cost difference is purely due to the rate each provider charges per token.`
+            : `No. ${modelA.display_name} uses the ${formatTokenizer(modelA.tokenizer)} tokenizer, while ${modelB.display_name} uses ${formatTokenizer(modelB.tokenizer)}. Different tokenizers split text differently, so the same prompt will produce different token counts on each model — the effective cost difference may be larger or smaller than the per-token price difference alone suggests.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: t("compare.faqCostPerMillionQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${modelA.display_name} (${modelA.provider}): $${modelA.input_cost_per_1m} input / $${modelA.output_cost_per_1m} output per 1M tokens. ${modelB.display_name} (${modelB.provider}): $${modelB.input_cost_per_1m} input / $${modelB.output_cost_per_1m} output per 1M tokens. Rates shown before caching or batch discounts.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: t("compare.faqOutputHeavyQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: outputHeavyCostA === outputHeavyCostB
+            ? `Both models cost the same for an 80% output / 20% input workload: $${outputHeavyCostA.toFixed(4)} per 1M total tokens billed.`
+            : `For an 80% output / 20% input workload (typical for code generation or long-form writing), ${modelA.display_name} costs $${outputHeavyCostA.toFixed(4)} per 1M total tokens and ${modelB.display_name} costs $${outputHeavyCostB.toFixed(4)}. ${outputHeavyCheaper.display_name} is ${outputHeavySavingsPct}% cheaper for this pattern. For your exact ratio, use the calculator to get a precise breakdown.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: t("compare.faqContextCapacityQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `${modelA.display_name} has a ${formatContextWindow(modelA.context_window)}-token context window — approximately ${contextCapacityWords(modelA.context_window)} or ${contextCapacityPages(modelA.context_window)} of standard text. ${modelB.display_name} has a ${formatContextWindow(modelB.context_window)}-token context window — approximately ${contextCapacityWords(modelB.context_window)} or ${contextCapacityPages(modelB.context_window)}. Estimates assume roughly 0.75 words per token.`,
         },
       },
     ],
@@ -519,13 +578,11 @@ export default async function ComparisonPage({
           >
             {t("compare.faqHeading")}
           </h2>
-          <dl className="space-y-6">
-            <div>
-              <dt className="font-medium text-ct-strong mb-1">
-                {t("compare.faqCheaperQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
-              </dt>
-              <dd className="text-ct-body text-sm leading-relaxed">
-                {costA < costB
+          <FaqAccordion
+            items={[
+              {
+                question: t("compare.faqCheaperQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+                answer: costA < costB
                   ? t("compare.faqCheaperAYes", {
                       modelA: modelA.display_name,
                       modelB: modelB.display_name,
@@ -545,42 +602,74 @@ export default async function ComparisonPage({
                       costB: `$${costB.toFixed(4)}`,
                       pct: savings,
                     })
-                  : t("compare.faqCheaperAEqual", { cost: `$${costA.toFixed(4)}` })}
-              </dd>
-            </div>
-            <div>
-              <dt className="font-medium text-ct-strong mb-1">
-                {t("compare.faqContextQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
-              </dt>
-              <dd className="text-ct-body text-sm leading-relaxed">
-                {t("compare.faqContextA", {
+                  : t("compare.faqCheaperAEqual", { cost: `$${costA.toFixed(4)}` }),
+              },
+              {
+                question: t("compare.faqContextQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+                answer: t("compare.faqContextA", {
                   modelA: modelA.display_name,
                   modelB: modelB.display_name,
                   windowA: formatContextWindow(modelA.context_window),
                   windowB: formatContextWindow(modelB.context_window),
-                })}
-              </dd>
-            </div>
-            <div>
-              <dt className="font-medium text-ct-strong mb-1">
-                {t("compare.faqCachingQ", { modelA: modelA.display_name, modelB: modelB.display_name })}
-              </dt>
-              <dd className="text-ct-body text-sm leading-relaxed">
-                {modelA.supports_context_caching
-                  ? `${modelA.display_name} supports context caching${modelA.context_caching_discount !== null ? ` (${(modelA.context_caching_discount * 100).toFixed(0)}% off repeated tokens)` : ""}.`
-                  : `${modelA.display_name} does not support context caching.`}{" "}
-                {modelA.supports_batch_api && modelA.batch_api_discount !== null
-                  ? `It offers a ${(modelA.batch_api_discount * 100).toFixed(0)}% Batch API discount.`
-                  : `It does not offer a batch API discount.`}{" "}
-                {modelB.supports_context_caching
-                  ? `${modelB.display_name} supports context caching${modelB.context_caching_discount !== null ? ` (${(modelB.context_caching_discount * 100).toFixed(0)}% off repeated tokens)` : ""}.`
-                  : `${modelB.display_name} does not support context caching.`}{" "}
-                {modelB.supports_batch_api && modelB.batch_api_discount !== null
-                  ? `It offers a ${(modelB.batch_api_discount * 100).toFixed(0)}% Batch API discount.`
-                  : `It does not offer a batch API discount.`}
-              </dd>
-            </div>
-          </dl>
+                }),
+              },
+              {
+                question: t("compare.faqCachingQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+                answer: [
+                  modelA.supports_context_caching
+                    ? `${modelA.display_name} supports context caching${modelA.context_caching_discount !== null ? ` (${(modelA.context_caching_discount * 100).toFixed(0)}% off repeated tokens)` : ""}.`
+                    : `${modelA.display_name} does not support context caching.`,
+                  modelA.supports_batch_api && modelA.batch_api_discount !== null
+                    ? ` It offers a ${(modelA.batch_api_discount * 100).toFixed(0)}% Batch API discount.`
+                    : ` It does not offer a batch API discount.`,
+                  modelB.supports_context_caching
+                    ? ` ${modelB.display_name} supports context caching${modelB.context_caching_discount !== null ? ` (${(modelB.context_caching_discount * 100).toFixed(0)}% off repeated tokens)` : ""}.`
+                    : ` ${modelB.display_name} does not support context caching.`,
+                  modelB.supports_batch_api && modelB.batch_api_discount !== null
+                    ? ` It offers a ${(modelB.batch_api_discount * 100).toFixed(0)}% Batch API discount.`
+                    : ` It does not offer a batch API discount.`,
+                ].join(''),
+              },
+              {
+                question: t("compare.faqTokenizerQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+                answer: sameTokenizer
+                  ? `Yes, both ${modelA.display_name} and ${modelB.display_name} use the ${formatTokenizer(modelA.tokenizer)} tokenizer. The same text produces identical token counts on both models, so any cost difference is purely due to the rate each provider charges per token.`
+                  : `No. ${modelA.display_name} uses the ${formatTokenizer(modelA.tokenizer)} tokenizer, while ${modelB.display_name} uses ${formatTokenizer(modelB.tokenizer)}. Different tokenizers split text differently, so the same prompt will produce different token counts on each model — the effective cost difference may be larger or smaller than the per-token price difference alone suggests.`,
+              },
+              {
+                question: t("compare.faqCostPerMillionQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+                answer: (
+                  <span>
+                    <span className="font-medium">{modelA.display_name}</span>{" "}
+                    ({modelA.provider}):{" "}
+                    <span className="font-mono">${modelA.input_cost_per_1m}</span> input /{" "}
+                    <span className="font-mono">${modelA.output_cost_per_1m}</span> output per 1M tokens.{" "}
+                    <span className="font-medium">{modelB.display_name}</span>{" "}
+                    ({modelB.provider}):{" "}
+                    <span className="font-mono">${modelB.input_cost_per_1m}</span> input /{" "}
+                    <span className="font-mono">${modelB.output_cost_per_1m}</span> output per 1M tokens.{" "}
+                    Rates shown before caching or batch discounts.
+                  </span>
+                ),
+              },
+              {
+                question: t("compare.faqOutputHeavyQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+                answer: (
+                  <span>
+                    {outputHeavyCostA === outputHeavyCostB
+                      ? `Both models cost the same for an 80% output / 20% input workload: $${outputHeavyCostA.toFixed(4)} per 1M total tokens.`
+                      : `For an 80% output / 20% input workload — typical for code generation or long-form writing — ${modelA.display_name} costs $${outputHeavyCostA.toFixed(4)} per 1M total tokens and ${modelB.display_name} costs $${outputHeavyCostB.toFixed(4)}. ${outputHeavyCheaper.display_name} is ${outputHeavySavingsPct}% cheaper for this pattern.`}{" "}
+                    For your exact ratio, paste a real prompt into the{" "}
+                    <Link href="/" className="text-ct-accent hover:underline">calculator above</Link>.
+                  </span>
+                ),
+              },
+              {
+                question: t("compare.faqContextCapacityQ", { modelA: modelA.display_name, modelB: modelB.display_name }),
+                answer: `${modelA.display_name} has a ${formatContextWindow(modelA.context_window)}-token context window — approximately ${contextCapacityWords(modelA.context_window)} or ${contextCapacityPages(modelA.context_window)} of standard text. ${modelB.display_name} has a ${formatContextWindow(modelB.context_window)}-token context window — approximately ${contextCapacityWords(modelB.context_window)} or ${contextCapacityPages(modelB.context_window)}. (Estimates assume ~0.75 words per token.)`,
+              },
+            ]}
+          />
         </section>
 
         {/* CTA */}
