@@ -16,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     for (let j = i + 1; j < modelIds.length; j++) {
       const [a, b] = [modelIds[i], modelIds[j]].sort();
       comparePairs.push({
-        url: `${BASE_URL}/compare/${a}-vs-${b}`,
+        url: `${BASE_URL}/compare/${a}-vs-${b}/`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
         priority: 0.5,
@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // /models/[id] pages
   const modelPages: MetadataRoute.Sitemap = activeModels.map((model) => ({
-    url: `${BASE_URL}/models/${model.id}`,
+    url: `${BASE_URL}/models/${model.id}/`,
     lastModified: new Date(),
     changeFrequency: 'weekly',
     priority: 0.7,
@@ -40,37 +40,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     ...(locale === 'en' ? [{
-      url: `${BASE_URL}/learn/what-is-a-token`,
+      url: `${BASE_URL}/learn/what-is-a-token/`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     }] : []),
     ...(locale === 'en' ? [{
-      url: `${BASE_URL}/privacy`,
+      url: `${BASE_URL}/privacy/`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.3,
     }] : []),
     ...(locale === 'en' ? [{
-      url: `${BASE_URL}/about`,
+      url: `${BASE_URL}/about/`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.4,
     }] : []),
     ...(locale === 'en' ? [{
-      url: `${BASE_URL}/contact`,
+      url: `${BASE_URL}/contact/`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.4,
     }] : []),
     {
-      url: `${BASE_URL}/compare`,
+      url: `${BASE_URL}/compare/`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.6,
     },
     {
-      url: `${BASE_URL}/models`,
+      url: `${BASE_URL}/models/`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.6,
