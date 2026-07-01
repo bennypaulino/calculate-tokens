@@ -46,6 +46,8 @@ jobs:
         run: node scripts/check-exemption-expiry.js
       - name: Validate security.txt
         run: node scripts/check-security-txt.js
+      - name: Check canonical URL consistency
+        run: node scripts/check-canonical-urls.js
       - name: Validate CSP configuration
         run: |
           node scripts/generate-headers.js

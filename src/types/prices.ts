@@ -2,6 +2,7 @@ export type TokenizerType =
   | 'cl100k_base'
   | 'o200k_base'
   | 'claude'
+  | 'claude-new'
   | 'gemini'
   | 'llama'
   | 'heuristic';

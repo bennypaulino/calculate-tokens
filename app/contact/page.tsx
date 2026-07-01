@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { canonicalUrl } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "Contact — Calculate Tokens",
   description:
     "Get in touch with the Calculate Tokens team for general enquiries, bug reports, feature requests, or partnership enquiries.",
   alternates: {
-    canonical: "https://calculatetokens.com/contact/",
+    canonical: canonicalUrl('/contact'),
   },
   openGraph: {
     title: "Contact — Calculate Tokens",
     description:
       "Get in touch with the Calculate Tokens team for general enquiries, bug reports, feature requests, or partnership enquiries.",
-    url: "https://calculatetokens.com/contact/",
+    url: canonicalUrl('/contact'),
     siteName: "Calculate Tokens",
     images: [
       {

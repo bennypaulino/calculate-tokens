@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
+import { canonicalUrl } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "What is a Token in AI? A Complete Guide",
   description:
     "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
   alternates: {
-    canonical: "https://calculatetokens.com/learn/what-is-a-token/",
+    canonical: canonicalUrl('/learn/what-is-a-token'),
   },
   openGraph: {
     title: "What is a Token in AI? A Complete Guide",
     description:
       "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
-    url: "https://calculatetokens.com/learn/what-is-a-token/",
+    url: canonicalUrl('/learn/what-is-a-token'),
     siteName: "Calculate Tokens",
     images: [
       {
