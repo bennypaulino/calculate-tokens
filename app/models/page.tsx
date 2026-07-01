@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
-import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig } from "@/lib/i18n";
+import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, canonicalUrl } from "@/lib/i18n";
 
 interface Model {
   id: string;
@@ -64,13 +64,13 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     alternates: {
-      canonical: `${getBaseUrl()}/models`,
+      canonical: canonicalUrl('/models'),
       languages: getHreflangAlternates("/models"),
     },
     openGraph: {
       title,
       description,
-      url: `${getBaseUrl()}/models`,
+      url: canonicalUrl('/models'),
       siteName: t("meta.siteName"),
       images: [
         {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CalculatorShell from "../src/components/calculator/CalculatorShell";
-import { t, getBaseUrl, getHreflangAlternates } from "../src/lib/i18n";
+import { t, getBaseUrl, getHreflangAlternates, canonicalUrl } from "../src/lib/i18n";
 
 const comparisonLinks = [
   { a: "GPT-4o", b: "Claude Sonnet 4.6", href: "/compare/claude-sonnet-4-6-vs-gpt-4o" },
@@ -14,7 +14,7 @@ const comparisonLinks = [
 export async function generateMetadata(): Promise<Metadata> {
   return {
     alternates: {
-      canonical: getBaseUrl(),
+      canonical: canonicalUrl('/'),
       languages: getHreflangAlternates("/"),
     },
   };

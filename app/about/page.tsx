@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { canonicalUrl } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "About — Calculate Tokens",
   description:
     "Calculate Tokens is a browser-native LLM token calculator with per-model WebAssembly tokenizers. Your text never leaves your browser.",
   alternates: {
-    canonical: "https://calculatetokens.com/about/",
+    canonical: canonicalUrl('/about'),
   },
   openGraph: {
     title: "About — Calculate Tokens",
     description:
       "Calculate Tokens is a browser-native LLM token calculator with per-model WebAssembly tokenizers. Your text never leaves your browser.",
-    url: "https://calculatetokens.com/about/",
+    url: canonicalUrl('/about'),
     siteName: "Calculate Tokens",
     images: [
       {

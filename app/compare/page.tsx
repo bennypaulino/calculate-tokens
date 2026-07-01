@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
-import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig } from "@/lib/i18n";
+import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, canonicalUrl } from "@/lib/i18n";
 
 interface Model {
   id: string;
@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: getLocaleConfig().ogLocale,
     },
     alternates: {
-      canonical: `${getBaseUrl()}/compare`,
+      canonical: canonicalUrl('/compare'),
       languages: getHreflangAlternates("/compare"),
     },
   };

@@ -39,14 +39,26 @@ const BASE_URLS: Record<Locale, string> = {
 }
 export const getBaseUrl = (): string => BASE_URLS[locale]
 
+function ensureTrailingSlash(path: string): string {
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return p.endsWith('/') ? p : `${p}/`;
+}
+
+/** Returns the canonical URL for a page path, always with a trailing slash.
+ *  Consistent with `trailingSlash: true` in next.config.ts. */
+export function canonicalUrl(path: string = '/'): string {
+  return `${getBaseUrl()}${ensureTrailingSlash(path)}`;
+}
+
 export function getHreflangAlternates(path: string): Record<string, string> {
+  const p = ensureTrailingSlash(path);
   return {
-    en: `https://calculatetokens.com${path}`,
-    de: `https://de.calculatetokens.com${path}`,
-    es: `https://es.calculatetokens.com${path}`,
-    fr: `https://fr.calculatetokens.com${path}`,
-    'pt-BR': `https://pt-br.calculatetokens.com${path}`,
-    'x-default': `https://calculatetokens.com${path}`,
+    en: `https://calculatetokens.com${p}`,
+    de: `https://de.calculatetokens.com${p}`,
+    es: `https://es.calculatetokens.com${p}`,
+    fr: `https://fr.calculatetokens.com${p}`,
+    'pt-BR': `https://pt-br.calculatetokens.com${p}`,
+    'x-default': `https://calculatetokens.com${p}`,
   }
 }
 
