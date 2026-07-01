@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   description:
     "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
   alternates: {
-    canonical: "https://calculatetokens.com/learn/what-is-a-token",
+    canonical: "https://calculatetokens.com/learn/what-is-a-token/",
   },
   openGraph: {
     title: "What is a Token in AI? A Complete Guide",
     description:
       "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
-    url: "https://calculatetokens.com/learn/what-is-a-token",
+    url: "https://calculatetokens.com/learn/what-is-a-token/",
     siteName: "Calculate Tokens",
     images: [
       {
@@ -56,7 +56,7 @@ const jsonLd = {
   headline: "What is a Token in AI? A Complete Guide",
   description:
     "Tokens are the units AI models use to process text. Learn how tokens work, how they're counted, and what they cost across different AI models.",
-  url: "https://calculatetokens.com/learn/what-is-a-token",
+  url: "https://calculatetokens.com/learn/what-is-a-token/",
   datePublished: "2026-06-06",
   dateModified: "2026-06-06",
   author: {
@@ -71,7 +71,7 @@ const jsonLd = {
   },
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": "https://calculatetokens.com/learn/what-is-a-token",
+    "@id": "https://calculatetokens.com/learn/what-is-a-token/",
   },
 };
 

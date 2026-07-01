@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   description:
     "Get in touch with the Calculate Tokens team for general enquiries, bug reports, feature requests, or partnership enquiries.",
   alternates: {
-    canonical: "https://calculatetokens.com/contact",
+    canonical: "https://calculatetokens.com/contact/",
   },
   openGraph: {
     title: "Contact — Calculate Tokens",
     description:
       "Get in touch with the Calculate Tokens team for general enquiries, bug reports, feature requests, or partnership enquiries.",
-    url: "https://calculatetokens.com/contact",
+    url: "https://calculatetokens.com/contact/",
     siteName: "Calculate Tokens",
     images: [
       {

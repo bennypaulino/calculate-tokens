@@ -5,13 +5,13 @@ export const metadata: Metadata = {
   description:
     "Privacy policy for calculatetokens.com: what data is collected, what is not, third-party services, data residency, user rights, and how to contact us.",
   alternates: {
-    canonical: "https://calculatetokens.com/privacy",
+    canonical: "https://calculatetokens.com/privacy/",
   },
   openGraph: {
     title: "Privacy Policy — Calculate Tokens",
     description:
       "Privacy policy for calculatetokens.com: what data is collected, what is not, third-party services, data residency, user rights, and how to contact us.",
-    url: "https://calculatetokens.com/privacy",
+    url: "https://calculatetokens.com/privacy/",
     siteName: "Calculate Tokens",
     images: [
       {

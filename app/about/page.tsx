@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   description:
     "Calculate Tokens is a browser-native LLM token calculator with per-model WebAssembly tokenizers. Your text never leaves your browser.",
   alternates: {
-    canonical: "https://calculatetokens.com/about",
+    canonical: "https://calculatetokens.com/about/",
   },
   openGraph: {
     title: "About — Calculate Tokens",
     description:
       "Calculate Tokens is a browser-native LLM token calculator with per-model WebAssembly tokenizers. Your text never leaves your browser.",
-    url: "https://calculatetokens.com/about",
+    url: "https://calculatetokens.com/about/",
     siteName: "Calculate Tokens",
     images: [
       {
