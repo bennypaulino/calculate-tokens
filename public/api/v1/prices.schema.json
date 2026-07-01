@@ -75,7 +75,7 @@
         },
         "tokenizer": {
           "type": "string",
-          "enum": ["cl100k_base", "o200k_base", "claude", "gemini", "llama", "heuristic"],
+          "enum": ["cl100k_base", "o200k_base", "claude", "claude-new", "gemini", "llama", "heuristic"],
           "description": "Tokenizer implementation key. 'heuristic' = Math.ceil(chars/4), no Wasm worker spawned."
         },
         "context_window": {

@@ -19,6 +19,8 @@ interface Model {
   batch_api_discount: number | null;
   thinking_model: boolean;
   last_human_verified: string;
+  pricing_note?: string;
+  pricing_note_expires?: string;
 }
 
 const models = pricesData.models as Model[];
@@ -46,11 +48,18 @@ function formatTokenizer(tokenizer: string): string {
     cl100k_base: "cl100k_base (tiktoken)",
     o200k_base: "o200k_base (tiktoken)",
     claude: "Anthropic tokenizer",
+    "claude-new": "Anthropic tokenizer (Opus 4.7+)",
     gemini: "Gemini tokenizer",
     llama: "SentencePiece (Llama)",
     heuristic: "Heuristic (~chars/4)",
   };
   return map[tokenizer] ?? tokenizer;
+}
+
+function isPricingNoteActive(model: Model): boolean {
+  if (!model.pricing_note) return false;
+  if (!model.pricing_note_expires) return true;
+  return new Date(model.pricing_note_expires) > new Date();
 }
 
 function formatCost(cost: number): string {
@@ -144,7 +153,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `${getBaseUrl()}/compare/${slug}`,
+      url: `${getBaseUrl()}/compare/${slug}/`,
       siteName: t("meta.siteName"),
       images: [
         {
@@ -163,7 +172,7 @@ export async function generateMetadata({
       images: ["/og/calculate-tokens-og.png"],
     },
     alternates: {
-      canonical: `${getBaseUrl()}/compare/${slug}`,
+      canonical: `${getBaseUrl()}/compare/${slug}/`,
       languages: getHreflangAlternates(`/compare/${slug}`),
     },
   };
@@ -514,6 +523,22 @@ export default async function ComparisonPage({
               </tbody>
             </table>
           </div>
+          {(isPricingNoteActive(modelA) || isPricingNoteActive(modelB)) && (
+            <div className="mt-3 space-y-1">
+              {isPricingNoteActive(modelA) && (
+                <p className="text-xs text-ct-muted">
+                  <span className="text-ct-accent font-medium">ⓘ {modelA.display_name}:</span>{" "}
+                  {modelA.pricing_note}
+                </p>
+              )}
+              {isPricingNoteActive(modelB) && (
+                <p className="text-xs text-ct-muted">
+                  <span className="text-ct-accent font-medium">ⓘ {modelB.display_name}:</span>{" "}
+                  {modelB.pricing_note}
+                </p>
+              )}
+            </div>
+          )}
         </section>
 
         {/* Plain-English cost example */}

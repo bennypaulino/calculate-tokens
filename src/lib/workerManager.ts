@@ -87,7 +87,7 @@ export class WorkerManager {
   private latestRequestIds = new Map<string, string>();
 
   private getOrCreateWorker(tokenizer: TokenizerType): ManagedWorker | null {
-    if (tokenizer === 'heuristic') return null;
+    if (tokenizer === 'heuristic' || tokenizer === 'claude-new') return null;
 
     let key: string;
     let factory: () => Worker;
@@ -127,8 +127,15 @@ export class WorkerManager {
     this.latestRequestIds.set(modelId, requestId);
 
     if (tokenizer === 'heuristic') {
-      const count = Math.ceil(text.length / 4);
-      onResult(count, false);
+      onResult(Math.ceil(text.length / 4), false);
+      return requestId;
+    }
+
+    // No public Wasm exists for the Opus 4.7+ / Sonnet 5 tokenizer.
+    // 3.6 chars/token is the empirically measured average for English;
+    // always shows ~ prefix because isWasm=false.
+    if (tokenizer === 'claude-new') {
+      onResult(Math.ceil(text.length / 3.6), false);
       return requestId;
     }
 

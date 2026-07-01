@@ -24,6 +24,8 @@ interface Model {
   last_human_verified: string;
   active: boolean;
   requires_js_render?: boolean;
+  pricing_note?: string;
+  pricing_note_expires?: string;
 }
 
 const models = pricesData.models as Model[];
@@ -71,11 +73,18 @@ function getTokenizerLabel(tokenizer: string): string {
     cl100k_base: "cl100k_base (GPT-3.5/4 family)",
     o200k_base: "o200k_base (GPT-4o / o-series)",
     claude: "Anthropic Claude tokenizer",
+    "claude-new": "Anthropic tokenizer (Opus 4.7+ / Sonnet 5)",
     gemini: "Gemini tokenizer",
     llama: "SentencePiece (Llama family)",
     heuristic: "Heuristic (~4 chars/token)",
   };
   return labels[tokenizer] ?? tokenizer;
+}
+
+function isPricingNoteActive(model: Model): boolean {
+  if (!model.pricing_note) return false;
+  if (!model.pricing_note_expires) return true;
+  return new Date(model.pricing_note_expires) > new Date();
 }
 
 function getComparisonSlugs(modelId: string): { slug: string; otherName: string }[] {
@@ -114,13 +123,13 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: `${getBaseUrl()}/models/${modelId}`,
+      canonical: `${getBaseUrl()}/models/${modelId}/`,
       languages: getHreflangAlternates(`/models/${modelId}`),
     },
     openGraph: {
       title,
       description,
-      url: `${getBaseUrl()}/models/${modelId}`,
+      url: `${getBaseUrl()}/models/${modelId}/`,
       siteName: t("meta.siteName"),
       images: [
         {
@@ -297,6 +306,17 @@ export default async function ModelPage({
             </table>
           </div>
         </section>
+
+        {/* Introductory / promotional pricing note */}
+        {isPricingNoteActive(model) && (
+          <div
+            className="mb-6 px-4 py-3 rounded-lg text-xs border"
+            style={{ background: 'var(--accent-tint)', borderColor: 'var(--accent-line)' }}
+          >
+            <span className="font-semibold text-ct-accent">ⓘ Introductory pricing: </span>
+            <span className="text-ct-body">{model.pricing_note}</span>
+          </div>
+        )}
 
         {/* Plain-English cost example */}
         <section
