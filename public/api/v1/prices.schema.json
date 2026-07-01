@@ -164,6 +164,15 @@
         "active": {
           "type": "boolean",
           "description": "Whether this model is shown in the UI. Set to false to soft-delete without removing from the file."
+        },
+        "pricing_note": {
+          "type": "string",
+          "description": "Human-readable note about temporary or introductory pricing, displayed in the UI near cost figures."
+        },
+        "pricing_note_expires": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date (YYYY-MM-DD) after which pricing_note should no longer be displayed."
         }
       },
       "if": {
