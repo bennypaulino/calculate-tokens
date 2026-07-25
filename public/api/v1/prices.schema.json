@@ -70,7 +70,7 @@
         },
         "provider_pricing_url": {
           "type": "string",
-          "pattern": "^https://(openai\\.com|anthropic\\.com|cloud\\.google\\.com|ai\\.google\\.dev|deepseek\\.com|llama\\.meta\\.com|mistral\\.ai)/",
+          "pattern": "^https://(openai\\.com|developers\\.openai\\.com|anthropic\\.com|cloud\\.google\\.com|ai\\.google\\.dev|deepseek\\.com|llama\\.meta\\.com|mistral\\.ai)/",
           "description": "HTTPS URL to the provider's official pricing page"
         },
         "tokenizer": {
