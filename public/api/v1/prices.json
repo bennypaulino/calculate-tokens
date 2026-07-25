@@ -179,7 +179,9 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "last_human_verified": "2026-06-06T00:00:00Z",
-      "active": true
+      "active": true,
+      "pricing_note": "Deprecated by OpenAI. API access shuts down 2026-10-23; calls will error after that date. Prices are no longer listed on OpenAI's pricing page and could not be re-verified from a vendor source.",
+      "pricing_note_expires": "2026-10-23"
     },
     {
       "id": "gpt-4-1",
@@ -217,7 +219,9 @@
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
       "last_human_verified": "2026-06-06T00:00:00Z",
-      "active": true
+      "active": true,
+      "pricing_note": "Deprecated by OpenAI. API access shuts down 2026-10-23; calls will error after that date. Prices are no longer listed on OpenAI's pricing page and could not be re-verified from a vendor source.",
+      "pricing_note_expires": "2026-10-23"
     },
     {
       "id": "claude-fable-5",
