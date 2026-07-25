@@ -109,7 +109,7 @@
     "cheaperSummary": "{{model}} es {{pct}}% más barato para esta carga de trabajo — ahorrando {{saving}} por mes con este volumen.",
     "faqHeading": "Preguntas frecuentes",
     "faqCheaperQ": "¿Es {{modelA}} más barato que {{modelB}}?",
-    "faqCheaperAYes": "Sí, {{modelA}} es más barato para la carga de trabajo típica anterior. Con {{inputA}}/1M de entrada y {{outputA}}/1M de tokens de salida, cuesta {{costA}} frente a {{costB}} para {{modelB}} — una diferencia del {{pct}}%. Los costos escalan linealmente, por lo que las cargas de trabajo más grandes amplían esta diferencia.",
+    "faqCheaperAYes": "Sí, {{modelA}} es más barato para la carga de trabajo típica anterior. Con {{inputA}}/1M de entrada y {{outputA}}/1M de tokens de salida, cuesta {{costA}} frente a {{costB}} para {{modelB}} — una diferencia del {{pct}}%.",
     "faqCheaperANo": "No, {{modelB}} es más barato para la carga de trabajo típica anterior. Con {{inputB}}/1M de entrada y {{outputB}}/1M de tokens de salida, cuesta {{costB}} frente a {{costA}} para {{modelA}} — una diferencia del {{pct}}%.",
     "faqCheaperAEqual": "Ambos modelos tienen el mismo costo para esta carga de trabajo ({{cost}}).",
     "faqContextQ": "¿Cuál es la ventana de contexto de {{modelA}} vs {{modelB}}?",
@@ -128,7 +128,13 @@
     "pricesDisclaimer": "Los precios pueden cambiar. Siempre verifica con la página de precios actual del proveedor antes de tomar decisiones de compra.",
     "notFound": "Comparación no encontrada",
     "notFoundBody": "Los modelos en esta URL no se encontraron en nuestra base de datos.",
-    "viewAllComparisons": "Ver todas las comparaciones"
+    "viewAllComparisons": "Ver todas las comparaciones",
+    "longContext": "Precios de contexto largo",
+    "longContextRates": "Más de {{threshold}} tokens: {{inputCost}} entrada / {{outputCost}} salida",
+    "longContextNone": "Tarifa plana para cualquier tamaño de prompt",
+    "faqCheaperAScaling": "Los costes escalan linealmente con el volumen de solicitudes, por lo que las cargas de trabajo mayores amplifican esta diferencia.",
+    "faqCheaperALongContextOne": "Ten en cuenta que {{model}} pasa a precios de contexto largo por encima de {{threshold}} tokens de prompt, por lo que en prompts muy largos esta diferencia no escala linealmente.",
+    "faqCheaperALongContextBoth": "Ten en cuenta que ambos modelos pasan a precios de contexto largo — {{modelA}} por encima de {{thresholdA}} y {{modelB}} por encima de {{thresholdB}} tokens de prompt —, por lo que en prompts muy largos esta diferencia no escala linealmente."
   },
   "models": {
     "breadcrumbHome": "Inicio",
@@ -178,7 +184,9 @@
     "pricingLastVerified": "Precios verificados por última vez",
     "pricingSource": "prices.json",
     "pricingSourceSuffix": "los datos son verificados por humanos y actualizados automáticamente por CI.",
-    "pricingPageLink": "Página de precios de {{provider}}"
+    "pricingPageLink": "Página de precios de {{provider}}",
+    "attrLongContext": "Tarifa de contexto largo (prompts de más de {{threshold}} tokens)",
+    "longContextRates": "{{inputCost}} entrada / {{outputCost}} salida por 1M"
   },
   "simulator": {
     "heading": "Simulador de escalado / masivo",

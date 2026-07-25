@@ -109,7 +109,7 @@
     "cheaperSummary": "{{model}} ist {{pct}}% günstiger für diese Arbeitslast — spart {{saving}} pro Monat bei diesem Volumen.",
     "faqHeading": "Häufig gestellte Fragen",
     "faqCheaperQ": "Ist {{modelA}} günstiger als {{modelB}}?",
-    "faqCheaperAYes": "Ja, {{modelA}} ist für die typische Arbeitslast oben günstiger. Bei {{inputA}}/1M Input- und {{outputA}}/1M Output-Token kostet es {{costA}} gegenüber {{costB}} für {{modelB}} — ein Unterschied von {{pct}}%. Die Kosten skalieren linear, sodass größere Arbeitslasten diese Lücke vergrößern.",
+    "faqCheaperAYes": "Ja, {{modelA}} ist für die typische Arbeitslast oben günstiger. Bei {{inputA}}/1M Input- und {{outputA}}/1M Output-Token kostet es {{costA}} gegenüber {{costB}} für {{modelB}} — ein Unterschied von {{pct}}%.",
     "faqCheaperANo": "Nein, {{modelB}} ist für die typische Arbeitslast oben günstiger. Bei {{inputB}}/1M Input- und {{outputB}}/1M Output-Token kostet es {{costB}} gegenüber {{costA}} für {{modelA}} — ein Unterschied von {{pct}}%.",
     "faqCheaperAEqual": "Beide Modelle kosten für diese Arbeitslast gleich viel ({{cost}}).",
     "faqContextQ": "Was ist das Kontextfenster von {{modelA}} vs {{modelB}}?",
@@ -128,7 +128,13 @@
     "pricesDisclaimer": "Preise können sich ändern. Überprüfen Sie stets die aktuelle Preisseite des Anbieters, bevor Sie Kaufentscheidungen treffen.",
     "notFound": "Vergleich nicht gefunden",
     "notFoundBody": "Die Modelle in dieser URL wurden in unserer Datenbank nicht gefunden.",
-    "viewAllComparisons": "Alle Vergleiche anzeigen"
+    "viewAllComparisons": "Alle Vergleiche anzeigen",
+    "longContext": "Long-Context-Preise",
+    "longContextRates": "Über {{threshold}} Token: {{inputCost}} Eingabe / {{outputCost}} Ausgabe",
+    "longContextNone": "Einheitspreis bei jeder Prompt-Größe",
+    "faqCheaperAScaling": "Die Kosten skalieren linear mit dem Anfragevolumen, sodass größere Workloads diesen Unterschied verstärken.",
+    "faqCheaperALongContextOne": "Beachten Sie, dass {{model}} oberhalb von {{threshold}} Prompt-Token auf Long-Context-Preise wechselt; bei sehr langen Prompts skaliert dieser Unterschied daher nicht linear.",
+    "faqCheaperALongContextBoth": "Beachten Sie, dass beide Modelle auf Long-Context-Preise wechseln — {{modelA}} oberhalb von {{thresholdA}} und {{modelB}} oberhalb von {{thresholdB}} Prompt-Token —, sodass dieser Unterschied bei sehr langen Prompts nicht linear skaliert."
   },
   "models": {
     "breadcrumbHome": "Startseite",
@@ -178,7 +184,9 @@
     "pricingLastVerified": "Preis zuletzt verifiziert",
     "pricingSource": "prices.json",
     "pricingSourceSuffix": "Daten werden von Menschen verifiziert und automatisch von CI aktualisiert.",
-    "pricingPageLink": "{{provider}}-Preisseite"
+    "pricingPageLink": "{{provider}}-Preisseite",
+    "attrLongContext": "Long-Context-Preis (Prompts über {{threshold}} Token)",
+    "longContextRates": "{{inputCost}} Eingabe / {{outputCost}} Ausgabe pro 1M"
   },
   "simulator": {
     "heading": "Skalierungssimulator / Massensimulator",

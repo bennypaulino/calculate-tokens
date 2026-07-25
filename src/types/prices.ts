@@ -7,6 +7,21 @@ export type TokenizerType =
   | 'llama'
   | 'heuristic';
 
+/**
+ * Long-context pricing tier. When the prompt exceeds `threshold_input_tokens`,
+ * the entire request -- input and output -- is billed at these rates instead of
+ * the model's standard ones. A step function on the whole request, not a
+ * marginal/graduated tier.
+ *
+ * Real thresholds differ by provider: 272,000 for OpenAI GPT-5.x, 200,000 for
+ * Google Gemini Pro. Never hardcode one.
+ */
+export interface LongContextPricing {
+  threshold_input_tokens: number;
+  input_cost_per_1m: number;
+  output_cost_per_1m: number;
+}
+
 export interface ModelEntry {
   id: string;
   display_name: string;
@@ -14,6 +29,8 @@ export interface ModelEntry {
   tokenizer: TokenizerType;
   input_cost_per_1m: number;
   output_cost_per_1m: number;
+  /** Absent for flat-rate models. */
+  long_context?: LongContextPricing;
   context_window: number;
   thinking_model: boolean;
   thinking_billed_separately: boolean;

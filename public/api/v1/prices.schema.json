@@ -173,6 +173,33 @@
           "type": "string",
           "format": "date",
           "description": "ISO 8601 date (YYYY-MM-DD) after which pricing_note should no longer be displayed."
+        },
+        "long_context": {
+          "type": "object",
+          "description": "Optional long-context pricing tier. When the PROMPT exceeds threshold_input_tokens, the entire request -- both input and output -- is billed at these rates instead of the top-level ones. This is a step function on the whole request, not a marginal/graduated rate. Omit for flat-rate models. Providers call this 'long context' (OpenAI, 272K threshold) or tiered prompt pricing (Google Gemini Pro, 200K threshold).",
+          "properties": {
+            "threshold_input_tokens": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Prompt token count above which the long-context rates apply. Strictly greater-than: a prompt exactly equal to this value uses standard rates."
+            },
+            "input_cost_per_1m": {
+              "type": "number",
+              "minimum": 0,
+              "description": "USD cost per 1M input tokens once the threshold is exceeded"
+            },
+            "output_cost_per_1m": {
+              "type": "number",
+              "minimum": 0,
+              "description": "USD cost per 1M output tokens once the threshold is exceeded"
+            }
+          },
+          "required": [
+            "threshold_input_tokens",
+            "input_cost_per_1m",
+            "output_cost_per_1m"
+          ],
+          "additionalProperties": false
         }
       },
       "if": {

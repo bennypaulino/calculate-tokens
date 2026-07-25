@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useCalculatorStore } from '../../store/calculatorStore';
 import { formatCost } from '../../lib/tokenCount';
 import { rowsToCsv } from '../../lib/csv';
+import { computeMonthlyProjection } from '../../lib/costCalc';
 import type { ModelEntry } from '../../types/prices';
 import type { ModelTokenState } from '../../types/calculator';
 import { t } from '../../lib/i18n';
@@ -21,6 +22,7 @@ interface SimRow {
   monthlyTotal: number;
   cachingApplied: boolean;
   batchApplied: boolean;
+  longContextApplied: boolean;
   inputTokens: number;
 }
 
@@ -47,6 +49,10 @@ export default function ScalingSimulator({
   outputTokens,
 }: ScalingSimulatorProps) {
   const volumeRequests = useCalculatorStore((s) => s.volumeRequests);
+  // Must match the cost grid: with thinking on, billable output tokens are
+  // inflated by the model's multiplier. Reading the raw prop under-reported
+  // output cost by that multiplier for every thinking model.
+  const thinkingEnabled = useCalculatorStore((s) => s.thinkingEnabled);
   const cachingEnabled = useCalculatorStore((s) => s.cachingEnabled);
   const batchEnabled = useCalculatorStore((s) => s.batchEnabled);
   const setVolumeRequests = useCalculatorStore((s) => s.setVolumeRequests);
@@ -58,31 +64,24 @@ export default function ScalingSimulator({
   const rows: SimRow[] = models.map((m) => {
     const inputTokens = tokenStates[m.id]?.tokenCount ?? 0;
 
-    const cachingApplied = cachingEnabled && m.supports_context_caching;
-    const cachingFactor =
-      cachingApplied && m.context_caching_discount !== null
-        ? 1 - m.context_caching_discount
-        : 1;
-
-    const batchApplied = batchEnabled && m.supports_batch_api;
-    const batchFactor =
-      batchApplied && m.batch_api_discount !== null
-        ? 1 - m.batch_api_discount
-        : 1;
-
-    const monthlyInput =
-      (inputTokens / 1_000_000) * m.input_cost_per_1m * cachingFactor;
-    const monthlyOutput = (outputTokens / 1_000_000) * m.output_cost_per_1m;
-    const perRequest = (monthlyInput + monthlyOutput) * batchFactor;
-    const monthlyTotal = perRequest * volumeRequests;
+    const projection = computeMonthlyProjection({
+      model: m,
+      inputTokens,
+      outputTokens,
+      thinkingEnabled,
+      cachingEnabled,
+      batchEnabled,
+      volumeRequests,
+    });
 
     return {
       modelId: m.id,
       modelName: m.display_name,
       provider: m.provider,
-      monthlyTotal,
-      cachingApplied,
-      batchApplied,
+      monthlyTotal: projection.monthlyTotal,
+      cachingApplied: projection.cachingApplied,
+      batchApplied: projection.batchApplied,
+      longContextApplied: projection.longContextApplied,
       inputTokens,
     };
   });
@@ -121,6 +120,7 @@ export default function ScalingSimulator({
       'Output Tokens',
       'Caching Applied',
       'Batch Applied',
+      'Long Context Rate',
       'Monthly Cost (USD)',
     ];
 
@@ -132,6 +132,7 @@ export default function ScalingSimulator({
       'Output Tokens': outputTokens,
       'Caching Applied': r.cachingApplied ? 'Yes' : 'No',
       'Batch Applied': r.batchApplied ? 'Yes' : 'No',
+      'Long Context Rate': r.longContextApplied ? 'Yes' : 'No',
       'Monthly Cost (USD)': r.monthlyTotal.toFixed(4),
     }));
 
