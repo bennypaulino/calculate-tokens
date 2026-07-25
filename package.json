@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/generate-headers.js && node scripts/build-workers.js && node scripts/check-i18n-keys.js && node scripts/check-i18n-stale.js",
-    "build": "next build && node scripts/compute-csp-hashes.js",
+    "build": "next build && node scripts/compute-csp-hashes.js && node scripts/compute-prices-hash.js",
     "start": "next start",
     "check:bundle": "node scripts/check-bundle-size.js",
     "test": "vitest run",
