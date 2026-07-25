@@ -111,4 +111,44 @@ if (failures.length > 0) {
 }
 
 console.log(`[OK] Build integrity check passed. Verified ${checked} compare page(s) against prices.json.`);
+// Runs before the exit below; the function is hoisted.
+verifyContentHash();
+
 process.exit(0);
+
+// --- Service Worker integrity header -------------------------------------
+// out/_headers is the artifact Cloudflare deploys. It shipped
+// `X-Content-Hash: placeholder` to production because compute-prices-hash.js
+// wrote only public/_headers, after next build had already copied it. The SW
+// compares prices.json against this value, so a placeholder silently disables
+// verification. Assert the deployed file carries the real digest.
+function verifyContentHash() {
+  const fs = require('fs');
+  const path = require('path');
+  const crypto = require('crypto');
+  const headersPath = path.resolve(__dirname, '../out/_headers');
+  if (!fs.existsSync(headersPath)) {
+    console.error('[FAIL] out/_headers not found.');
+    process.exit(1);
+  }
+  const headers = fs.readFileSync(headersPath, 'utf8');
+  const m = headers.match(/^\s*X-Content-Hash:\s*(\S+)/m);
+  if (!m) {
+    console.error('[FAIL] out/_headers has no X-Content-Hash header.');
+    process.exit(1);
+  }
+  const shipped = m[1];
+  if (!/^[a-f0-9]{64}$/.test(shipped)) {
+    console.error(`[FAIL] out/_headers ships X-Content-Hash: ${shipped} — expected a sha256 digest. The Service Worker integrity check is disabled.`);
+    process.exit(1);
+  }
+  const expected = crypto
+    .createHash('sha256')
+    .update(fs.readFileSync(path.resolve(__dirname, '../public/api/v1/prices.json')))
+    .digest('hex');
+  if (shipped !== expected) {
+    console.error(`[FAIL] X-Content-Hash mismatch.\n  shipped:  ${shipped}\n  expected: ${expected}`);
+    process.exit(1);
+  }
+  console.log('[OK] out/_headers X-Content-Hash matches prices.json.');
+}
