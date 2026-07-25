@@ -41,25 +41,50 @@ const sharedHeaderLines =
 
 const SHARED_HEADERS = sharedHeaderLines.map(h => `  ${h}`).join('\n');
 
+// NOTE ON 'unsafe-inline': Next.js static export embeds a unique RSC payload as
+// an inline <script> on every page. Hash-pinning them unioned 4,064 hashes into
+// one 219,918-byte header line -- 110x Cloudflare Pages' 2,000-char-per-line
+// limit in _headers -- so the ENTIRE CSP was silently discarded and production
+// served no CSP at all. Every other header on the same rule survived, which is
+// why it went unnoticed. A host-restricted CSP that actually ships beats a
+// hash-perfect one that does not. Per-page <meta> CSP would restore hashing;
+// see the PR discussion.
 const ANALYTICS_CSP =
   "default-src 'self'; " +
-  "script-src 'self' 'wasm-unsafe-eval'; " +
-  "worker-src 'self'; " +
-  "connect-src 'self'; " +
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com https://cloud.umami.is; " +
+  "worker-src 'self' blob:; " +
+  "connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com https://cloud.umami.is https://api-gateway.umami.dev; " +
   "style-src 'self' 'unsafe-inline'; " +
   "img-src 'self' data:; " +
   "font-src 'self' https://fonts.gstatic.com; " +
   "frame-ancestors 'none'";
 
+// AdSense needs considerably more than the two hosts previously listed: ad
+// creatives inject inline scripts, beacons hit adtrafficquality.google for
+// invalid-traffic detection, and creatives frame several google domains.
+// connect-src 'self' alone blocked every AdSense beacon AND both analytics
+// providers.
 const ADSENSE_CSP =
   "default-src 'self'; " +
-  "script-src 'self' https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; " +
+  "script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com " +
+  "https://googleads.g.doubleclick.net https://tpc.googlesyndication.com " +
+  "https://partner.googleadservices.com https://adservice.google.com " +
+  "https://www.googletagservices.com https://fundingchoicesmessages.google.com " +
+  "https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google " +
+  "https://static.cloudflareinsights.com https://cloud.umami.is; " +
   "worker-src 'self' https://workers.calculatetokens.com; " +
-  "connect-src 'self'; " +
+  "connect-src 'self' https://pagead2.googlesyndication.com " +
+  "https://googleads.g.doubleclick.net https://ep1.adtrafficquality.google " +
+  "https://ep2.adtrafficquality.google https://csi.gstatic.com https://www.google.com " +
+  "https://cloudflareinsights.com https://static.cloudflareinsights.com " +
+  "https://cloud.umami.is https://api-gateway.umami.dev; " +
   "style-src 'self' 'unsafe-inline'; " +
   "img-src 'self' data: https:; " +
+  "media-src 'self' https:; " +
   "font-src 'self' https://fonts.gstatic.com; " +
-  "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; " +
+  "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com " +
+  "https://www.google.com https://pagead2.googlesyndication.com " +
+  "https://ep2.adtrafficquality.google blob:; " +
   "frame-ancestors 'none'";
 
 const csp = mode === 'analytics' ? ANALYTICS_CSP : ADSENSE_CSP;
