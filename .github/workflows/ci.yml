@@ -73,4 +73,12 @@ jobs:
       - name: Smoke tests (visual regression)
         run: npx playwright test tests/e2e/visual-smoke.spec.ts --project=chromium
       - name: Lighthouse CI
-        run: npx lhci autorun
+        # Must be the SCOPED, VERSION-PINNED name. `npx lhci` resolved the
+        # unscoped registry package `lhci` -- an unrelated placeholder that
+        # prints a greeting and exits 0 -- so this gate silently never ran.
+        #
+        # Deliberately not a devDependency: @lhci/cli pulls ~313 packages whose
+        # transitive tree currently trips `npm audit --audit-level=high` (tmp,
+        # brace-expansion). Clearing that would need project-wide `overrides`
+        # for a tool that only ever runs in CI, so it is pinned here instead.
+        run: npx --yes @lhci/cli@0.15.1 autorun

@@ -56,3 +56,6 @@ public/*.worker.js
 
 # generated at build time by generate-headers.js + compute-csp-hashes.js
 public/_headers
+
+# Lighthouse CI local run artifacts
+.lighthouseci/
