@@ -102,14 +102,29 @@ describe('i18n getHreflangAlternates()', () => {
     vi.stubEnv('NEXT_PUBLIC_LOCALE', 'de')
     const { getHreflangAlternates } = await import('@/lib/i18n')
     const alts = getHreflangAlternates('/models')
-    expect(alts['x-default']).toBe('https://calculatetokens.com/models')
+    expect(alts['x-default']).toBe('https://calculatetokens.com/models/')
   })
 
   it('de alternate uses German subdomain with the given path', async () => {
     vi.stubEnv('NEXT_PUBLIC_LOCALE', 'de')
     const { getHreflangAlternates } = await import('@/lib/i18n')
     const alts = getHreflangAlternates('/models')
-    expect(alts.de).toBe('https://de.calculatetokens.com/models')
+    expect(alts.de).toBe('https://de.calculatetokens.com/models/')
+  })
+
+  // Guards the `trailingSlash: true` invariant in next.config.ts: every
+  // alternate must end in exactly one slash, and root must not become "//".
+  it('appends a trailing slash without doubling it on root', async () => {
+    vi.stubEnv('NEXT_PUBLIC_LOCALE', 'en')
+    const { getHreflangAlternates } = await import('@/lib/i18n')
+
+    for (const url of Object.values(getHreflangAlternates('/compare'))) {
+      expect(url.endsWith('/compare/')).toBe(true)
+    }
+    for (const url of Object.values(getHreflangAlternates('/'))) {
+      expect(url.endsWith('//')).toBe(false)
+      expect(url.endsWith('/')).toBe(true)
+    }
   })
 
   it('includes all 5 locale keys plus x-default', async () => {
