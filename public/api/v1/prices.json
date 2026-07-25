@@ -179,7 +179,11 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "last_human_verified": "2026-06-06T00:00:00Z",
-      "active": true
+      "active": true,
+      "pricing_note": "Deprecated by OpenAI. API access shuts down 2026-10-23; calls will error after that date. Prices are no longer listed on OpenAI's pricing page and could not be re-verified from a vendor source.",
+      "pricing_note_expires": "2026-10-23",
+      "verification_waiver_until": "2026-10-23",
+      "verification_waiver_reason": "Deprecated by OpenAI and delisted from its pricing page; API shuts down 2026-10-23, so the waiver expires with the model."
     },
     {
       "id": "gpt-4-1",
@@ -198,7 +202,11 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "last_human_verified": "2026-06-06T00:00:00Z",
-      "active": true
+      "active": true,
+      "verification_waiver_until": "2026-08-24",
+      "verification_waiver_reason": "Delisted from OpenAI pricing page; deprecation status unconfirmed. Short waiver to force a re-check.",
+      "pricing_note": "No longer listed on OpenAI's pricing page. Price could not be re-verified from a vendor source; treat as indicative.",
+      "pricing_note_expires": "2026-08-24"
     },
     {
       "id": "o4-mini",
@@ -217,7 +225,11 @@
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
       "last_human_verified": "2026-06-06T00:00:00Z",
-      "active": true
+      "active": true,
+      "pricing_note": "Deprecated by OpenAI. API access shuts down 2026-10-23; calls will error after that date. Prices are no longer listed on OpenAI's pricing page and could not be re-verified from a vendor source.",
+      "pricing_note_expires": "2026-10-23",
+      "verification_waiver_until": "2026-10-23",
+      "verification_waiver_reason": "Deprecated by OpenAI and delisted from its pricing page; API shuts down 2026-10-23, so the waiver expires with the model."
     },
     {
       "id": "claude-fable-5",
@@ -516,7 +528,9 @@
       "thinking_billed_separately": false,
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true,
-      "pricing_note": "Retired from DeepSeek's own API on 2026-07-24. Figures reflect third-party hosts and are not vendor-published; verify before relying on them."
+      "pricing_note": "Retired from DeepSeek's own API on 2026-07-24. Figures reflect third-party hosts and are not vendor-published; verify before relying on them.",
+      "verification_waiver_until": "2026-10-01",
+      "verification_waiver_reason": "Retired from DeepSeek API 2026-07-24; figures are third-party and not vendor-published."
     },
     {
       "id": "deepseek-r1",
@@ -536,7 +550,9 @@
       "thinking_billed_separately": false,
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true,
-      "pricing_note": "Retired from DeepSeek's own API on 2026-07-24. Figures reflect third-party hosts and are not vendor-published; verify before relying on them."
+      "pricing_note": "Retired from DeepSeek's own API on 2026-07-24. Figures reflect third-party hosts and are not vendor-published; verify before relying on them.",
+      "verification_waiver_until": "2026-10-01",
+      "verification_waiver_reason": "Retired from DeepSeek API 2026-07-24; figures are third-party and not vendor-published."
     },
     {
       "id": "llama-4-scout",

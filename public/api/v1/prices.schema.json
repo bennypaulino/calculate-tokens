@@ -213,6 +213,16 @@
             "output_cost_per_1m"
           ],
           "additionalProperties": false
+        },
+        "verification_waiver_until": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date until which this model is exempt from staleness escalation. For models whose price genuinely cannot be re-verified against a vendor source -- e.g. delisted or vendor-retired models priced from third parties. Waived models are still reported, never silenced; the waiver is a dated commitment capped at 90 days, and an expired one fails CI."
+        },
+        "verification_waiver_reason": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Why verification is blocked. Required alongside verification_waiver_until."
         }
       },
       "if": {
@@ -234,6 +244,11 @@
             "const": false
           }
         }
+      },
+      "dependentRequired": {
+        "verification_waiver_until": [
+          "verification_waiver_reason"
+        ]
       }
     }
   }

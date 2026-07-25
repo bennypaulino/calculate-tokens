@@ -15,6 +15,7 @@ jobs:
       # notify-price-changes job was permanently skipped and no verification
       # issue was ever opened.
       price_changes: ${{ steps.detection.outputs.changed_providers }}
+      stale_models: ${{ steps.staleness.outputs.stale_models }}
       detected_sha: ${{ steps.detection.outputs.detected_sha }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
@@ -42,6 +43,10 @@ jobs:
             console.log('Valid');
           "
       - name: Check for stale pricing data
+        # Deliberately flagless, so it cannot fail `validate` and block
+        # update-timestamps / notify-price-changes via `needs:`. The escalation
+        # job below is what actually has teeth.
+        id: staleness
         run: node scripts/check-staleness.js
       - name: Detect provider pricing page changes
         id: detection
@@ -133,3 +138,49 @@ jobs:
             --title "Pricing verification needed: ${PRICE_CHANGES}" \
             --label "pricing-verification-pending" \
             --body-file /tmp/issue_body.md
+
+  escalate-staleness:
+    runs-on: ubuntu-latest
+    needs: [validate]
+    # Only `needs: [validate]`, so a red run here cannot block update-timestamps
+    # or notify-price-changes -- they depend on validate alone.
+    if: ${{ needs.validate.result == 'success' && needs.validate.outputs.stale_models != '' }}
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Render issue body
+        run: node scripts/generate-staleness-issue-body.js > /tmp/staleness.md
+      - name: Open or update the escalation issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LABEL="pricing-staleness-escalation"
+          gh label create "$LABEL" --color "B60205" \
+            --description "Model pricing unverified past the escalation threshold" 2>/dev/null || true
+          EXISTING=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')
+          NEW_STATE=$(grep -o '<!-- staleness-state: .* -->' /tmp/staleness.md || echo '')
+          if [ -z "$EXISTING" ]; then
+            gh issue create --title "Pricing verification overdue" \
+              --label "$LABEL" --body-file /tmp/staleness.md
+          else
+            OLD_STATE=$(gh issue view "$EXISTING" --json body --jq .body \
+              | grep -o '<!-- staleness-state: .* -->' || echo '')
+            gh issue edit "$EXISTING" --body-file /tmp/staleness.md
+            # Comment only when the set actually changed, so the issue does not
+            # accrue a daily pile of identical notes.
+            if [ "$NEW_STATE" != "$OLD_STATE" ]; then
+              gh issue comment "$EXISTING" \
+                --body "Staleness set changed. Body updated with the current list."
+            fi
+          fi
+      - name: Fail if anything is critically stale
+        # Runs last so the issue is always filed before the run goes red.
+        run: node scripts/check-staleness.js --fail-on-critical
