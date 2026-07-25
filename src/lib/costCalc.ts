@@ -1,4 +1,16 @@
-import type { ModelEntry } from '../types/prices';
+import type { LongContextPricing, ModelEntry } from '../types/prices';
+
+/**
+ * Minimum shape `resolveRates` needs. Structural rather than `ModelEntry` so
+ * the statically-rendered pages, which each declare their own trimmed-down
+ * model interface, can route through the same rate logic instead of reading
+ * the rate fields directly.
+ */
+export interface RateBearingModel {
+  input_cost_per_1m: number;
+  output_cost_per_1m: number;
+  long_context?: LongContextPricing;
+}
 
 export interface ResolvedRates {
   inputCostPer1m: number;
@@ -21,7 +33,7 @@ export interface ResolvedRates {
  * dollar figure must go through it rather than reading the rate fields directly,
  * or it will silently under-bill long prompts.
  */
-export function resolveRates(model: ModelEntry, inputTokens: number): ResolvedRates {
+export function resolveRates(model: RateBearingModel, inputTokens: number): ResolvedRates {
   const tier = model.long_context;
   if (tier && inputTokens > tier.threshold_input_tokens) {
     return {
@@ -34,6 +46,73 @@ export function resolveRates(model: ModelEntry, inputTokens: number): ResolvedRa
     inputCostPer1m: model.input_cost_per_1m,
     outputCostPer1m: model.output_cost_per_1m,
     longContextApplied: false,
+  };
+}
+
+export interface MonthlyProjectionArgs {
+  model: ModelEntry;
+  /** Prompt tokens for a SINGLE request. Never the monthly aggregate. */
+  inputTokens: number;
+  /** Output tokens for a single request, before any thinking multiplier. */
+  outputTokens: number;
+  thinkingEnabled: boolean;
+  cachingEnabled: boolean;
+  batchEnabled: boolean;
+  volumeRequests: number;
+}
+
+export interface MonthlyProjection {
+  monthlyTotal: number;
+  cachingApplied: boolean;
+  batchApplied: boolean;
+  longContextApplied: boolean;
+}
+
+/**
+ * Projects monthly spend for a fixed request shape repeated `volumeRequests`
+ * times.
+ *
+ * The long-context threshold is evaluated against a SINGLE request's prompt,
+ * never against `inputTokens * volumeRequests`. Providers price each request
+ * independently, so a million small requests never reach a long-context tier.
+ * Getting this wrong would long-context-price every model at high volume.
+ */
+export function computeMonthlyProjection(args: MonthlyProjectionArgs): MonthlyProjection {
+  const {
+    model,
+    inputTokens,
+    outputTokens,
+    thinkingEnabled,
+    cachingEnabled,
+    batchEnabled,
+    volumeRequests,
+  } = args;
+
+  const cachingApplied = cachingEnabled && model.supports_context_caching;
+  const cachingFactor =
+    cachingApplied && model.context_caching_discount !== null
+      ? 1 - model.context_caching_discount
+      : 1;
+
+  const batchApplied = batchEnabled && model.supports_batch_api;
+  const batchFactor =
+    batchApplied && model.batch_api_discount !== null ? 1 - model.batch_api_discount : 1;
+
+  // Thinking inflates billable output tokens; must match what the cost grid
+  // shows for the same model, or the two panels disagree on the same page.
+  const effectiveOutput = computeEffectiveOutputTokens(outputTokens, model, thinkingEnabled);
+
+  const rates = resolveRates(model, inputTokens);
+
+  const perRequestInput = (inputTokens / 1_000_000) * rates.inputCostPer1m * cachingFactor;
+  const perRequestOutput = (effectiveOutput / 1_000_000) * rates.outputCostPer1m;
+  const perRequest = (perRequestInput + perRequestOutput) * batchFactor;
+
+  return {
+    monthlyTotal: perRequest * volumeRequests,
+    cachingApplied,
+    batchApplied,
+    longContextApplied: rates.longContextApplied,
   };
 }
 

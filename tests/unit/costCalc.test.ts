@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeCostRow, computeEffectiveOutputTokens, resolveRates } from '@/lib/costCalc'
+import { computeCostRow, computeEffectiveOutputTokens, computeMonthlyProjection, resolveRates } from '@/lib/costCalc'
 import type { ModelEntry } from '@/types/prices'
 
 function makeModel(overrides: Partial<ModelEntry> = {}): ModelEntry {
@@ -244,5 +244,99 @@ describe('prices.json long-context data integrity', () => {
       expect(lc.input_cost_per_1m).toBeGreaterThanOrEqual(m.input_cost_per_1m)
       expect(lc.output_cost_per_1m).toBeGreaterThanOrEqual(m.output_cost_per_1m)
     }
+  })
+})
+
+describe('computeMonthlyProjection — scaling simulator math', () => {
+  const sol = () =>
+    makeModel({
+      id: 'gpt-5-6-sol',
+      input_cost_per_1m: 5.0,
+      output_cost_per_1m: 30.0,
+      context_window: 1_050_000,
+      thinking_model: true,
+      thinking_billed_separately: true,
+      thinking_multiplier: 3,
+      supports_context_caching: true,
+      context_caching_discount: 0.9,
+      supports_batch_api: true,
+      batch_api_discount: 0.5,
+      long_context: {
+        threshold_input_tokens: 272_000,
+        input_cost_per_1m: 10.0,
+        output_cost_per_1m: 45.0,
+      },
+    })
+
+  const base = {
+    inputTokens: 1_000,
+    outputTokens: 1_000,
+    thinkingEnabled: false,
+    cachingEnabled: false,
+    batchEnabled: false,
+    volumeRequests: 1,
+  }
+
+  it('evaluates the threshold per request, never against the monthly aggregate', () => {
+    // 1M requests x 1k prompt tokens = 1e9 tokens/month, but each individual
+    // prompt is 1,000 tokens -- far below 272K. Resolving against the aggregate
+    // would wrongly bill every request at long-context rates.
+    const r = computeMonthlyProjection({
+      ...base,
+      model: sol(),
+      inputTokens: 1_000,
+      volumeRequests: 1_000_000,
+    })
+    expect(r.longContextApplied).toBe(false)
+    // 1k in @ $5 + 1k out @ $30 = $0.035 per request
+    expect(r.monthlyTotal).toBeCloseTo(35_000, 4)
+  })
+
+  it('applies long-context rates when a single prompt exceeds the threshold', () => {
+    const r = computeMonthlyProjection({ ...base, model: sol(), inputTokens: 300_000 })
+    expect(r.longContextApplied).toBe(true)
+    // 300k in @ $10 = $3.00, 1k out @ $45 = $0.045
+    expect(r.monthlyTotal).toBeCloseTo(3.045, 6)
+  })
+
+  it('inflates billable output by the thinking multiplier, matching the cost grid', () => {
+    const withThinking = computeMonthlyProjection({ ...base, model: sol(), thinkingEnabled: true })
+    const without = computeMonthlyProjection({ ...base, model: sol(), thinkingEnabled: false })
+
+    // Same request shape, so the grid and the simulator must agree.
+    const gridRow = computeCostRow(sol(), base.inputTokens, base.outputTokens, true)
+    expect(withThinking.monthlyTotal).toBeCloseTo(gridRow.totalCost, 6)
+
+    // 1k out -> 3k billable out @ $30 = $0.09 (vs $0.03), input unchanged.
+    expect(withThinking.monthlyTotal).toBeCloseTo(0.095, 6)
+    expect(without.monthlyTotal).toBeCloseTo(0.035, 6)
+  })
+
+  it('applies caching to input only and batch to the whole request', () => {
+    const r = computeMonthlyProjection({
+      ...base,
+      model: sol(),
+      cachingEnabled: true,
+      batchEnabled: true,
+    })
+    // input 1k @ $5 * (1 - 0.9) = $0.0005; output 1k @ $30 = $0.03
+    // (0.0005 + 0.03) * (1 - 0.5) = $0.01525
+    expect(r.monthlyTotal).toBeCloseTo(0.01525, 6)
+    expect(r.cachingApplied).toBe(true)
+    expect(r.batchApplied).toBe(true)
+  })
+
+  it('ignores discounts the model does not support', () => {
+    const flat = makeModel({ supports_context_caching: false, supports_batch_api: false })
+    const r = computeMonthlyProjection({
+      ...base,
+      model: flat,
+      cachingEnabled: true,
+      batchEnabled: true,
+    })
+    expect(r.cachingApplied).toBe(false)
+    expect(r.batchApplied).toBe(false)
+    // 1k in @ $2.50 + 1k out @ $10.00, undiscounted
+    expect(r.monthlyTotal).toBeCloseTo(0.0125, 6)
   })
 })

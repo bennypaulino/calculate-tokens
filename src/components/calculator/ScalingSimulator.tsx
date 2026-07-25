@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useCalculatorStore } from '../../store/calculatorStore';
 import { formatCost } from '../../lib/tokenCount';
 import { rowsToCsv } from '../../lib/csv';
-import { resolveRates } from '../../lib/costCalc';
+import { computeMonthlyProjection } from '../../lib/costCalc';
 import type { ModelEntry } from '../../types/prices';
 import type { ModelTokenState } from '../../types/calculator';
 import { t } from '../../lib/i18n';
@@ -49,6 +49,10 @@ export default function ScalingSimulator({
   outputTokens,
 }: ScalingSimulatorProps) {
   const volumeRequests = useCalculatorStore((s) => s.volumeRequests);
+  // Must match the cost grid: with thinking on, billable output tokens are
+  // inflated by the model's multiplier. Reading the raw prop under-reported
+  // output cost by that multiplier for every thinking model.
+  const thinkingEnabled = useCalculatorStore((s) => s.thinkingEnabled);
   const cachingEnabled = useCalculatorStore((s) => s.cachingEnabled);
   const batchEnabled = useCalculatorStore((s) => s.batchEnabled);
   const setVolumeRequests = useCalculatorStore((s) => s.setVolumeRequests);
@@ -60,36 +64,24 @@ export default function ScalingSimulator({
   const rows: SimRow[] = models.map((m) => {
     const inputTokens = tokenStates[m.id]?.tokenCount ?? 0;
 
-    const cachingApplied = cachingEnabled && m.supports_context_caching;
-    const cachingFactor =
-      cachingApplied && m.context_caching_discount !== null
-        ? 1 - m.context_caching_discount
-        : 1;
-
-    const batchApplied = batchEnabled && m.supports_batch_api;
-    const batchFactor =
-      batchApplied && m.batch_api_discount !== null
-        ? 1 - m.batch_api_discount
-        : 1;
-
-    // The long-context threshold is evaluated per request, not against the
-    // monthly aggregate -- providers price each request independently.
-    const rates = resolveRates(m, inputTokens);
-
-    const monthlyInput =
-      (inputTokens / 1_000_000) * rates.inputCostPer1m * cachingFactor;
-    const monthlyOutput = (outputTokens / 1_000_000) * rates.outputCostPer1m;
-    const perRequest = (monthlyInput + monthlyOutput) * batchFactor;
-    const monthlyTotal = perRequest * volumeRequests;
+    const projection = computeMonthlyProjection({
+      model: m,
+      inputTokens,
+      outputTokens,
+      thinkingEnabled,
+      cachingEnabled,
+      batchEnabled,
+      volumeRequests,
+    });
 
     return {
       modelId: m.id,
       modelName: m.display_name,
       provider: m.provider,
-      monthlyTotal,
-      cachingApplied,
-      batchApplied,
-      longContextApplied: rates.longContextApplied,
+      monthlyTotal: projection.monthlyTotal,
+      cachingApplied: projection.cachingApplied,
+      batchApplied: projection.batchApplied,
+      longContextApplied: projection.longContextApplied,
       inputTokens,
     };
   });
