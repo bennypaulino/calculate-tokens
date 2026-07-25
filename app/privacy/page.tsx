@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { canonicalUrl } from "@/lib/i18n";
+import { canonicalUrl, englishOnlyRobots } from "@/lib/i18n";
 
 export const metadata: Metadata = {
+  ...englishOnlyRobots(),
   title: "Privacy Policy — Calculate Tokens",
   description:
     "Privacy policy for calculatetokens.com: what data is collected, what is not, third-party services, data residency, user rights, and how to contact us.",

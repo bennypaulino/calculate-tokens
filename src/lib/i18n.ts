@@ -70,3 +70,21 @@ const LOCALE_CONFIG: Record<Locale, { htmlLang: string; ogLocale: string }> = {
   'pt-BR': { htmlLang: 'pt-BR', ogLocale: 'pt_BR' },
 }
 export const getLocaleConfig = () => LOCALE_CONFIG[locale]
+
+/**
+ * Metadata fragment for pages that exist only in English.
+ *
+ * /learn/what-is-a-token/, /about/, /contact/ and /privacy/ are hardcoded
+ * English JSX with no locale keys, but the static export builds them for every
+ * locale subdomain and the nav links them from every page. Each one
+ * self-canonicalised to its own subdomain, so de/es/fr/pt-BR each served a
+ * verbatim English duplicate declaring <html lang="de"> — 16 duplicate URLs,
+ * including the site's flagship explainer cannibalised four times.
+ *
+ * noindex rather than a cross-host canonical: these are untranslated pages that
+ * do not belong in a German or Spanish index at all, and a canonical pointing
+ * across hosts is advisory only. follow stays true so the links still pass.
+ */
+export function englishOnlyRobots() {
+  return locale === 'en' ? {} : { robots: { index: false, follow: true } };
+}
