@@ -109,7 +109,7 @@
     "cheaperSummary": "{{model}} é {{pct}}% mais barato para esta carga de trabalho — economizando {{saving}} por mês neste volume.",
     "faqHeading": "Perguntas frequentes",
     "faqCheaperQ": "{{modelA}} é mais barato que {{modelB}}?",
-    "faqCheaperAYes": "Sim, {{modelA}} é mais barato para a carga de trabalho típica acima. Com {{inputA}}/1M de entrada e {{outputA}}/1M de tokens de saída, custa {{costA}} versus {{costB}} para {{modelB}} — uma diferença de {{pct}}%. Os custos escalam linearmente, então cargas de trabalho maiores ampliam essa diferença.",
+    "faqCheaperAYes": "Sim, {{modelA}} é mais barato para a carga de trabalho típica acima. Com {{inputA}}/1M de entrada e {{outputA}}/1M de tokens de saída, custa {{costA}} versus {{costB}} para {{modelB}} — uma diferença de {{pct}}%.",
     "faqCheaperANo": "Não, {{modelB}} é mais barato para a carga de trabalho típica acima. Com {{inputB}}/1M de entrada e {{outputB}}/1M de tokens de saída, custa {{costB}} versus {{costA}} para {{modelA}} — uma diferença de {{pct}}%.",
     "faqCheaperAEqual": "Ambos os modelos têm o mesmo custo para esta carga de trabalho ({{cost}}).",
     "faqContextQ": "Qual é a janela de contexto de {{modelA}} vs {{modelB}}?",
@@ -131,7 +131,10 @@
     "viewAllComparisons": "Ver todas as comparações",
     "longContext": "Preços de contexto longo",
     "longContextRates": "Acima de {{threshold}} tokens: {{inputCost}} entrada / {{outputCost}} saída",
-    "longContextNone": "Tarifa única para qualquer tamanho de prompt"
+    "longContextNone": "Tarifa única para qualquer tamanho de prompt",
+    "faqCheaperAScaling": "Os custos escalam linearmente com o volume de requisições, portanto cargas de trabalho maiores amplificam essa diferença.",
+    "faqCheaperALongContextOne": "Observe que {{model}} muda para preços de contexto longo acima de {{threshold}} tokens de prompt, portanto em prompts muito longos essa diferença não escala linearmente.",
+    "faqCheaperALongContextBoth": "Observe que ambos os modelos mudam para preços de contexto longo — {{modelA}} acima de {{thresholdA}} e {{modelB}} acima de {{thresholdB}} tokens de prompt —, portanto em prompts muito longos essa diferença não escala linearmente."
   },
   "models": {
     "breadcrumbHome": "Início",

@@ -109,7 +109,7 @@
     "cheaperSummary": "{{model}} est {{pct}}% moins cher pour cette charge de travail — économisant {{saving}} par mois à ce volume.",
     "faqHeading": "Questions fréquentes",
     "faqCheaperQ": "{{modelA}} est-il moins cher que {{modelB}} ?",
-    "faqCheaperAYes": "Oui, {{modelA}} est moins cher pour la charge de travail typique ci-dessus. À {{inputA}}/1M en entrée et {{outputA}}/1M en tokens de sortie, il coûte {{costA}} contre {{costB}} pour {{modelB}} — une différence de {{pct}}%. Les coûts évoluent de façon linéaire, donc des charges de travail plus importantes amplifient cet écart.",
+    "faqCheaperAYes": "Oui, {{modelA}} est moins cher pour la charge de travail typique ci-dessus. À {{inputA}}/1M en entrée et {{outputA}}/1M en tokens de sortie, il coûte {{costA}} contre {{costB}} pour {{modelB}} — une différence de {{pct}}%.",
     "faqCheaperANo": "Non, {{modelB}} est moins cher pour la charge de travail typique ci-dessus. À {{inputB}}/1M en entrée et {{outputB}}/1M en tokens de sortie, il coûte {{costB}} contre {{costA}} pour {{modelA}} — une différence de {{pct}}%.",
     "faqCheaperAEqual": "Les deux modèles coûtent pareil pour cette charge de travail ({{cost}}).",
     "faqContextQ": "Quelle est la fenêtre de contexte de {{modelA}} vs {{modelB}} ?",
@@ -131,7 +131,10 @@
     "viewAllComparisons": "Voir toutes les comparaisons",
     "longContext": "Tarification contexte long",
     "longContextRates": "Au-delà de {{threshold}} tokens : {{inputCost}} entrée / {{outputCost}} sortie",
-    "longContextNone": "Tarif unique quelle que soit la taille du prompt"
+    "longContextNone": "Tarif unique quelle que soit la taille du prompt",
+    "faqCheaperAScaling": "Les coûts évoluent linéairement avec le volume de requêtes, de sorte que les charges de travail plus importantes amplifient cet écart.",
+    "faqCheaperALongContextOne": "Notez que {{model}} passe à la tarification contexte long au-delà de {{threshold}} tokens de prompt ; pour les prompts très longs, cet écart n évolue donc pas linéairement.",
+    "faqCheaperALongContextBoth": "Notez que les deux modèles passent à la tarification contexte long — {{modelA}} au-delà de {{thresholdA}} et {{modelB}} au-delà de {{thresholdB}} tokens de prompt — de sorte que cet écart n évolue pas linéairement pour les prompts très longs."
   },
   "models": {
     "breadcrumbHome": "Accueil",

@@ -3,6 +3,7 @@ import Link from "next/link";
 import pricesData from "@/public/api/v1/prices.json";
 import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, locale, canonicalUrl } from "@/lib/i18n";
 import { FaqAccordion } from "../FaqAccordion";
+import { resolveRates } from "@/lib/costCalc";
 
 interface Model {
   id: string;
@@ -222,12 +223,20 @@ export default async function ComparisonPage({
   const totalInputTokens = EXAMPLE_REQUESTS * EXAMPLE_INPUT_TOKENS;
   const totalOutputTokens = EXAMPLE_REQUESTS * EXAMPLE_OUTPUT_TOKENS;
 
+  // Resolve against a SINGLE request's prompt (EXAMPLE_INPUT_TOKENS), not the
+  // monthly aggregate -- the long-context threshold is per request. Going
+  // through resolveRates rather than reading the rate fields directly means a
+  // future threshold drop below 500 cannot silently leave these pages quoting
+  // the cheaper standard rate.
+  const ratesA = resolveRates(modelA, EXAMPLE_INPUT_TOKENS);
+  const ratesB = resolveRates(modelB, EXAMPLE_INPUT_TOKENS);
+
   const costA =
-    (totalInputTokens / 1_000_000) * modelA.input_cost_per_1m +
-    (totalOutputTokens / 1_000_000) * modelA.output_cost_per_1m;
+    (totalInputTokens / 1_000_000) * ratesA.inputCostPer1m +
+    (totalOutputTokens / 1_000_000) * ratesA.outputCostPer1m;
   const costB =
-    (totalInputTokens / 1_000_000) * modelB.input_cost_per_1m +
-    (totalOutputTokens / 1_000_000) * modelB.output_cost_per_1m;
+    (totalInputTokens / 1_000_000) * ratesB.inputCostPer1m +
+    (totalOutputTokens / 1_000_000) * ratesB.outputCostPer1m;
 
   const cheaperModel = costA <= costB ? modelA : modelB;
   const cheaperCost = Math.min(costA, costB);
@@ -236,6 +245,36 @@ export default async function ComparisonPage({
     pricierCost > 0
       ? (((pricierCost - cheaperCost) / pricierCost) * 100).toFixed(0)
       : "0";
+
+  // The old copy asserted costs "scale linearly, so larger workloads amplify
+  // this gap". That is false for tiered models: measured on
+  // gemini-2-5-pro-vs-gpt-5-6-luna the gap runs 1.25x -> 2.50x -> 1.25x as the
+  // prompt grows, because each model crosses its own threshold at a different
+  // point. Only claim linear scaling when neither model is tiered.
+  const tierA = modelA.long_context;
+  const tierB = modelB.long_context;
+  const scalingNote =
+    tierA && tierB
+      ? t("compare.faqCheaperALongContextBoth", {
+          modelA: modelA.display_name,
+          thresholdA: formatTokenThreshold(tierA.threshold_input_tokens),
+          modelB: modelB.display_name,
+          thresholdB: formatTokenThreshold(tierB.threshold_input_tokens),
+        })
+      : tierA
+        ? t("compare.faqCheaperALongContextOne", {
+            model: modelA.display_name,
+            threshold: formatTokenThreshold(tierA.threshold_input_tokens),
+          })
+        : tierB
+          ? t("compare.faqCheaperALongContextOne", {
+              model: modelB.display_name,
+              threshold: formatTokenThreshold(tierB.threshold_input_tokens),
+            })
+          : t("compare.faqCheaperAScaling");
+  // Only add to the "B is cheaper" branch when it is a tier caveat; that branch
+  // never carried the linear-scaling sentence.
+  const scalingNoteIfTiered = tierA || tierB ? ` ${scalingNote}` : "";
 
   const lastVerifiedA = formatDate(modelA.last_human_verified);
   const lastVerifiedB = formatDate(modelB.last_human_verified);
@@ -269,7 +308,7 @@ export default async function ComparisonPage({
                   costA: `$${costA.toFixed(4)}`,
                   costB: `$${costB.toFixed(4)}`,
                   pct: savings,
-                })
+                }) + " " + scalingNote
               : costB < costA
               ? t("compare.faqCheaperANo", {
                   modelA: modelA.display_name,
@@ -279,7 +318,7 @@ export default async function ComparisonPage({
                   costA: `$${costA.toFixed(4)}`,
                   costB: `$${costB.toFixed(4)}`,
                   pct: savings,
-                })
+                }) + scalingNoteIfTiered
               : t("compare.faqCheaperAEqual", { cost: `$${costA.toFixed(4)}` }),
         },
       },
@@ -656,7 +695,7 @@ export default async function ComparisonPage({
                       costA: `$${costA.toFixed(4)}`,
                       costB: `$${costB.toFixed(4)}`,
                       pct: savings,
-                    })
+                    }) + " " + scalingNote
                   : costB < costA
                   ? t("compare.faqCheaperANo", {
                       modelA: modelA.display_name,
@@ -666,7 +705,7 @@ export default async function ComparisonPage({
                       costA: `$${costA.toFixed(4)}`,
                       costB: `$${costB.toFixed(4)}`,
                       pct: savings,
-                    })
+                    }) + scalingNoteIfTiered
                   : t("compare.faqCheaperAEqual", { cost: `$${costA.toFixed(4)}` }),
               },
               {

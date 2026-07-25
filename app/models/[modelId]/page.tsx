@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import pricesData from "@/public/api/v1/prices.json";
+import { resolveRates } from "@/lib/costCalc";
 import { t, getBaseUrl, getHreflangAlternates, getLocaleConfig, locale, canonicalUrl } from "@/lib/i18n";
 
 interface Model {
@@ -73,8 +74,10 @@ function computeMonthlyCost(model: Model): string {
   const requests = 1_000;
   const inputTokens = 500;
   const outputTokens = 200;
-  const inputCost = (requests * inputTokens * model.input_cost_per_1m) / 1_000_000;
-  const outputCost = (requests * outputTokens * model.output_cost_per_1m) / 1_000_000;
+  // Per-request prompt size drives the tier, not requests * inputTokens.
+  const rates = resolveRates(model, inputTokens);
+  const inputCost = (requests * inputTokens * rates.inputCostPer1m) / 1_000_000;
+  const outputCost = (requests * outputTokens * rates.outputCostPer1m) / 1_000_000;
   const total = inputCost + outputCost;
   return total < 0.01 ? `$${total.toFixed(4)}` : `$${total.toFixed(2)}`;
 }
@@ -186,11 +189,23 @@ export default async function ModelPage({
     url: `${getBaseUrl()}/models/${model.id}`,
     offers: {
       "@type": "Offer",
+      // Lowest rate a caller can pay, i.e. a "from" price. Tiered models bill
+      // more above their long-context threshold; that is spelled out in the
+      // free-text description below rather than modelled here, because
+      // restructuring this into a priceSpecification would need validating
+      // against Google's Rich Results Test first.
       price: String(model.input_cost_per_1m),
       priceCurrency: "USD",
-      description: "Per 1M input tokens",
+      description: model.long_context
+        ? `From $${model.input_cost_per_1m} per 1M input tokens (prompts up to ${model.long_context.threshold_input_tokens.toLocaleString("en-US")} tokens)`
+        : "Per 1M input tokens",
     },
-    description: `${model.display_name} by ${model.provider}. API pricing: $${model.input_cost_per_1m} per 1M input tokens, $${model.output_cost_per_1m} per 1M output tokens. Context window: ${formatContextWindow(model.context_window)}.`,
+    description:
+      `${model.display_name} by ${model.provider}. API pricing: $${model.input_cost_per_1m} per 1M input tokens, $${model.output_cost_per_1m} per 1M output tokens.` +
+      (model.long_context
+        ? ` Prompts over ${model.long_context.threshold_input_tokens.toLocaleString("en-US")} tokens are billed at $${model.long_context.input_cost_per_1m} input / $${model.long_context.output_cost_per_1m} output per 1M.`
+        : "") +
+      ` Context window: ${formatContextWindow(model.context_window)}.`,
   };
 
   return (

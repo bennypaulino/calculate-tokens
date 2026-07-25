@@ -109,7 +109,7 @@
     "cheaperSummary": "{{model}} is {{pct}}% cheaper for this workload — saving {{saving}} per month at this volume.",
     "faqHeading": "Frequently asked questions",
     "faqCheaperQ": "Is {{modelA}} cheaper than {{modelB}}?",
-    "faqCheaperAYes": "Yes, {{modelA}} is cheaper for the typical workload above. At {{inputA}}/1M input and {{outputA}}/1M output tokens, it costs {{costA}} versus {{costB}} for {{modelB}} — a {{pct}}% difference. Costs scale linearly, so larger workloads amplify this gap.",
+    "faqCheaperAYes": "Yes, {{modelA}} is cheaper for the typical workload above. At {{inputA}}/1M input and {{outputA}}/1M output tokens, it costs {{costA}} versus {{costB}} for {{modelB}} — a {{pct}}% difference.",
     "faqCheaperANo": "No, {{modelB}} is cheaper for the typical workload above. At {{inputB}}/1M input and {{outputB}}/1M output tokens, it costs {{costB}} versus {{costA}} for {{modelA}} — a {{pct}}% difference.",
     "faqCheaperAEqual": "Both models cost the same for this workload ({{cost}}).",
     "faqContextQ": "What is the context window of {{modelA}} vs {{modelB}}?",
@@ -131,7 +131,10 @@
     "viewAllComparisons": "View all comparisons",
     "longContext": "Long-context pricing",
     "longContextRates": "Over {{threshold}} tokens: {{inputCost}} in / {{outputCost}} out",
-    "longContextNone": "Flat rate at any prompt size"
+    "longContextNone": "Flat rate at any prompt size",
+    "faqCheaperAScaling": "Costs scale linearly with request volume, so larger workloads amplify this gap.",
+    "faqCheaperALongContextOne": "Note that {{model}} switches to long-context pricing above {{threshold}} prompt tokens, so for very long prompts this gap does not scale linearly.",
+    "faqCheaperALongContextBoth": "Note that both models switch to long-context pricing — {{modelA}} above {{thresholdA}} prompt tokens and {{modelB}} above {{thresholdB}} — so for very long prompts this gap does not scale linearly."
   },
   "models": {
     "breadcrumbHome": "Home",
