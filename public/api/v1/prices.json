@@ -19,7 +19,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -39,7 +39,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -59,7 +59,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -79,7 +79,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -99,7 +99,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -119,7 +119,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -139,7 +139,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -159,7 +159,7 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -179,7 +179,7 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -199,7 +199,7 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -220,7 +220,7 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -241,7 +241,7 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -262,7 +262,7 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-24T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -283,7 +283,7 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -306,7 +306,7 @@
       "requires_js_render": true,
       "pricing_note": "Introductory pricing through Aug 31, 2026. Standard price: $3.00 / $15.00 per MTok after that date.",
       "pricing_note_expires": "2026-08-31",
-      "last_checked": "2026-07-01T00:00:00Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-07-01T00:00:00Z",
       "active": true
     },
@@ -327,7 +327,7 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -347,7 +347,7 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -367,7 +367,7 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -387,7 +387,7 @@
       "thinking_model": true,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -407,7 +407,7 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-06-06T17:39:57.443Z",
+      "last_checked": "2026-07-25T11:42:47.533Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     }
