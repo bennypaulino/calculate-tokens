@@ -10,7 +10,11 @@ jobs:
     permissions:
       contents: read
     outputs:
-      price_changes: ${{ steps.detection.outputs.price_changes }}
+      # check-page-changes.js emits the step output as `changed_providers`.
+      # Reading `price_changes` here silently yielded "" on every run, so the
+      # notify-price-changes job was permanently skipped and no verification
+      # issue was ever opened.
+      price_changes: ${{ steps.detection.outputs.changed_providers }}
       detected_sha: ${{ steps.detection.outputs.detected_sha }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
@@ -77,8 +81,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Do NOT add public/_headers here: it is gitignored (.gitignore:58) and
+          # regenerated at deploy time by the Cloudflare build command
+          # (`npm run build && node scripts/compute-prices-hash.js`). Adding an
+          # ignored path makes `git add` exit 1, and under `bash -e` that killed
+          # the whole && chain -- so the commit and push never ran and
+          # last_checked/snapshots never persisted.
           git diff --quiet || (
-            git add public/api/v1/prices.json public/_headers scripts/pricing-snapshots/ &&
+            git add public/api/v1/prices.json scripts/pricing-snapshots/ &&
             git commit -m "chore: update pricing last_checked timestamps and page snapshots [skip ci]" &&
             git push
           )
