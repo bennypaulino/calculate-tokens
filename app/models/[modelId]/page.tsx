@@ -179,6 +179,45 @@ export default async function ModelPage({
   const monthlyCost = computeMonthlyCost(model);
   const comparisons = getComparisonSlugs(modelId);
 
+  // Per-1M unit prices. `Offer.price` alone could only ever carry ONE number,
+  // so it advertised the input rate and silently omitted output -- which
+  // usually dominates real spend. priceSpecification is the schema.org
+  // primitive for "priced per unit of something", and it is additive: `price`
+  // is retained as the lowest rate a caller can pay, so any consumer reading
+  // only that keeps working.
+  const unitPrice = (name: string, price: number, minTokens?: number) => ({
+    "@type": "UnitPriceSpecification",
+    name,
+    price: String(price),
+    priceCurrency: "USD",
+    referenceQuantity: {
+      "@type": "QuantitativeValue",
+      value: 1000000,
+      unitText: "tokens",
+    },
+    ...(minTokens
+      ? {
+          eligibleQuantity: {
+            "@type": "QuantitativeValue",
+            minValue: minTokens,
+            unitText: "tokens",
+          },
+        }
+      : {}),
+  });
+
+  const lc = model.long_context;
+  const priceSpecification = [
+    unitPrice("Input tokens", model.input_cost_per_1m),
+    unitPrice("Output tokens", model.output_cost_per_1m),
+    ...(lc
+      ? [
+          unitPrice("Input tokens (long context)", lc.input_cost_per_1m, lc.threshold_input_tokens + 1),
+          unitPrice("Output tokens (long context)", lc.output_cost_per_1m, lc.threshold_input_tokens + 1),
+        ]
+      : []),
+  ];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -188,21 +227,18 @@ export default async function ModelPage({
     url: `${getBaseUrl()}/models/${model.id}`,
     offers: {
       "@type": "Offer",
-      // Lowest rate a caller can pay, i.e. a "from" price. Tiered models bill
-      // more above their long-context threshold; that is spelled out in the
-      // free-text description below rather than modelled here, because
-      // restructuring this into a priceSpecification would need validating
-      // against Google's Rich Results Test first.
+      // Retained for consumers that read only `price`: the lowest per-1M rate.
       price: String(model.input_cost_per_1m),
       priceCurrency: "USD",
-      description: model.long_context
-        ? `From $${model.input_cost_per_1m} per 1M input tokens (prompts up to ${model.long_context.threshold_input_tokens.toLocaleString("en-US")} tokens)`
-        : "Per 1M input tokens",
+      description: lc
+        ? `From $${model.input_cost_per_1m} per 1M input tokens (prompts up to ${lc.threshold_input_tokens.toLocaleString("en-US")} tokens)`
+        : "From $" + model.input_cost_per_1m + " per 1M input tokens",
+      priceSpecification,
     },
     description:
       `${model.display_name} by ${model.provider}. API pricing: $${model.input_cost_per_1m} per 1M input tokens, $${model.output_cost_per_1m} per 1M output tokens.` +
-      (model.long_context
-        ? ` Prompts over ${model.long_context.threshold_input_tokens.toLocaleString("en-US")} tokens are billed at $${model.long_context.input_cost_per_1m} input / $${model.long_context.output_cost_per_1m} output per 1M.`
+      (lc
+        ? ` Prompts over ${lc.threshold_input_tokens.toLocaleString("en-US")} tokens are billed at $${lc.input_cost_per_1m} input / $${lc.output_cost_per_1m} output per 1M.`
         : "") +
       ` Context window: ${formatContextWindow(model.context_window)}.`,
   };
