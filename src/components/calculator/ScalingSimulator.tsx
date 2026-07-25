@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useCalculatorStore } from '../../store/calculatorStore';
 import { formatCost } from '../../lib/tokenCount';
 import { rowsToCsv } from '../../lib/csv';
+import { resolveRates } from '../../lib/costCalc';
 import type { ModelEntry } from '../../types/prices';
 import type { ModelTokenState } from '../../types/calculator';
 import { t } from '../../lib/i18n';
@@ -21,6 +22,7 @@ interface SimRow {
   monthlyTotal: number;
   cachingApplied: boolean;
   batchApplied: boolean;
+  longContextApplied: boolean;
   inputTokens: number;
 }
 
@@ -70,9 +72,13 @@ export default function ScalingSimulator({
         ? 1 - m.batch_api_discount
         : 1;
 
+    // The long-context threshold is evaluated per request, not against the
+    // monthly aggregate -- providers price each request independently.
+    const rates = resolveRates(m, inputTokens);
+
     const monthlyInput =
-      (inputTokens / 1_000_000) * m.input_cost_per_1m * cachingFactor;
-    const monthlyOutput = (outputTokens / 1_000_000) * m.output_cost_per_1m;
+      (inputTokens / 1_000_000) * rates.inputCostPer1m * cachingFactor;
+    const monthlyOutput = (outputTokens / 1_000_000) * rates.outputCostPer1m;
     const perRequest = (monthlyInput + monthlyOutput) * batchFactor;
     const monthlyTotal = perRequest * volumeRequests;
 
@@ -83,6 +89,7 @@ export default function ScalingSimulator({
       monthlyTotal,
       cachingApplied,
       batchApplied,
+      longContextApplied: rates.longContextApplied,
       inputTokens,
     };
   });
@@ -121,6 +128,7 @@ export default function ScalingSimulator({
       'Output Tokens',
       'Caching Applied',
       'Batch Applied',
+      'Long Context Rate',
       'Monthly Cost (USD)',
     ];
 
@@ -132,6 +140,7 @@ export default function ScalingSimulator({
       'Output Tokens': outputTokens,
       'Caching Applied': r.cachingApplied ? 'Yes' : 'No',
       'Batch Applied': r.batchApplied ? 'Yes' : 'No',
+      'Long Context Rate': r.longContextApplied ? 'Yes' : 'No',
       'Monthly Cost (USD)': r.monthlyTotal.toFixed(4),
     }));
 

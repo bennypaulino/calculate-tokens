@@ -11,6 +11,12 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
   },
   resolve: {
-    alias: { '@': path.resolve(__dirname, 'src') },
+    // Mirrors tsconfig.json "paths". The @/public entry must precede @ so the
+    // more specific prefix wins; without it, importing prices.json in a test
+    // resolves into src/ and fails.
+    alias: [
+      { find: /^@\/public\//, replacement: path.resolve(__dirname, 'public') + '/' },
+      { find: /^@\//, replacement: path.resolve(__dirname, 'src') + '/' },
+    ],
   },
 })

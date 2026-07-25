@@ -103,15 +103,20 @@ for (const { displayName, models, pricingUrl } of resolvedProviders) {
   lines.push(`**Pricing page:** ${pricingUrl}`);
   lines.push('');
 
-  // Table header
-  lines.push('| Model | Input (per 1M tokens) | Output (per 1M tokens) | Last Human Verified |');
-  lines.push('|---|---|---|---|');
+  // Table header. The long-context column matters: a verifier who only checks
+  // the headline rates will miss a changed tier threshold or tier price.
+  lines.push('| Model | Input (per 1M tokens) | Output (per 1M tokens) | Long context | Last Human Verified |');
+  lines.push('|---|---|---|---|---|');
 
   for (const model of models) {
     const inputCost = model.input_cost_per_1m != null ? `$${model.input_cost_per_1m.toFixed(2)}` : 'N/A';
     const outputCost = model.output_cost_per_1m != null ? `$${model.output_cost_per_1m.toFixed(2)}` : 'N/A';
+    const lc = model.long_context;
+    const longContext = lc
+      ? `>${lc.threshold_input_tokens.toLocaleString('en-US')} tok: $${lc.input_cost_per_1m.toFixed(2)} / $${lc.output_cost_per_1m.toFixed(2)}`
+      : 'flat';
     const lastVerified = model.last_human_verified || 'Never';
-    lines.push(`| ${model.display_name} (\`${model.id}\`) | ${inputCost} | ${outputCost} | ${lastVerified} |`);
+    lines.push(`| ${model.display_name} (\`${model.id}\`) | ${inputCost} | ${outputCost} | ${longContext} | ${lastVerified} |`);
   }
 
   lines.push('');

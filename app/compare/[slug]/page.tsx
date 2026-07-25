@@ -21,6 +21,11 @@ interface Model {
   last_human_verified: string;
   pricing_note?: string;
   pricing_note_expires?: string;
+  long_context?: {
+    threshold_input_tokens: number;
+    input_cost_per_1m: number;
+    output_cost_per_1m: number;
+  };
 }
 
 const models = pricesData.models as Model[];
@@ -54,6 +59,12 @@ function formatTokenizer(tokenizer: string): string {
     heuristic: "Heuristic (~chars/4)",
   };
   return map[tokenizer] ?? tokenizer;
+}
+
+function formatTokenThreshold(tokens: number): string {
+  if (tokens >= 1_000_000) return `${(tokens / 1_000_000).toFixed(2).replace(/\.?0+$/, "")}M`;
+  if (tokens >= 1_000) return `${Math.round(tokens / 1_000)}K`;
+  return String(tokens);
 }
 
 function isPricingNoteActive(model: Model): boolean {
@@ -448,6 +459,35 @@ export default async function ComparisonPage({
                     {formatCost(modelB.output_cost_per_1m)}
                   </td>
                 </tr>
+                {(modelA.long_context || modelB.long_context) && (
+                  <tr>
+                    <th
+                      scope="row"
+                      className="px-4 py-3 font-medium text-ct-muted text-left"
+                      style={{ background: 'var(--surface-sunken)' }}
+                    >
+                      {t("compare.longContext")}
+                    </th>
+                    <td className="px-4 py-3 text-ct-body">
+                      {modelA.long_context
+                        ? t("compare.longContextRates", {
+                            threshold: formatTokenThreshold(modelA.long_context.threshold_input_tokens),
+                            inputCost: formatCost(modelA.long_context.input_cost_per_1m),
+                            outputCost: formatCost(modelA.long_context.output_cost_per_1m),
+                          })
+                        : t("compare.longContextNone")}
+                    </td>
+                    <td className="px-4 py-3 text-ct-body">
+                      {modelB.long_context
+                        ? t("compare.longContextRates", {
+                            threshold: formatTokenThreshold(modelB.long_context.threshold_input_tokens),
+                            inputCost: formatCost(modelB.long_context.input_cost_per_1m),
+                            outputCost: formatCost(modelB.long_context.output_cost_per_1m),
+                          })
+                        : t("compare.longContextNone")}
+                    </td>
+                  </tr>
+                )}
                 <tr>
                   <th
                     scope="row"

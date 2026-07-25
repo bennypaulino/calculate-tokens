@@ -128,7 +128,10 @@
     "pricesDisclaimer": "Prices may change. Always verify against the provider's current pricing page before making purchasing decisions.",
     "notFound": "Comparison not found",
     "notFoundBody": "The models in this URL were not found in our database.",
-    "viewAllComparisons": "View all comparisons"
+    "viewAllComparisons": "View all comparisons",
+    "longContext": "Long-context pricing",
+    "longContextRates": "Over {{threshold}} tokens: {{inputCost}} in / {{outputCost}} out",
+    "longContextNone": "Flat rate at any prompt size"
   },
   "models": {
     "breadcrumbHome": "Home",
@@ -178,7 +181,9 @@
     "pricingLastVerified": "Pricing last verified",
     "pricingSource": "prices.json",
     "pricingSourceSuffix": "data is human-verified and updated automatically by CI.",
-    "pricingPageLink": "{{provider}} pricing page"
+    "pricingPageLink": "{{provider}} pricing page",
+    "attrLongContext": "Long-context rate (prompts over {{threshold}} tokens)",
+    "longContextRates": "{{inputCost}} input / {{outputCost}} output per 1M"
   },
   "simulator": {
     "heading": "Scaling / Bulk Simulator",

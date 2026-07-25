@@ -128,7 +128,10 @@
     "pricesDisclaimer": "Les tarifs peuvent changer. Vérifiez toujours la page de tarification actuelle du fournisseur avant de prendre des décisions d'achat.",
     "notFound": "Comparaison introuvable",
     "notFoundBody": "Les modèles dans cette URL n'ont pas été trouvés dans notre base de données.",
-    "viewAllComparisons": "Voir toutes les comparaisons"
+    "viewAllComparisons": "Voir toutes les comparaisons",
+    "longContext": "Tarification contexte long",
+    "longContextRates": "Au-delà de {{threshold}} tokens : {{inputCost}} entrée / {{outputCost}} sortie",
+    "longContextNone": "Tarif unique quelle que soit la taille du prompt"
   },
   "models": {
     "breadcrumbHome": "Accueil",
@@ -178,7 +181,9 @@
     "pricingLastVerified": "Tarification vérifiée pour la dernière fois",
     "pricingSource": "prices.json",
     "pricingSourceSuffix": "les données sont vérifiées par des humains et mises à jour automatiquement par CI.",
-    "pricingPageLink": "Page de tarification {{provider}}"
+    "pricingPageLink": "Page de tarification {{provider}}",
+    "attrLongContext": "Tarif contexte long (prompts de plus de {{threshold}} tokens)",
+    "longContextRates": "{{inputCost}} entrée / {{outputCost}} sortie par 1M"
   },
   "simulator": {
     "heading": "Simulateur de mise à l'échelle / en masse",

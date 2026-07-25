@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeCostRow, computeEffectiveOutputTokens } from '@/lib/costCalc'
+import { computeCostRow, computeEffectiveOutputTokens, resolveRates } from '@/lib/costCalc'
 import type { ModelEntry } from '@/types/prices'
 
 function makeModel(overrides: Partial<ModelEntry> = {}): ModelEntry {
@@ -110,5 +110,139 @@ describe('computeEffectiveOutputTokens — thinking enabled with billed_separate
     })
     const effective = computeEffectiveOutputTokens(500, model, true)
     expect(effective).toBe(500)
+  })
+})
+
+describe('resolveRates — long-context tier selection', () => {
+  const tiered = () =>
+    makeModel({
+      id: 'gpt-5-6-sol',
+      input_cost_per_1m: 5.0,
+      output_cost_per_1m: 30.0,
+      context_window: 1_050_000,
+      long_context: {
+        threshold_input_tokens: 272_000,
+        input_cost_per_1m: 10.0,
+        output_cost_per_1m: 45.0,
+      },
+    })
+
+  it('uses standard rates below the threshold', () => {
+    const r = resolveRates(tiered(), 271_999)
+    expect(r.inputCostPer1m).toBe(5.0)
+    expect(r.outputCostPer1m).toBe(30.0)
+    expect(r.longContextApplied).toBe(false)
+  })
+
+  it('uses standard rates exactly AT the threshold (strictly greater-than)', () => {
+    const r = resolveRates(tiered(), 272_000)
+    expect(r.inputCostPer1m).toBe(5.0)
+    expect(r.longContextApplied).toBe(false)
+  })
+
+  it('switches to long-context rates one token above the threshold', () => {
+    const r = resolveRates(tiered(), 272_001)
+    expect(r.inputCostPer1m).toBe(10.0)
+    expect(r.outputCostPer1m).toBe(45.0)
+    expect(r.longContextApplied).toBe(true)
+  })
+
+  it('leaves flat-rate models untouched at any prompt size', () => {
+    const r = resolveRates(makeModel(), 10_000_000)
+    expect(r.inputCostPer1m).toBe(2.5)
+    expect(r.outputCostPer1m).toBe(10.0)
+    expect(r.longContextApplied).toBe(false)
+  })
+
+  it('honours each provider its own threshold rather than a shared constant', () => {
+    // Gemini switches at 200K, OpenAI at 272K. A prompt between the two must
+    // be long-context for Gemini and standard for OpenAI.
+    const gemini = makeModel({
+      input_cost_per_1m: 1.25,
+      output_cost_per_1m: 10.0,
+      long_context: {
+        threshold_input_tokens: 200_000,
+        input_cost_per_1m: 2.5,
+        output_cost_per_1m: 15.0,
+      },
+    })
+    expect(resolveRates(gemini, 250_000).longContextApplied).toBe(true)
+    expect(resolveRates(tiered(), 250_000).longContextApplied).toBe(false)
+  })
+})
+
+describe('computeCostRow — long-context pricing', () => {
+  const gemini = () =>
+    makeModel({
+      id: 'gemini-2-5-pro',
+      input_cost_per_1m: 1.25,
+      output_cost_per_1m: 10.0,
+      context_window: 1_000_000,
+      long_context: {
+        threshold_input_tokens: 200_000,
+        input_cost_per_1m: 2.5,
+        output_cost_per_1m: 15.0,
+      },
+    })
+
+  it('bills a below-threshold prompt entirely at standard rates', () => {
+    const row = computeCostRow(gemini(), 100_000, 1_000, false)
+    expect(row.inputCost).toBeCloseTo(0.125, 6) // 100k @ $1.25
+    expect(row.outputCost).toBeCloseTo(0.01, 6) // 1k @ $10.00
+    expect(row.longContextApplied).toBe(false)
+  })
+
+  it('re-prices the WHOLE request once the prompt crosses the threshold', () => {
+    // Step function, not marginal: all 300k input bills at $2.50 (not 200k at
+    // $1.25 + 100k at $2.50), and output moves to $15.00 even though the
+    // threshold is defined on input alone.
+    const row = computeCostRow(gemini(), 300_000, 1_000, false)
+    expect(row.inputCost).toBeCloseTo(0.75, 6) // 300k @ $2.50, NOT 0.5
+    expect(row.outputCost).toBeCloseTo(0.015, 6) // 1k @ $15.00, NOT 0.01
+    expect(row.totalCost).toBeCloseTo(0.765, 6)
+    expect(row.longContextApplied).toBe(true)
+  })
+
+  it('is never cheaper to send a longer prompt across the boundary', () => {
+    const justUnder = computeCostRow(gemini(), 200_000, 1_000, false)
+    const justOver = computeCostRow(gemini(), 200_001, 1_000, false)
+    expect(justOver.totalCost).toBeGreaterThan(justUnder.totalCost)
+  })
+
+  it('applies the long-context output rate to thinking-inflated output tokens', () => {
+    const m = makeModel({
+      input_cost_per_1m: 1.25,
+      output_cost_per_1m: 10.0,
+      thinking_model: true,
+      thinking_billed_separately: true,
+      thinking_multiplier: 3,
+      long_context: {
+        threshold_input_tokens: 200_000,
+        input_cost_per_1m: 2.5,
+        output_cost_per_1m: 15.0,
+      },
+    })
+    const row = computeCostRow(m, 300_000, 1_000, true)
+    expect(row.outputTokens).toBe(3_000)
+    expect(row.outputCost).toBeCloseTo(0.045, 6) // 3k @ $15.00
+  })
+})
+
+describe('prices.json long-context data integrity', () => {
+  it('keeps every declared threshold reachable inside the context window', async () => {
+    const { models } = await import('@/public/api/v1/prices.json')
+    const tiered = (models as ModelEntry[]).filter((m) => m.long_context)
+    expect(tiered.length).toBeGreaterThan(0)
+
+    for (const m of tiered) {
+      const lc = m.long_context!
+      expect(
+        lc.threshold_input_tokens,
+        `${m.id}: threshold >= context_window, so the tier can never trigger`
+      ).toBeLessThan(m.context_window)
+      // A "long context" tier that is cheaper would invert the cost model.
+      expect(lc.input_cost_per_1m).toBeGreaterThanOrEqual(m.input_cost_per_1m)
+      expect(lc.output_cost_per_1m).toBeGreaterThanOrEqual(m.output_cost_per_1m)
+    }
   })
 })

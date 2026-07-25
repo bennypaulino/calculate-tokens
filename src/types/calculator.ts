@@ -21,6 +21,8 @@ export interface CostRow {
   outputStatus: TokenizerStatus;
   isThinkingModel: boolean;
   thinkingBilledSeparately: boolean;
+  /** Prompt exceeded the model's long-context threshold; higher rates were billed. */
+  longContextApplied: boolean;
   last_human_verified: string;
 }
 

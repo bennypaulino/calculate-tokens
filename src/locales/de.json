@@ -128,7 +128,10 @@
     "pricesDisclaimer": "Preise können sich ändern. Überprüfen Sie stets die aktuelle Preisseite des Anbieters, bevor Sie Kaufentscheidungen treffen.",
     "notFound": "Vergleich nicht gefunden",
     "notFoundBody": "Die Modelle in dieser URL wurden in unserer Datenbank nicht gefunden.",
-    "viewAllComparisons": "Alle Vergleiche anzeigen"
+    "viewAllComparisons": "Alle Vergleiche anzeigen",
+    "longContext": "Long-Context-Preise",
+    "longContextRates": "Über {{threshold}} Token: {{inputCost}} Eingabe / {{outputCost}} Ausgabe",
+    "longContextNone": "Einheitspreis bei jeder Prompt-Größe"
   },
   "models": {
     "breadcrumbHome": "Startseite",
@@ -178,7 +181,9 @@
     "pricingLastVerified": "Preis zuletzt verifiziert",
     "pricingSource": "prices.json",
     "pricingSourceSuffix": "Daten werden von Menschen verifiziert und automatisch von CI aktualisiert.",
-    "pricingPageLink": "{{provider}}-Preisseite"
+    "pricingPageLink": "{{provider}}-Preisseite",
+    "attrLongContext": "Long-Context-Preis (Prompts über {{threshold}} Token)",
+    "longContextRates": "{{inputCost}} Eingabe / {{outputCost}} Ausgabe pro 1M"
   },
   "simulator": {
     "heading": "Skalierungssimulator / Massensimulator",

@@ -26,6 +26,11 @@ interface Model {
   requires_js_render?: boolean;
   pricing_note?: string;
   pricing_note_expires?: string;
+  long_context?: {
+    threshold_input_tokens: number;
+    input_cost_per_1m: number;
+    output_cost_per_1m: number;
+  };
 }
 
 const models = pricesData.models as Model[];
@@ -56,6 +61,12 @@ function formatCost(cost: number): string {
   if (cost < 0.01) return `$${cost.toFixed(4)}`;
   if (cost < 1) return `$${cost.toFixed(2)}`;
   return `$${cost.toFixed(2)}`;
+}
+
+function formatTokenThreshold(tokens: number): string {
+  if (tokens >= 1_000_000) return `${(tokens / 1_000_000).toFixed(2).replace(/\.?0+$/, "")}M`;
+  if (tokens >= 1_000) return `${Math.round(tokens / 1_000)}K`;
+  return String(tokens);
 }
 
 function computeMonthlyCost(model: Model): string {
@@ -262,6 +273,21 @@ export default async function ModelPage({
                     {formatCost(model.output_cost_per_1m)}
                   </td>
                 </tr>
+                {model.long_context && (
+                  <tr>
+                    <td className="px-4 py-3 text-ct-body">
+                      {t("models.attrLongContext", {
+                        threshold: formatTokenThreshold(model.long_context.threshold_input_tokens),
+                      })}
+                    </td>
+                    <td className="px-4 py-3 font-medium text-ct-strong">
+                      {t("models.longContextRates", {
+                        inputCost: formatCost(model.long_context.input_cost_per_1m),
+                        outputCost: formatCost(model.long_context.output_cost_per_1m),
+                      })}
+                    </td>
+                  </tr>
+                )}
                 <tr className="bg-ct-raised/20">
                   <td className="px-4 py-3 text-ct-body">{t("models.attrContextCaching")}</td>
                   <td className="px-4 py-3 font-medium text-ct-strong">

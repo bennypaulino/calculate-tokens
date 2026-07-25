@@ -20,8 +20,13 @@
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
       "last_checked": "2026-07-25T11:56:09.694Z",
-      "last_human_verified": "2026-07-24T00:00:00Z",
-      "active": true
+      "last_human_verified": "2026-07-25T00:00:00Z",
+      "active": true,
+      "long_context": {
+        "threshold_input_tokens": 272000,
+        "input_cost_per_1m": 10,
+        "output_cost_per_1m": 45
+      }
     },
     {
       "id": "gpt-5-6-terra",
@@ -40,8 +45,13 @@
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
       "last_checked": "2026-07-25T11:56:09.694Z",
-      "last_human_verified": "2026-07-24T00:00:00Z",
-      "active": true
+      "last_human_verified": "2026-07-25T00:00:00Z",
+      "active": true,
+      "long_context": {
+        "threshold_input_tokens": 272000,
+        "input_cost_per_1m": 5,
+        "output_cost_per_1m": 22.5
+      }
     },
     {
       "id": "gpt-5-6-luna",
@@ -60,8 +70,13 @@
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
       "last_checked": "2026-07-25T11:56:09.694Z",
-      "last_human_verified": "2026-07-24T00:00:00Z",
-      "active": true
+      "last_human_verified": "2026-07-25T00:00:00Z",
+      "active": true,
+      "long_context": {
+        "threshold_input_tokens": 272000,
+        "input_cost_per_1m": 2,
+        "output_cost_per_1m": 9
+      }
     },
     {
       "id": "gpt-5-5",
@@ -80,8 +95,13 @@
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
       "last_checked": "2026-07-25T11:56:09.694Z",
-      "last_human_verified": "2026-07-24T00:00:00Z",
-      "active": true
+      "last_human_verified": "2026-07-25T00:00:00Z",
+      "active": true,
+      "long_context": {
+        "threshold_input_tokens": 272000,
+        "input_cost_per_1m": 10,
+        "output_cost_per_1m": 45
+      }
     },
     {
       "id": "gpt-5-4",
@@ -100,8 +120,13 @@
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
       "last_checked": "2026-07-25T11:56:09.694Z",
-      "last_human_verified": "2026-07-24T00:00:00Z",
-      "active": true
+      "last_human_verified": "2026-07-25T00:00:00Z",
+      "active": true,
+      "long_context": {
+        "threshold_input_tokens": 272000,
+        "input_cost_per_1m": 5,
+        "output_cost_per_1m": 22.5
+      }
     },
     {
       "id": "gpt-5-4-mini",
@@ -348,8 +373,13 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "last_checked": "2026-07-25T11:56:09.694Z",
-      "last_human_verified": "2026-06-06T00:00:00Z",
-      "active": true
+      "last_human_verified": "2026-07-25T00:00:00Z",
+      "active": true,
+      "long_context": {
+        "threshold_input_tokens": 200000,
+        "input_cost_per_1m": 2.5,
+        "output_cost_per_1m": 15
+      }
     },
     {
       "id": "deepseek-v3",
