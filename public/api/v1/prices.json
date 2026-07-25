@@ -2,6 +2,7 @@
   "$schema": "https://calculatetokens.com/api/v1/prices.schema.json",
   "version": "1.0.0",
   "generated_at": "2026-07-24T00:00:00Z",
+  "last_checked": "2026-07-25T11:56:09.694Z",
   "models": [
     {
       "id": "gpt-5-6-sol",
@@ -19,7 +20,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-25T00:00:00Z",
       "active": true,
       "long_context": {
@@ -44,7 +44,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-25T00:00:00Z",
       "active": true,
       "long_context": {
@@ -69,7 +68,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-25T00:00:00Z",
       "active": true,
       "long_context": {
@@ -94,7 +92,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-25T00:00:00Z",
       "active": true,
       "long_context": {
@@ -119,7 +116,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-25T00:00:00Z",
       "active": true,
       "long_context": {
@@ -144,7 +140,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -164,7 +159,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -184,7 +178,6 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -204,7 +197,6 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -224,7 +216,6 @@
       "thinking_model": true,
       "thinking_multiplier": 3,
       "thinking_billed_separately": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -245,7 +236,6 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -266,7 +256,6 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -287,7 +276,6 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-24T00:00:00Z",
       "active": true
     },
@@ -308,7 +296,6 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -331,7 +318,6 @@
       "requires_js_render": true,
       "pricing_note": "Introductory pricing through Aug 31, 2026. Standard price: $3.00 / $15.00 per MTok after that date.",
       "pricing_note_expires": "2026-08-31",
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-01T00:00:00Z",
       "active": true
     },
@@ -352,7 +338,6 @@
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
       "requires_js_render": true,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -372,7 +357,6 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-07-25T00:00:00Z",
       "active": true,
       "long_context": {
@@ -397,7 +381,6 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -417,7 +400,6 @@
       "thinking_model": true,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     },
@@ -437,7 +419,6 @@
       "thinking_model": false,
       "thinking_multiplier": null,
       "thinking_billed_separately": false,
-      "last_checked": "2026-07-25T11:56:09.694Z",
       "last_human_verified": "2026-06-06T00:00:00Z",
       "active": true
     }
