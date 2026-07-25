@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { canonicalUrl } from "@/lib/i18n";
+import { canonicalUrl, englishOnlyRobots } from "@/lib/i18n";
 
 export const metadata: Metadata = {
+  ...englishOnlyRobots(),
   title: "About — Calculate Tokens",
   description:
     "Calculate Tokens is a browser-native LLM token calculator with per-model WebAssembly tokenizers. Your text never leaves your browser.",

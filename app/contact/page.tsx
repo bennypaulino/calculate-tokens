@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { canonicalUrl } from "@/lib/i18n";
+import { canonicalUrl, englishOnlyRobots } from "@/lib/i18n";
 
 export const metadata: Metadata = {
+  ...englishOnlyRobots(),
   title: "Contact — Calculate Tokens",
   description:
     "Get in touch with the Calculate Tokens team for general enquiries, bug reports, feature requests, or partnership enquiries.",

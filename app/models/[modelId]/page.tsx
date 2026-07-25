@@ -224,7 +224,9 @@ export default async function ModelPage({
     name: model.display_name,
     applicationCategory: "AI Language Model",
     operatingSystem: "Web",
-    url: `${getBaseUrl()}/models/${model.id}`,
+    // canonicalUrl() adds the trailing slash; the bare form 308-redirects and
+    // disagreed with the page's own canonical.
+    url: canonicalUrl(`/models/${model.id}`),
     offers: {
       "@type": "Offer",
       // Retained for consumers that read only `price`: the lowest per-1M rate.
