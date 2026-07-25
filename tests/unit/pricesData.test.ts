@@ -61,3 +61,61 @@ describe('prices.json conforms to prices.schema.json', () => {
     }
   })
 })
+
+describe('verification waivers are dated commitments, not off switches', () => {
+  type Model = {
+    id: string
+    active?: boolean
+    last_human_verified?: string
+    verification_waiver_until?: string
+    verification_waiver_reason?: string
+  }
+  const waived = (prices.models as Model[]).filter((m) => m.verification_waiver_until)
+
+  it('always pairs a waiver with a reason', () => {
+    for (const m of waived) {
+      expect(
+        m.verification_waiver_reason,
+        `${m.id} is waived without a reason; the schema requires one`
+      ).toBeTruthy()
+      expect((m.verification_waiver_reason ?? '').length).toBeGreaterThanOrEqual(10)
+    }
+  })
+
+  it('caps every waiver at 90 days out, so none becomes permanent', () => {
+    const CAP_DAYS = 90
+    const now = Date.now()
+    for (const m of waived) {
+      const daysOut = Math.floor(
+        (new Date(m.verification_waiver_until!).getTime() - now) / 86_400_000
+      )
+      expect(
+        daysOut,
+        `${m.id} waiver runs ${daysOut} days out, beyond the ${CAP_DAYS}-day cap`
+      ).toBeLessThanOrEqual(CAP_DAYS)
+    }
+  })
+
+  it('never waives a model that could simply be re-verified', () => {
+    // A waiver means "the vendor no longer publishes this price", so it should
+    // coexist with a pricing_note explaining the situation to users. Without
+    // that, the waiver is just hiding a stale number.
+    for (const m of waived as (Model & { pricing_note?: string })[]) {
+      expect(
+        m.pricing_note,
+        `${m.id} is waived but carries no pricing_note; users see no warning`
+      ).toBeTruthy()
+    }
+  })
+
+  it('never records a verification date in the future', () => {
+    const now = Date.now()
+    for (const m of prices.models as Model[]) {
+      if (!m.last_human_verified) continue
+      expect(
+        new Date(m.last_human_verified).getTime(),
+        `${m.id} claims verification in the future, which would age backwards forever`
+      ).toBeLessThanOrEqual(now)
+    }
+  })
+})

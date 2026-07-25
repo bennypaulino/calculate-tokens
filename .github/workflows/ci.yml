@@ -44,6 +44,12 @@ jobs:
         run: npm audit --audit-level=high
       - name: Check audit exemption expiry
         run: node scripts/check-exemption-expiry.js
+      - name: Check verification waiver expiry
+        # Diff-authored and deterministic, like the audit exemptions above, so
+        # it belongs on PRs. Time-based staleness deliberately does NOT gate CI:
+        # it would go red on a day with no commits and block contributors who
+        # cannot fix it.
+        run: node scripts/check-staleness.js --fail-on-expired-waiver
       - name: Validate security.txt
         run: node scripts/check-security-txt.js
       - name: Check canonical URL consistency
