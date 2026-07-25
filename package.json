@@ -2,6 +2,9 @@
   "name": "calculate-tokens",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/generate-headers.js && node scripts/build-workers.js && node scripts/check-i18n-keys.js && node scripts/check-i18n-stale.js",
