@@ -1,10 +1,16 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://calculatetokens.com/api/v1/prices.schema.json",
-  "title": "Calculate Tokens — Pricing Data",
+  "title": "Calculate Tokens \u2014 Pricing Data",
   "description": "Schema for public/api/v1/prices.json. Single source of truth for model IDs, tokenizer mapping, pricing, and feature flags.",
   "type": "object",
-  "required": ["$schema", "version", "generated_at", "models"],
+  "required": [
+    "$schema",
+    "version",
+    "generated_at",
+    "last_checked",
+    "models"
+  ],
   "additionalProperties": false,
   "properties": {
     "$schema": {
@@ -19,6 +25,11 @@
       "type": "string",
       "format": "date-time",
       "description": "ISO 8601 timestamp of when this file was last generated"
+    },
+    "last_checked": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the last automated provider pricing-page check. Written by the pricing-check CI job and by nothing else. Document-level rather than per-model because the check runs once per provider page, not per model -- the previous per-model field was written with an identical value for every model, giving 20 lines of daily churn and a guaranteed merge conflict with any open PR editing this file."
     },
     "models": {
       "type": "array",
@@ -48,7 +59,6 @@
         "thinking_model",
         "thinking_multiplier",
         "thinking_billed_separately",
-        "last_checked",
         "last_human_verified",
         "active"
       ],
@@ -75,7 +85,15 @@
         },
         "tokenizer": {
           "type": "string",
-          "enum": ["cl100k_base", "o200k_base", "claude", "claude-new", "gemini", "llama", "heuristic"],
+          "enum": [
+            "cl100k_base",
+            "o200k_base",
+            "claude",
+            "claude-new",
+            "gemini",
+            "llama",
+            "heuristic"
+          ],
           "description": "Tokenizer implementation key. 'heuristic' = Math.ceil(chars/4), no Wasm worker spawned."
         },
         "context_window": {
@@ -151,15 +169,10 @@
           "type": "boolean",
           "description": "true = check-page-changes.js must use Playwright headless rendering instead of fetch (e.g. Anthropic pricing SPA)"
         },
-        "last_checked": {
-          "type": "string",
-          "format": "date-time",
-          "description": "ISO 8601 timestamp — updated automatically by the pricing-check CI job"
-        },
         "last_human_verified": {
           "type": "string",
           "format": "date-time",
-          "description": "ISO 8601 timestamp — updated only when a human has navigated to provider_pricing_url and confirmed values. Drives amber staleness indicators in the UI."
+          "description": "ISO 8601 timestamp \u2014 updated only when a human has navigated to provider_pricing_url and confirmed values. Drives amber staleness indicators in the UI."
         },
         "active": {
           "type": "boolean",
@@ -204,14 +217,22 @@
       },
       "if": {
         "properties": {
-          "thinking_model": { "const": false }
+          "thinking_model": {
+            "const": false
+          }
         },
-        "required": ["thinking_model"]
+        "required": [
+          "thinking_model"
+        ]
       },
       "then": {
         "properties": {
-          "thinking_multiplier": { "type": "null" },
-          "thinking_billed_separately": { "const": false }
+          "thinking_multiplier": {
+            "type": "null"
+          },
+          "thinking_billed_separately": {
+            "const": false
+          }
         }
       }
     }

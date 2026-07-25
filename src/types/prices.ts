@@ -37,7 +37,6 @@ export interface ModelEntry {
   thinking_multiplier: number | null;
   active: boolean;
   last_human_verified: string;
-  last_checked: string;
   provider_pricing_url: string;
   supports_context_caching: boolean;
   context_caching_discount: number | null;
@@ -48,5 +47,7 @@ export interface ModelEntry {
 export interface PricesData {
   version: string;
   generated_at: string;
+  /** Document-level: the pricing check runs per provider page, not per model. */
+  last_checked: string;
   models: ModelEntry[];
 }

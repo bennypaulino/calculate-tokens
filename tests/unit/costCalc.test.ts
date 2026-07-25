@@ -16,7 +16,6 @@ function makeModel(overrides: Partial<ModelEntry> = {}): ModelEntry {
     thinking_multiplier: null,
     active: true,
     last_human_verified: '2025-01-01',
-    last_checked: '2025-01-01',
     provider_pricing_url: 'https://openai.com/pricing',
     supports_context_caching: false,
     context_caching_discount: null,

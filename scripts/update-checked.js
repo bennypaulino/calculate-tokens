@@ -20,15 +20,14 @@ try {
 }
 
 const timestamp = new Date().toISOString();
-const activeModels = prices.models.filter((m) => m.active);
 
-for (const model of prices.models) {
-  if (model.active) {
-    model.last_checked = timestamp;
-  }
-}
+// Document-level, not per-model. The check runs once per provider pricing
+// page, so a per-model field was writing the SAME value to every model --
+// 20 lines of daily churn that conflicted with any open PR touching this
+// file. One line, at the top, well away from the models array.
+prices.last_checked = timestamp;
 
 fs.writeFileSync(PRICES_PATH, JSON.stringify(prices, null, 2) + '\n', 'utf8');
 
-console.log(`Updated last_checked for ${activeModels.length} model(s) to ${timestamp}`);
+console.log(`Updated last_checked to ${timestamp}`);
 process.exit(0);

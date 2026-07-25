@@ -21,7 +21,6 @@ interface Model {
   thinking_model: boolean;
   thinking_multiplier: number | null;
   thinking_billed_separately: boolean;
-  last_checked: string;
   last_human_verified: string;
   active: boolean;
   requires_js_render?: boolean;
